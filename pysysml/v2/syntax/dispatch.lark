@@ -1,0 +1,64 @@
+start: identification
+
+// 8.2.2.1.2 Lexical Structure
+DEFINED_BY : ":" | "defined" "by"
+SPECIALIZES : ":>" | "specializes"
+SUBSETS : ":>" | "subsets"
+REFERENCES : "::>" | "references"
+REDEFINES : ":>>" | "redefines"
+
+// 8.2.2.2 Elements and Relationships Textual Notation
+identification : ( "<" NAME ">" )? ( NAME )?
+relationship_body : ";" | "{" ( owned_annotation )* "}"
+
+// 8.2.2.3 Dependencies Textual Notation
+// dependency : prefix_metadata_annotation* "dependency" dependency_declaration relationship_body
+dependency : "dependency" dependency_declaration relationship_body
+dependency_declaration : ( identification "from" )? qualified_name ( "," qualified_name )* "to" qualified_name ( "," qualified_name )*
+qualified_name : NAME ("." NAME)*
+
+// 8.2.2.4.1 Annotations
+annotation : qualified_name
+owned_annotation : annotating_element
+annotating_member : annotating_element
+// annotating_element : comment | documentation | textual_representation | metadata_feature
+annotating_element : comment | documentation | textual_representation
+
+// 8.2.2.4.2 Comments and Documentation
+comment : ( "comment" identification ( "about" annotation ( "," annotation )* )? )? ( "locale" STRING_VALUE )? REGULAR_COMMENT
+documentation : "doc" identification ( "locale" STRING_VALUE )? REGULAR_COMMENT
+
+// 8.2.2.4.3 Textual Representation
+textual_representation : ( "rep" identification )? "language" STRING_VALUE REGULAR_COMMENT
+
+// 8.2.2.5.1 Packages
+root_namespace : package_body_element*
+// package : prefix_metadata_member* package_declaration package_body
+package : package_declaration package_body
+STANDARD : "standard"
+// library_package : [STANDARD] "library" prefix_metadata_member* package_declaration package_body
+library_package : [STANDARD] "library" package_declaration package_body
+package_declaration : "package" identification
+package_body : ";" | "{" package_body_element* "}"
+package_body_element : package_member | element_filter_member | alias_member | import
+member_prefix : visibility_indicator?
+package_member : owning_membership member_prefix ( definition_element | usage_element )
+element_filter_member : member_prefix "filter" owned_expression ";"
+alias_member : member_prefix "alias" ( "<" NAME ">" )? NAME? "for" qualified_name relationship_body
+ALL : "all"
+import : visibility_indicator? "import" [ALL] ( imported_namespace | imported_filter_package ) relationship_body
+imported_namespace : qualified_name? ( NAME | "*" ) ( "::" "**" )?
+imported_filter_package : filter_package
+filter_package : filter_package_import filter_package_member+
+filter_package_import : imported_namespace
+filter_package_member : "[" owned_expression "]"
+visibility_indicator : "public" | "private" | "protected"
+
+
+// global assets
+%import common.CNAME -> NAME
+%import common.C_COMMENT -> REGULAR_COMMENT
+%import common.ESCAPED_STRING -> STRING_VALUE
+%import common.WS
+%import common.NUMBER
+%ignore WS
