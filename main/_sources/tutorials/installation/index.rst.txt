@@ -30,4 +30,4 @@ is successful.
     :linenos:
 
 pysysml is still under development, you can also check out the \
-documents in stable version through `https://SysMLv2-Research.github.io/pysysml/main/index.html <https://SysMLv2-Research.github.io/pysysml/main/index.html>`_.
+documents in stable version through `https://sysmlv2-research.github.io/pysysml/main/index.html <https://sysmlv2-research.github.io/pysysml/main/index.html>`_.
