@@ -1,0 +1,511 @@
+# Start rule (placeholder, as the actual start rule is not provided in the given excerpt)
+start: NAME
+
+# Ignore whitespace and comments
+%import common.WS
+%ignore WS
+%ignore SINGLE_LINE_NOTE
+%ignore MULTILINE_NOTE
+%ignore REGULAR_COMMENT
+
+
+# 8.2.2 Lexical Structure
+# 8.2.2.1 Line Terminators and White Space
+LINE_TERMINATOR: /\r?\n/
+LINE_TEXT: /[^\r\n]*/
+WHITE_SPACE: /[ \t\f]|{LINE_TERMINATOR}/
+
+# 8.2.2.2 Notes and Comments
+SINGLE_LINE_NOTE: "//" LINE_TEXT
+MULTILINE_NOTE: "//*" COMMENT_TEXT "*/"
+REGULAR_COMMENT: "/*" COMMENT_TEXT "*/"
+COMMENT_TEXT: (COMMENT_LINE_TEXT | LINE_TERMINATOR)*
+COMMENT_LINE_TEXT: /[^\r\n]*(?<!\*\/)/  // LINE_TEXT excluding the sequence "*/"
+
+# 8.2.2.3 Names
+NAME: BASIC_NAME | UNRESTRICTED_NAME
+BASIC_NAME: BASIC_INITIAL_CHARACTER BASIC_NAME_CHARACTER*
+UNRESTRICTED_NAME: "'" (STRING_CHARACTER | ESCAPE_SEQUENCE)* "'"
+BASIC_INITIAL_CHARACTER: ALPHABETIC_CHARACTER | "_"
+BASIC_NAME_CHARACTER: BASIC_INITIAL_CHARACTER | DECIMAL_DIGIT
+
+# Additional tokens that might be needed
+ALPHABETIC_CHARACTER: /[a-zA-Z]/
+DECIMAL_DIGIT: /[0-9]/
+NAME_CHARACTER: /[^'\\]/
+
+# Define escape sequences
+ESCAPE_SEQUENCE: /\\['"bftn\\]/
+
+
+# 8.2.2.4 Numeric Values
+
+# DECIMAL_VALUE: one or more decimal digits
+DECIMAL_VALUE: /[0-9]+/
+
+# EXPONENTIAL_VALUE: decimal value followed by 'e' or 'E', optional sign, and another decimal value
+EXPONENTIAL_VALUE: DECIMAL_VALUE ("e"|"E") ["+"|"-"] DECIMAL_VALUE
+
+# Note: DECIMAL_VALUE may be used for natural literals or as part of real literals
+# Note: EXPONENTIAL_VALUE may be used in the specification of real literals
+# Note: Decimal point and fractional part are handled in the syntax of real literals, not here
+
+# 8.2.2.5 String Value
+
+# STRING_VALUE: enclosed in double quotes, containing string characters and escape sequences
+STRING_VALUE: "\"" (STRING_CHARACTER | ESCAPE_SEQUENCE)* "\""
+
+# STRING_CHARACTER: any printable character except backslash or double quote
+STRING_CHARACTER: /[^\"\'\\\n\r]/
+
+# 8.2.2.7 Symbols
+
+# Define individual symbols
+SYMBOL: "(" | ")" | "{" | "}" | "[" | "]" | ";" | "," | "~" | "@" | "#" | "%" | "&" | "^" | "|" | "*" | "**" | "+" | "-" | "/" | "->" | "." | ".." | ":" | "::" | ":>" | ":>>" | "::>" | "<" | "<=" | "=" | ":=" | "==" | "===" | "!=" | "!==" | ">" | ">=" | "?" | "??" | ".?"
+
+# Special lexical terminals
+TYPED_BY: ":" | "typed" "by"
+SPECIALIZES: ":>" | "specializes"
+SUBSETS: ":>" | "subsets"
+REFERENCES: "::>" | "references"
+REDEFINES: ":>>" | "redefines"
+CONJUGATES: "~" | "conjugates"
+
+
+# 8.2.3 Root Concrete Syntax
+# 8.2.3.1 Elements and Relationships Concrete Syntax
+identification: ("<" NAME ">")? NAME?
+relationship_body: ";" | "{" relationship_owned_element* "}"
+relationship_owned_element: owned_related_element | owned_annotation
+owned_related_element: non_feature_element | feature_element
+
+# 8.2.3.2 Dependencies Concrete Syntax
+dependency: prefix_metadata_annotation* "dependency" (identification? "from")? qualified_name ("," qualified_name)* "to" qualified_name ("," qualified_name)* relationship_body
+
+# 8.2.3.3 Annotations Concrete Syntax
+# 8.2.3.3.1 Annotations
+annotation: qualified_name
+owned_annotation: annotating_element
+annotating_element: comment | documentation | textual_representation | metadata_feature
+
+# 8.2.3.3.2 Comments and Documentation
+comment: ("comment" identification ("about" annotation ("," annotation)*)?)? ("locale" STRING_VALUE)? REGULAR_COMMENT
+documentation: "doc" identification ("locale" STRING_VALUE)? REGULAR_COMMENT
+
+# 8.2.3.3.3 Textual Representation
+textual_representation: ("rep" identification)? "language" STRING_VALUE REGULAR_COMMENT
+
+# 8.2.3.4 Namespaces Concrete Syntax
+# 8.2.3.4.1 Namespaces
+root_namespace: namespace_body_element*
+namespace: prefix_metadata_member* namespace_declaration namespace_body
+namespace_declaration: "namespace" identification
+namespace_body: ";" | "{" namespace_body_element* "}"
+namespace_body_element: namespace_member | alias_member | import
+member_prefix: visibility_indicator?
+visibility_indicator: "public" | "private" | "protected"
+namespace_member: non_feature_member | namespace_feature_member
+non_feature_member: member_prefix member_element
+namespace_feature_member: member_prefix feature_element
+alias_member: member_prefix "alias" ("<" NAME ">")? NAME? "for" qualified_name relationship_body
+qualified_name: (NAME "::")* NAME
+
+# 8.2.3.4.2 Imports
+import: visibility_indicator? "import" ("all")? import_declaration relationship_body
+import_declaration: membership_import | namespace_import
+membership_import: qualified_name ("::" "**")?
+namespace_import: qualified_name "::" "*" ("::" "**")? | filter_package
+filter_package: import_declaration filter_package_member+
+filter_package_member: "[" owned_expression "]"
+
+# 8.2.3.4.3 Namespace Elements
+member_element: annotating_element | non_feature_element
+non_feature_element: dependency | namespace | type | classifier | data_type | class | structure | metaclass | association | association_structure | interaction | behavior | function | predicate | multiplicity | package | library_package | specialization | conjugation | subclassification | disjoining | feature_inverting | feature_typing | subsetting | redefinition | type_featuring
+feature_element: feature | step | expression | boolean_expression | invariant | connector | binding_connector | succession | item_flow | succession_item_flow
+
+
+# 8.2.4 Core Concrete Syntax
+# 8.2.4.1 Types Concrete Syntax
+
+# 8.2.4.1.1 Types
+type: type_prefix "type" type_declaration type_body
+type_prefix: ("abstract")? prefix_metadata_member*
+type_declaration: ("all")? identification owned_multiplicity? (specialization_part | conjugation_part)+ type_relationship_part*
+specialization_part: SPECIALIZES owned_specialization ("," owned_specialization)*
+conjugation_part: CONJUGATES owned_conjugation
+type_relationship_part: disjoining_part | unioning_part | intersecting_part | differencing_part
+disjoining_part: "disjoint" "from" owned_disjoining ("," owned_disjoining)*
+unioning_part: "unions" unioning ("," unioning)*
+intersecting_part: "intersects" intersecting ("," intersecting)*
+differencing_part: "differences" differencing ("," differencing)*
+type_body: ";" | "{" type_body_element* "}"
+type_body_element: non_feature_member | feature_member | alias_member | import
+
+# 8.2.4.1.2 Specialization
+specialization: ("specialization" identification)? "subtype" specific_type SPECIALIZES general_type relationship_body
+owned_specialization: general_type
+specific_type: qualified_name | owned_feature_chain
+general_type: qualified_name | owned_feature_chain
+
+# 8.2.4.1.3 Conjugation
+conjugation: ("conjugation" identification)? "conjugate" (qualified_name | feature_chain) CONJUGATES (qualified_name | feature_chain) relationship_body
+owned_conjugation: qualified_name | feature_chain
+
+# 8.2.4.1.4 Disjoining
+disjoining: ("disjoining" identification)? "disjoint" (qualified_name | feature_chain) "from" (qualified_name | feature_chain) relationship_body
+owned_disjoining: qualified_name | feature_chain
+
+# 8.2.4.1.5 Unioning, Intersecting and Differencing
+unioning: qualified_name | owned_feature_chain
+intersecting: qualified_name | owned_feature_chain
+differencing: qualified_name | owned_feature_chain
+
+# 8.2.4.1.6 Feature Membership
+feature_member: type_feature_member | owned_feature_member
+type_feature_member: member_prefix "member" feature_element
+owned_feature_member: member_prefix feature_element
+
+# 8.2.4.2 Classifiers Concrete Syntax
+# 8.2.4.2.1 Classifiers
+classifier: type_prefix "classifier" classifier_declaration type_body
+classifier_declaration: ("all")? identification owned_multiplicity? (superclassing_part | conjugation_part)? type_relationship_part*
+superclassing_part: SPECIALIZES owned_subclassification ("," owned_subclassification)*
+
+# 8.2.4.2.2 Subclassification
+subclassification: ("specialization" identification)? "subclassifier" qualified_name SPECIALIZES qualified_name relationship_body
+owned_subclassification: qualified_name
+
+# 8.2.4.3 Features Concrete Syntax
+# 8.2.4.3.1 Features
+feature: feature_prefix ("feature"? feature_declaration | "feature" | prefix_metadata_member) value_part? type_body
+feature_prefix: feature_direction? "abstract"? ("composite" | "portion")? "readonly"? "derived"? "end"? prefix_metadata_member*
+feature_direction: "in" | "out" | "inout"
+feature_declaration: ("all")? (feature_identification (feature_specialization_part | conjugation_part)? | feature_specialization_part | conjugation_part) feature_relationship_part*
+feature_identification: "<" NAME ">" NAME? | NAME
+feature_relationship_part: (type_relationship_part
+                         | chaining_part
+                         | inverting_part
+                         | type_featuring_part)
+chaining_part: "chains" (owned_feature_chaining | feature_chain)
+inverting_part: "inverse" "of" owned_feature_inverting
+type_featuring_part: "featured" "by" owned_type_featuring ("," owned_type_featuring)*
+feature_specialization_part: (feature_specialization+ multiplicity_part? feature_specialization*
+                           | multiplicity_part feature_specialization*)
+multiplicity_part: (owned_multiplicity
+                 | owned_multiplicity? ("ordered" "nonunique"? | "nonunique" "ordered"?))
+feature_specialization: typings | subsettings | references | redefinitions
+typings: typed_by ("," owned_feature_typing)*
+typed_by: TYPED_BY owned_feature_typing
+subsettings: subsets ("," owned_subsetting)*
+subsets: SUBSETS owned_subsetting
+references: REFERENCES owned_reference_subsetting
+redefinitions: redefines ("," owned_redefinition)*
+redefines: REDEFINES owned_redefinition
+
+
+# 8.2.4.3.2 Feature Typing
+feature_typing: ("specialization" identification)? "typing" qualified_name TYPED_BY general_type relationship_body
+owned_feature_typing: general_type
+
+# 8.2.4.3.3 Subsetting
+subsetting: ("specialization" identification)? "subset" specific_type SUBSETS general_type relationship_body
+owned_subsetting: general_type
+owned_reference_subsetting: general_type
+
+# 8.2.4.3.4 Redefinition
+redefinition: ("specialization" identification)? "redefinition" specific_type REDEFINES general_type relationship_body
+owned_redefinition: general_type
+
+# 8.2.4.3.5 Feature Chaining
+owned_feature_chain: feature_chain
+feature_chain: owned_feature_chaining ("." owned_feature_chaining)+
+owned_feature_chaining: qualified_name
+
+# 8.2.4.3.6 Feature Inverting
+feature_inverting: ("inverting" identification?)? "inverse" (qualified_name | owned_feature_chain) "of" (qualified_name | owned_feature_chain) relationship_body
+owned_feature_inverting: qualified_name | owned_feature_chain
+
+# 8.2.4.3.7 Type Featuring
+type_featuring: "featuring" (identification "of")? qualified_name "by" qualified_name relationship_body
+owned_type_featuring: qualified_name
+
+
+# 8.2.5 Kernel Concrete Syntax
+# 8.2.5.1 Data Types Concrete Syntax
+data_type: type_prefix "datatype" classifier_declaration type_body
+
+# 8.2.5.2 Classes Concrete Syntax
+class: type_prefix "class" classifier_declaration type_body
+
+# 8.2.5.3 Structures Concrete Syntax
+structure: type_prefix "struct" classifier_declaration type_body
+
+# 8.2.5.4 Associations Concrete Syntax
+association: type_prefix "assoc" classifier_declaration type_body
+association_structure: type_prefix "assoc" "struct" classifier_declaration type_body
+
+# 8.2.5.5 Connectors Concrete Syntax
+connector: feature_prefix "connector" (feature_declaration? value_part? | connector_declaration) type_body
+connector_declaration: binary_connector_declaration | nary_connector_declaration
+binary_connector_declaration: (feature_declaration? "from" | "all" "from"?)? connector_end_member "to" connector_end_member
+nary_connector_declaration: feature_declaration? "(" connector_end_member "," connector_end_member ("," connector_end_member)* ")"
+connector_end_member: connector_end
+connector_end: (NAME REFERENCES)? owned_reference_subsetting (owned_multiplicity)?
+
+# 8.2.5.5.2 Binding Connectors
+binding_connector: feature_prefix "binding" binding_connector_declaration type_body
+binding_connector_declaration: feature_declaration ("of" connector_end_member "=" connector_end_member)?
+                             | ("all")? ("of"? connector_end_member "=" connector_end_member)?
+
+# 8.2.5.5.3 Successions
+succession: feature_prefix "succession" succession_declaration type_body
+
+succession_declaration: feature_declaration ("first" connector_end_member "then" connector_end_member)?
+                      | ("all")? ("first"? connector_end_member "then" connector_end_member)?
+
+# 8.2.5.6 Behaviors Concrete Syntax
+behavior: type_prefix "behavior" classifier_declaration type_body
+
+step: feature_prefix "step" feature_declaration value_part? type_body
+
+# 8.2.5.7 Functions Concrete Syntax
+function: type_prefix "function" classifier_declaration function_body
+
+function_body: ";" | "{" function_body_part "}"
+
+function_body_part: (type_body_element | return_feature_member)* result_expression_member?
+
+return_feature_member: member_prefix "return" feature_element
+
+result_expression_member: member_prefix owned_expression
+
+# 8.2.5.7.2 Expressions
+expression: feature_prefix "expr" feature_declaration value_part? function_body
+
+# 8.2.5.7.3 Predicates
+predicate: type_prefix "predicate" classifier_declaration function_body
+
+# 8.2.5.7.4 Boolean Expressions and Invariants
+boolean_expression: feature_prefix "bool" feature_declaration value_part? function_body
+
+invariant: feature_prefix "inv" ("true" | "false")? feature_declaration value_part? function_body
+
+# 8.2.5.8 Expressions Concrete Syntax
+# 8.2.5.8.1 Operator Expressions
+owned_expression_reference_member:  owned_expression_reference
+owned_expression_reference: owned_expression_member
+owned_expression_member: owned_expression
+owned_expression: conditional_expression
+                | conditional_binary_operator_expression
+                | binary_operator_expression
+                | unary_operator_expression
+                | classification_expression
+                | metaclassification_expression
+                | extent_expression
+                | primary_expression
+
+conditional_expression: "if" argument_member "?" argument_expression_member "else" argument_expression_member
+conditional_binary_operator_expression: argument_member conditional_binary_operator argument_expression_member
+conditional_binary_operator: "??" | "or" | "and" | "implies"
+
+binary_operator_expression: argument_member binary_operator argument_member
+binary_operator: "|" | "&" | "xor" | ".."
+               | "==" | "!=" | "===" | "!=="
+               | "<" | ">" | "<=" | ">="
+               | "+" | "-" | "*" | "/"
+               | "%" | "^" | "**"
+
+unary_operator_expression: unary_operator argument_member
+unary_operator: "+" | "-" | "~" | "not"
+
+classification_expression: argument_member? (classification_test_operator type_reference_member
+                                            | cast_operator type_result_member)
+classification_test_operator: "istype" | "hastype" | "@"
+cast_operator: "as"
+metaclassification_expression: metadata_argument_member (meta_classification_test_operator type_reference_member
+                                                       | meta_cast_operator type_result_member)
+
+argument_member: argument
+argument: argument_value
+argument_value: owned_expression
+argument_expression_member: argument_expression
+argument_expression: argument_expression_value
+argument_expression_value: owned_expression_reference
+
+metadata_argument_member: metadata_argument
+metadata_argument: metadata_value
+metadata_value: metadata_reference
+metadata_reference: qualified_name
+
+meta_classification_test_operator: "@@"
+meta_cast_operator: "meta"
+
+extent_expression: "all" type_reference_member
+type_reference_member: type_reference
+type_result_member: type_reference
+type_reference: reference_typing
+reference_typing: qualified_name
+
+
+# 8.2.5.8.2 Primary Expressions
+primary_expression: feature_chain_expression | non_feature_chain_primary_expression
+
+primary_argument_value: primary_expression
+primary_argument: primary_argument_value
+primary_argument_member: primary_argument
+
+non_feature_chain_primary_expression: bracket_expression
+                                    | index_expression
+                                    | sequence_expression
+                                    | select_expression
+                                    | collect_expression
+                                    | function_operation_expression
+                                    | base_expression
+
+non_feature_chain_primary_argument_value: non_feature_chain_primary_expression
+non_feature_chain_primary_argument: non_feature_chain_primary_argument_value
+non_feature_chain_primary_argument_member: primary_argument
+
+# Bracket Expression
+bracket_expression: primary_argument_member "[" sequence_expression_list_member "]"
+
+# Index Expression
+index_expression: primary_argument_member "#" "(" sequence_expression_list_member ")"
+
+# Sequence Expression
+sequence_expression: "(" sequence_expression_list ")"
+sequence_expression_list: owned_expression ","? | sequence_operator_expression
+sequence_operator_expression: owned_expression_member "," sequence_expression_list_member
+sequence_expression_list_member: sequence_expression_list
+
+# Feature Chain Expression
+feature_chain_expression: non_feature_chain_primary_argument_member "." feature_chain_member
+
+# Collect Expression
+collect_expression: primary_argument_member "." body_expression_member
+
+# Select Expression
+select_expression: primary_argument_member ".?" body_expression_member
+
+# Function Operation Expression
+function_operation_expression: primary_argument_member "->" reference_typing (body_argument_member | function_reference_argument_member | argument_list)
+
+body_argument_member: body_argument
+body_argument: body_argument_value
+body_argument_value: body_expression
+
+function_reference_argument_member: function_reference_argument
+function_reference_argument: function_reference_argument_value
+function_reference_argument_value: function_reference_expression
+function_reference_expression: function_reference_member
+function_reference_member: function_reference
+function_reference: reference_typing
+
+feature_chain_member: feature_reference_member | owned_feature_chain_member
+owned_feature_chain_member: feature_chain
+
+# 8.2.5.8.3 Base Expressions
+base_expression: null_expression
+               | literal_expression
+               | feature_reference_expression
+               | metadata_access_expression
+               | invocation_expression
+               | body_expression
+
+null_expression: "null" | "(" ")"
+
+feature_reference_expression: feature_reference_member
+feature_reference_member: feature_reference
+feature_reference: qualified_name
+
+metadata_access_expression: qualified_name "." "metadata"
+
+invocation_expression: (owned_feature_typing | owned_subsetting) argument_list
+
+argument_list: "(" (positional_argument_list | named_argument_list)? ")"
+positional_argument_list: argument_member ("," argument_member)*
+named_argument_list: named_argument_member ("," named_argument_member)*
+named_argument_member: named_argument
+named_argument: parameter_redefinition "=" argument_value
+parameter_redefinition: qualified_name
+
+body_expression: body_expression_member
+body_expression_member: expression_body
+expression_body: "{" function_body_part "}"
+
+# 8.2.5.8.4 Literal Expressions
+literal_expression: literal_boolean
+                  | literal_string
+                  | literal_integer
+                  | literal_real
+                  | literal_infinity
+
+literal_boolean: BOOLEAN_VALUE
+BOOLEAN_VALUE: "true" | "false"
+
+literal_string: STRING_VALUE
+literal_integer: DECIMAL_VALUE
+literal_real: REAL_VALUE
+REAL_VALUE: DECIMAL_VALUE? "." (DECIMAL_VALUE | EXPONENTIAL_VALUE) | EXPONENTIAL_VALUE
+
+literal_infinity: "*"
+
+
+# 8.2.5.9 Interactions Concrete Syntax
+# 8.2.5.9.1 Interactions
+interaction: type_prefix "interaction" classifier_declaration type_body
+
+# 8.2.5.9.2 Item Flows
+item_flow: feature_prefix "flow" item_flow_declaration type_body
+succession_item_flow: feature_prefix "succession" "flow" item_flow_declaration type_body
+item_flow_declaration: feature_declaration value_part? ("of" item_feature_member)? ("from" item_flow_end_member "to" item_flow_end_member)?
+                     | "all"? item_flow_end_member "to" item_flow_end_member
+item_feature_member: item_feature
+item_feature: identification item_feature_specialization_part value_part?
+            | (owned_feature_typing (owned_multiplicity)? | owned_multiplicity (owned_feature_typing)?)
+item_feature_specialization_part: feature_specialization+ multiplicity_part? feature_specialization*
+                                | multiplicity_part feature_specialization+
+item_flow_end_member: item_flow_end
+item_flow_end: (owned_reference_subsetting ".")? item_flow_feature_member
+item_flow_feature_member: item_flow_feature
+item_flow_feature: item_flow_redefinition
+item_flow_redefinition: qualified_name
+
+# 8.2.5.10 Feature Values Concrete Syntax
+value_part: feature_value
+feature_value: ("=" | ":=" | "default" ("=" | ":=")?) owned_expression
+
+# 8.2.5.11 Multiplicities Concrete Syntax
+multiplicity: multiplicity_subset | multiplicity_range
+multiplicity_subset: "multiplicity" identification subsets type_body
+multiplicity_range: "multiplicity" identification multiplicity_bounds type_body
+owned_multiplicity: owned_multiplicity_range
+owned_multiplicity_range: multiplicity_bounds
+multiplicity_bounds: "[" (multiplicity_expression_member "..")? multiplicity_expression_member "]"
+multiplicity_expression_member: literal_expression | feature_reference_expression
+
+# 8.2.5.12 Metadata Concrete Syntax
+metaclass: type_prefix "metaclass" classifier_declaration type_body
+
+prefix_metadata_annotation: "#" prefix_metadata_feature
+prefix_metadata_member: "#" prefix_metadata_feature
+prefix_metadata_feature: owned_feature_typing
+
+metadata_feature: prefix_metadata_member* ("@" | "metadata") metadata_feature_declaration ("about" annotation ("," annotation)*)? metadata_body
+metadata_feature_declaration: (identification (":" | "typed" "by"))? owned_feature_typing
+metadata_body: ";" | "{" metadata_body_element* "}"
+metadata_body_element: non_feature_member
+                     | metadata_body_feature_member
+                     | alias_member
+                     | import
+metadata_body_feature_member: metadata_body_feature
+metadata_body_feature: "feature"? (":>>" | "redefines")? owned_redefinition feature_specialization_part? value_part? metadata_body
+
+# 8.2.5.13 Packages Concrete Syntax
+package: prefix_metadata_member* package_declaration package_body
+library_package: "standard"? "library" prefix_metadata_member* package_declaration package_body
+package_declaration: "package" identification
+package_body: ";"
+            | "{" (namespace_body_element | element_filter_member)* "}"
+element_filter_member: member_prefix "filter" owned_expression ";"
+
