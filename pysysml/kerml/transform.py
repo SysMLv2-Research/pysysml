@@ -3,6 +3,7 @@ from lark import Transformer, v_args, Tree, Token, GrammarError
 from .base import is_reserved_word
 
 
+# noinspection PyPep8Naming
 class KerMLTransformer(Transformer):
     @v_args(tree=True)
     def NAME(self, token: Token):
