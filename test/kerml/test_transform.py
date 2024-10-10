@@ -4,7 +4,6 @@ import pytest
 from hbutils.random import random_sha1_with_timestamp
 from lark import Lark, GrammarError, UnexpectedCharacters, Token, UnexpectedEOF
 
-from pysysml.kerml.models import Name
 from pysysml.kerml.transform import tree_to_cst
 
 
@@ -140,7 +139,7 @@ class TestKerMLTransform:
             with pytest.raises(expected):
                 _ = token_name_parser(text)
         else:
-            assert token_name_parser(text) == Name(text)
+            assert token_name_parser(text) == text
 
     @pytest.mark.parametrize(['text', 'expected'], [
         # Valid single line comments
