@@ -244,3 +244,157 @@ class TestKerMLTransform:
                 _ = exponential_value_parser(text)
         else:
             assert exponential_value_parser(text) == text
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # Valid cases
+        ('""', '""'),  # Empty string
+        ('"hello"', '"hello"'),  # Simple string
+        ('"123"', '"123"'),  # Numeric string
+        ('"with spaces"', '"with spaces"'),  # String with spaces
+        ('"special_chars!@#"', '"special_chars!@#"'),  # String with special characters
+        ('"line\\nbreak"', '"line\\nbreak"'),  # String with escape sequence for newline
+        ('"tab\\tcharacter"', '"tab\\tcharacter"'),  # String with escape sequence for tab
+        ('"quote\\"inside"', '"quote\\"inside"'),  # String with escaped double quote
+        ('"backslash\\\\"', '"backslash\\\\"'),  # String with escaped backslash
+        ('"mix\\tand\\nmatch\\""', '"mix\\tand\\nmatch\\""'),  # Mixed escape sequences
+
+        # Invalid cases
+        ('"unterminated', UnexpectedCharacters),  # Unterminated string
+        ('no_quotes', UnexpectedCharacters),  # Missing quotes
+        ('"contains\\abad"', UnexpectedCharacters),  # Invalid escape sequence
+        ('"newline\ninside"', UnexpectedCharacters),  # Unescaped newline
+        ('"carriage\rreturn"', UnexpectedCharacters),  # Unescaped carriage return
+        ('"tab\tin"', UnexpectedCharacters),  # Unescaped tab
+        ('"backspace\bin"', UnexpectedCharacters),  # Unescaped backspace
+        ('"formfeed\fin"', UnexpectedCharacters),  # Unescaped form feed
+        ('"single\'quote"', UnexpectedCharacters),  # Contains single quote without escaping
+        ('"double"quote"', UnexpectedCharacters),  # Contains unescaped double quote
+    ])
+    def test_string_value(self, text: str, expected):
+        string_value_parser = _parser_for_token('STRING_VALUE')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = string_value_parser(text)
+        else:
+            assert string_value_parser(text) == expected
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # TYPED_BY valid cases
+        (':', ':'),  # Single colon
+        ('typed by', 'typed by'),  # Typed by as a single word
+        ('typed  by', 'typed  by'),  # Typed by with multiple spaces
+
+        # TYPED_BY invalid cases
+        ('::', UnexpectedCharacters),  # Double colon, not allowed
+        ('typedby', UnexpectedCharacters),  # Space between typed and by
+        ('typoedby', UnexpectedCharacters),  # Typo in typed by
+        ('typed-by', UnexpectedCharacters),  # Hyphen between typed and by
+
+    ])
+    def test_typed_by(self, text: str, expected):
+        token_name_parser = _parser_for_token('TYPED_BY')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = token_name_parser(text)
+        else:
+            assert token_name_parser(text) == text
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # SPECIALIZES valid cases
+        (':>', ':>'),  # Symbol for specializes
+        ('specializes', 'specializes'),  # Word for specializes
+
+        # SPECIALIZES invalid cases
+        (':>>', UnexpectedCharacters),  # Incorrect symbol for specializes
+        ('special izes', UnexpectedCharacters),  # Space in specializes
+        ('specailizes', UnexpectedCharacters),  # Typo in specializes
+        ('special-izes', UnexpectedCharacters),  # Hyphen in specializes
+
+    ])
+    def test_specializes(self, text: str, expected):
+        token_name_parser = _parser_for_token('SPECIALIZES')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = token_name_parser(text)
+        else:
+            assert token_name_parser(text) == text
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # SUBSETS valid cases
+        (':>', ':>'),  # Symbol for subsets
+        ('subsets', 'subsets'),  # Word for subsets
+
+        # SUBSETS invalid cases
+        ('::>', UnexpectedCharacters),  # Incorrect symbol for subsets
+        ('sub sets', UnexpectedCharacters),  # Space in subsets
+        ('subsets!', UnexpectedCharacters),  # Exclamation mark in subsets
+        ('sub-sets', UnexpectedCharacters),  # Hyphen in subsets
+
+    ])
+    def test_subsets(self, text: str, expected):
+        token_name_parser = _parser_for_token('SUBSETS')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = token_name_parser(text)
+        else:
+            assert token_name_parser(text) == text
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # REFERENCES valid cases
+        ('::>', '::>'),  # Symbol for references
+        ('references', 'references'),  # Word for references
+
+        # REFERENCES invalid cases
+        (':>', UnexpectedCharacters),  # Incorrect symbol for references
+        ('refer ences', UnexpectedCharacters),  # Space in references
+        ('referencess', UnexpectedCharacters),  # Typo in references
+        ('reference-s', UnexpectedCharacters),  # Hyphen in references
+
+    ])
+    def test_references(self, text: str, expected):
+        token_name_parser = _parser_for_token('REFERENCES')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = token_name_parser(text)
+        else:
+            assert token_name_parser(text) == text
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # REDEFINES valid cases
+        (':>>', ':>>'),  # Symbol for redefines
+        ('redefines', 'redefines'),  # Word for redefines
+
+        # REDEFINES invalid cases
+        (':>', UnexpectedCharacters),  # Incorrect symbol for redefines
+        ('redef ines', UnexpectedCharacters),  # Space in redefines
+        ('redefiness', UnexpectedCharacters),  # Typo in redefines
+        ('redefine-s', UnexpectedCharacters),  # Hyphen in redefines
+
+    ])
+    def test_redefines(self, text: str, expected):
+        token_name_parser = _parser_for_token('REDEFINES')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = token_name_parser(text)
+        else:
+            assert token_name_parser(text) == text
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # CONJUGATES valid cases
+        ('~', '~'),  # Symbol for conjugates
+        ('conjugates', 'conjugates'),  # Word for conjugates
+
+        # CONJUGATES invalid cases
+        ('~~', UnexpectedCharacters),  # Double tilde, not allowed
+        ('conjug ates', UnexpectedCharacters),  # Space in conjugates
+        ('conjugatess', UnexpectedCharacters),  # Typo in conjugates
+        ('conjuga-tes', UnexpectedCharacters),  # Hyphen in conjugates
+
+    ])
+    def test_conjugates(self, text: str, expected):
+        token_name_parser = _parser_for_token('CONJUGATES')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = token_name_parser(text)
+        else:
+            assert token_name_parser(text) == text

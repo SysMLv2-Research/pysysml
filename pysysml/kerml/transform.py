@@ -9,7 +9,7 @@ class KerMLTransformer(Transformer):
     def NAME(self, token: Token):
         if not token.value.startswith('\'') and is_reserved_word(token.value):
             raise GrammarError(f'Do not use reserved word {token.value!r} as name in KerML.')
-        return Name(token)
+        return Name(token.value)
 
     @v_args(tree=True)
     def start(self, tree: Tree):

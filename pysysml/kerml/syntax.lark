@@ -64,7 +64,7 @@ STRING_CHARACTER: /[^\"\'\\\n\r\t\b\f]/
 SYMBOL: "(" | ")" | "{" | "}" | "[" | "]" | ";" | "," | "~" | "@" | "#" | "%" | "&" | "^" | "|" | "*" | "**" | "+" | "-" | "/" | "->" | "." | ".." | ":" | "::" | ":>" | ":>>" | "::>" | "<" | "<=" | "=" | ":=" | "==" | "===" | "!=" | "!==" | ">" | ">=" | "?" | "??" | ".?"
 
 # Special lexical terminals
-TYPED_BY: ":" | "typed" "by"
+TYPED_BY: ":" | "typed" WHITE_SPACE+ "by"
 SPECIALIZES: ":>" | "specializes"
 SUBSETS: ":>" | "subsets"
 REFERENCES: "::>" | "references"
