@@ -2,4 +2,4 @@ include README.md
 include MANIFEST.in
 include requirements.txt
 include requirements-*.txt
-recursive-include pysysml *.json *.yml *.yaml *.png
+recursive-include pysysml *.json *.yml *.yaml *.txt *.lark

@@ -101,7 +101,7 @@ root_namespace: namespace_body_element*
 namespace: prefix_metadata_member* namespace_declaration namespace_body
 namespace_declaration: "namespace" identification
 namespace_body: ";" | "{" namespace_body_element* "}"
-namespace_body_element: namespace_member | alias_member | import
+namespace_body_element: namespace_member | alias_member | import_statement
 member_prefix: visibility_indicator?
 visibility_indicator: "public" | "private" | "protected"
 namespace_member: non_feature_member | namespace_feature_member
@@ -111,7 +111,7 @@ alias_member: member_prefix "alias" ("<" NAME ">")? NAME? "for" qualified_name r
 qualified_name: (NAME "::")* NAME
 
 # 8.2.3.4.2 Imports
-import: visibility_indicator? "import" ("all")? import_declaration relationship_body
+import_statement: visibility_indicator? "import_statement" ("all")? import_declaration relationship_body
 import_declaration: membership_import | namespace_import
 membership_import: qualified_name ("::" "**")?
 namespace_import: qualified_name "::" "*" ("::" "**")? | filter_package
@@ -120,7 +120,7 @@ filter_package_member: "[" owned_expression "]"
 
 # 8.2.3.4.3 Namespace Elements
 member_element: annotating_element | non_feature_element
-non_feature_element: dependency | namespace | type | classifier | data_type | class | structure | metaclass | association | association_structure | interaction | behavior | function | predicate | multiplicity | package | library_package | specialization | conjugation | subclassification | disjoining | feature_inverting | feature_typing | subsetting | redefinition | type_featuring
+non_feature_element: dependency | namespace | type | classifier | data_type | class_statement | structure | metaclass | association | association_structure | interaction | behavior | function | predicate | multiplicity | package | library_package | specialization | conjugation | subclassification | disjoining | feature_inverting | feature_typing | subsetting | redefinition | type_featuring
 feature_element: feature | step | expression | boolean_expression | invariant | connector | binding_connector | succession | item_flow | succession_item_flow
 
 
@@ -139,7 +139,7 @@ unioning_part: "unions" unioning ("," unioning)*
 intersecting_part: "intersects" intersecting ("," intersecting)*
 differencing_part: "differences" differencing ("," differencing)*
 type_body: ";" | "{" type_body_element* "}"
-type_body_element: non_feature_member | feature_member | alias_member | import
+type_body_element: non_feature_member | feature_member | alias_member | import_statement
 
 # 8.2.4.1.2 Specialization
 specialization: ("specialization" identification)? "subtype" specific_type SPECIALIZES general_type relationship_body
@@ -235,7 +235,7 @@ owned_type_featuring: qualified_name
 data_type: type_prefix "datatype" classifier_declaration type_body
 
 # 8.2.5.2 Classes Concrete Syntax
-class: type_prefix "class" classifier_declaration type_body
+class_statement: type_prefix "class_statement" classifier_declaration type_body
 
 # 8.2.5.3 Structures Concrete Syntax
 structure: type_prefix "struct" classifier_declaration type_body
@@ -497,7 +497,7 @@ metadata_body: ";" | "{" metadata_body_element* "}"
 metadata_body_element: non_feature_member
                      | metadata_body_feature_member
                      | alias_member
-                     | import
+                     | import_statement
 metadata_body_feature_member: metadata_body_feature
 metadata_body_feature: "feature"? (":>>" | "redefines")? owned_redefinition feature_specialization_part? value_part? metadata_body
 
