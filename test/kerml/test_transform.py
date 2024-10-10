@@ -397,3 +397,61 @@ class TestKerMLTransform:
                 _ = token_name_parser(text)
         else:
             assert token_name_parser(text) == text
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # Valid cases for BOOLEAN_VALUE
+        ('true', 'true'),
+        ('false', 'false'),
+
+        # Invalid cases for BOOLEAN_VALUE
+        ('True', UnexpectedCharacters),  # Case sensitive
+        ('False', UnexpectedCharacters),  # Case sensitive
+        ('tru', UnexpectedCharacters),  # Typo
+        ('fals', UnexpectedCharacters),  # Typo
+        ('1', UnexpectedCharacters),  # Not a boolean value
+        ('0', UnexpectedCharacters),  # Not a boolean value
+        ('yes', UnexpectedCharacters),  # Not a boolean value
+        ('no', UnexpectedCharacters),  # Not a boolean value
+        ('truth', UnexpectedCharacters),  # Not a boolean value
+        ('falsity', UnexpectedCharacters),  # Not a boolean value
+    ])
+    def test_boolean_value(self, text: str, expected):
+        token_boolean_parser = _parser_for_token('BOOLEAN_VALUE')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = token_boolean_parser(text)
+        else:
+            assert token_boolean_parser(text) == text
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # Valid cases for REAL_VALUE
+        ('0.5', '0.5'),
+        ('.5', '.5'),  # Optional leading decimal
+        ('3.14159', '3.14159'),
+        ('2.71828e10', '2.71828e10'),  # Exponential notation
+        ('1e-5', '1e-5'),  # Exponential notation
+        ('0.0', '0.0'),  # Zero value
+        ('123.456', '123.456'),
+        ('.123', '.123'),  # No leading digit
+        ('123e5', '123e5'),  # Exponential notation
+        ('1.2e-3', '1.2e-3'),  # Exponential notation
+
+        # Invalid cases for REAL_VALUE
+        ('123', UnexpectedCharacters),  # No decimal or exponential part
+        ('e10', UnexpectedCharacters),  # Missing leading number
+        ('1.', UnexpectedCharacters),  # Missing decimal part
+        ('.', UnexpectedCharacters),  # Missing both parts
+        ('1e', UnexpectedCharacters),  # Missing exponent
+        ('e', UnexpectedCharacters),  # Missing leading number and exponent
+        ('1.2.3', UnexpectedCharacters),  # Multiple decimal points
+        ('123e', UnexpectedCharacters),  # Missing exponent
+        ('-1.2', UnexpectedCharacters),  # Negative numbers not allowed
+        ('+1.2', UnexpectedCharacters),  # Positive sign not allowed
+    ])
+    def test_real_value(self, text: str, expected):
+        token_real_parser = _parser_for_token('REAL_VALUE')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = token_real_parser(text)
+        else:
+            assert token_real_parser(text) == text
