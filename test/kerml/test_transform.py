@@ -2,7 +2,7 @@ import os
 
 import pytest
 from hbutils.random import random_sha1_with_timestamp
-from lark import Lark, GrammarError, UnexpectedCharacters
+from lark import Lark, GrammarError, UnexpectedCharacters, Token
 
 from pysysml.kerml.models import Name
 from pysysml.kerml.transform import tree_to_cst
@@ -29,11 +29,6 @@ def _parser_for_token(token_name):
         return node.children[0]
 
     return _parse
-
-
-@pytest.fixture()
-def token_name_parser():
-    return _parser_for_token('NAME')
 
 
 @pytest.mark.unittest
@@ -139,10 +134,68 @@ class TestKerMLTransform:
         ('by', GrammarError),
 
     ])
-    def test_name(self, token_name_parser, text: str, expected):
-        # \(('[a-zA-Z\d_]+'), True\),
+    def test_name(self, text: str, expected):
+        token_name_parser = _parser_for_token('NAME')
         if isinstance(expected, type) and issubclass(expected, Exception):
             with pytest.raises(expected):
                 _ = token_name_parser(text)
         else:
             assert token_name_parser(text) == Name(text)
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # Valid single line comments
+        ('// This is a comment', '// This is a comment'),
+        ('//Another comment', '//Another comment'),
+        ('//12345', '//12345'),
+
+        # Invalid single line comments
+        ('/ This is not a comment', UnexpectedCharacters),  # missing second slash
+        ('// This is not a multiline /* comment */', '// This is not a multiline /* comment */'),  # valid single line
+        ('//', '//'),  # valid single line, empty comment
+
+    ])
+    def test_single_line_note(self, text: str, expected):
+        single_line_note_parser = _parser_for_token('SINGLE_LINE_NOTE')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = single_line_note_parser(text)
+        else:
+            assert single_line_note_parser(text) == Token('SINGLE_LINE_NOTE', text)
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # Valid multiline notes
+        ('//* This is a multiline comment */', '//* This is a multiline comment */'),
+        ('//* Multiline\ncomment */', '//* Multiline\ncomment */'),
+        ('//*12345*/', '//*12345*/'),
+
+        # Invalid multiline notes
+        ('/* This is not a multiline note */', UnexpectedCharacters),  # wrong start sequence
+        ('//* This is not closed', UnexpectedCharacters),  # not properly closed
+        ('//* */', '//* */'),  # valid, empty multiline note
+    ])
+    def test_multiline_note(self, text: str, expected):
+        multiline_note_parser = _parser_for_token('MULTILINE_NOTE')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = multiline_note_parser(text)
+        else:
+            assert multiline_note_parser(text) == Token('MULTILINE_NOTE', text)
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # Valid regular comments
+        ('/* This is a comment */', '/* This is a comment */'),
+        ('/* Multiline\ncomment */', '/* Multiline\ncomment */'),
+        ('/*12345*/', '/*12345*/'),
+
+        # Invalid regular comments
+        ('//* This is not a regular comment */', UnexpectedCharacters),  # wrong start sequence
+        ('/* This is not closed', UnexpectedCharacters),  # not properly closed
+        ('/* */', '/* */'),  # valid, empty regular comment
+    ])
+    def test_regular_comment(self, text: str, expected):
+        regular_comment_parser = _parser_for_token('REGULAR_COMMENT')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = regular_comment_parser(text)
+        else:
+            assert regular_comment_parser(text) == Token('REGULAR_COMMENT', text)
