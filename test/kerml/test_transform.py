@@ -2,7 +2,7 @@ import os
 
 import pytest
 from hbutils.random import random_sha1_with_timestamp
-from lark import Lark, GrammarError, UnexpectedCharacters, Token
+from lark import Lark, GrammarError, UnexpectedCharacters, Token, UnexpectedEOF
 
 from pysysml.kerml.models import Name
 from pysysml.kerml.transform import tree_to_cst
@@ -199,3 +199,48 @@ class TestKerMLTransform:
                 _ = regular_comment_parser(text)
         else:
             assert regular_comment_parser(text) == Token('REGULAR_COMMENT', text)
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # Valid DECIMAL_VALUE cases
+        ('0', '0'),  # single digit
+        ('123', '123'),  # multiple digits
+        ('456789', '456789'),  # larger number
+
+        # Invalid DECIMAL_VALUE cases
+        ('', UnexpectedEOF),  # empty string
+        ('abc', UnexpectedCharacters),  # non-digit characters
+        ('12.34', UnexpectedCharacters),  # contains a decimal point
+        ('-123', UnexpectedCharacters),  # negative sign not allowed
+        ('123abc', UnexpectedCharacters),  # trailing non-digit characters
+    ])
+    def test_decimal_value(self, text: str, expected):
+        decimal_value_parser = _parser_for_token('DECIMAL_VALUE')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = decimal_value_parser(text)
+        else:
+            assert decimal_value_parser(text) == text
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        # Valid EXPONENTIAL_VALUE cases
+        ('1e10', '1e10'),  # simple exponential
+        ('2E+5', '2E+5'),  # positive exponent with plus sign
+        ('3E-2', '3E-2'),  # negative exponent
+        ('123e45', '123e45'),  # larger base and exponent
+
+        # Invalid EXPONENTIAL_VALUE cases
+        ('e10', UnexpectedCharacters),  # missing base
+        ('10E', UnexpectedCharacters),  # missing exponent
+        ('10e+', UnexpectedCharacters),  # missing exponent number
+        ('10e-5.5', UnexpectedCharacters),  # fractional exponent not allowed
+        ('abcE10', UnexpectedCharacters),  # non-digit base
+        ('10eabc', UnexpectedCharacters),  # non-digit exponent
+        ('10e 5', UnexpectedCharacters),  # space between exponent
+    ])
+    def test_exponential_value(self, text: str, expected):
+        exponential_value_parser = _parser_for_token('EXPONENTIAL_VALUE')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = exponential_value_parser(text)
+        else:
+            assert exponential_value_parser(text) == text
