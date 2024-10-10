@@ -103,23 +103,27 @@ class TestKerMLTransform:
         ("' '", "' '"),
 
         # invalid unrestricted words
-        ('"ksdjfl"', UnexpectedCharacters),
-        ("'   ksdjfl\\a  233'", UnexpectedCharacters),
-        ("'   ksdjfl  233\\'", UnexpectedCharacters),
+        ('"ksdjfl"', UnexpectedCharacters),  # Invalid because it starts with a double quote instead of a single quote
+        ("'   ksdjfl\\a  233'", UnexpectedCharacters),  # Invalid because '\\a' is not a supported escape character
+        ("'   ksdjfl  233\\'", UnexpectedCharacters),  # Invalid because it ends with a lone backslash
         ("'unterminated", UnexpectedCharacters),
-        ("ksdjfl'", UnexpectedCharacters),
-        ("'ksdjfl", UnexpectedCharacters),
-        ("'\\x20'", UnexpectedCharacters),
-        ("'\\u1234'", UnexpectedCharacters),
-        ("'\\U0001F600'", UnexpectedCharacters),
-        ("'\\123'", UnexpectedCharacters),
-        ("'\\777'", UnexpectedCharacters),
-        ("'invalid\\escape'", UnexpectedCharacters),
+        # Invalid because it starts with a single quote but does not end with one
+        ("ksdjfl'", UnexpectedCharacters),  # Invalid because it ends with a single quote but does not start with one
+        ("'ksdjfl", UnexpectedCharacters),  # Invalid because it starts with a single quote but does not end with one
+        ("'\\x20'", UnexpectedCharacters),  # Invalid because '\\x' hex escape is not supported
+        ("'\\u1234'", UnexpectedCharacters),  # Invalid because '\\u' unicode escape is not supported
+        ("'\\U0001F600'", UnexpectedCharacters),  # Invalid because '\\U' unicode escape is not supported
+        ("'\\123'", UnexpectedCharacters),  # Invalid because octal escapes are not supported
+        ("'\\777'", UnexpectedCharacters),  # Invalid because octal escapes are not supported
+        ("'invalid\\escape'", UnexpectedCharacters),  # Invalid because '\\escape' is not a recognized escape sequence
         ("'another\\invalid\\escape'", UnexpectedCharacters),
+        # Invalid because '\\invalid' is not a recognized escape sequence
         ("'wrong\\escape\\sequence'", UnexpectedCharacters),
-        ("'\\'", UnexpectedCharacters),
+        # Invalid because '\\escape' and '\\sequence' are not recognized escape sequences
+        ("'\\'", UnexpectedCharacters),  # Invalid because it contains a lone backslash which is not escaping anything
         ("'\\n\\r\\b\\t\\f\\'\\\"'", "'\\n\\r\\b\\t\\f\\'\\\"'"),
-        ("'\\n\\r\\b\\t\\f\\'\\\"'*10", UnexpectedCharacters),
+        # Correctly escaped characters including single and double quotes
+        ("'\\n\\r\\b\\t\\f\\'\\\"'*10", UnexpectedCharacters),  # Invalid because it ends with an unescaped single quote
 
         # preserved words
         ('about', GrammarError),
