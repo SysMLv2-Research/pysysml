@@ -35,7 +35,7 @@ DECIMAL_DIGIT: /[0-9]/
 NAME_CHARACTER: /[^'\\]/
 
 # Define escape sequences
-ESCAPE_SEQUENCE: /\\['"bftn\\]/
+ESCAPE_SEQUENCE: /\\['"bftrn\\]/
 
 
 # 8.2.2.4 Numeric Values
@@ -56,7 +56,7 @@ EXPONENTIAL_VALUE: DECIMAL_VALUE ("e"|"E") ["+"|"-"] DECIMAL_VALUE
 STRING_VALUE: "\"" (STRING_CHARACTER | ESCAPE_SEQUENCE)* "\""
 
 # STRING_CHARACTER: any printable character except backslash or double quote
-STRING_CHARACTER: /[^\"\'\\\n\r]/
+STRING_CHARACTER: /[^\"\'\\\n\r\t\b\f]/
 
 # 8.2.2.7 Symbols
 

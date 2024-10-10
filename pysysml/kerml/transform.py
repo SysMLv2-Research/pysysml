@@ -1,12 +1,15 @@
-from lark import Transformer, v_args, Tree, Token
+from lark import Transformer, v_args, Tree, Token, GrammarError
+
+from .base import is_reserved_word
+from .models import Name
 
 
 class KerMLTransformer(Transformer):
     @v_args(tree=True)
     def NAME(self, token: Token):
-        # if not token.value.startswith('\'')
-        print(repr(token))
-        return token
+        if not token.value.startswith('\'') and is_reserved_word(token.value):
+            raise GrammarError(f'Do not use reserved word {token.value!r} as name in KerML.')
+        return Name(token)
 
     @v_args(tree=True)
     def start(self, tree: Tree):
@@ -975,3 +978,8 @@ class KerMLTransformer(Transformer):
     @v_args(tree=True)
     def element_filter_member(self, tree: Tree):
         return tree
+
+
+def tree_to_cst(tree: Tree):
+    trans = KerMLTransformer()
+    return trans.transform(tree)
