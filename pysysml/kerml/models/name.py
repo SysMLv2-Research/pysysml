@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 
 
 def name_unescape(name: str):
@@ -37,3 +37,12 @@ class QualifiedName:
 
     def __eq__(self, other):
         return isinstance(other, QualifiedName) and self._value() == other._value()
+
+
+@dataclass
+class Identification:
+    short_name: Optional[str]
+    name: Optional[str]
+
+    def __bool__(self):
+        return bool(self.short_name is not None or self.name is not None)

@@ -19,11 +19,31 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def dependency_annotation_list(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def dependency_list(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def comment(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
+    def comment_prefix(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def comment_about_list(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def documentation(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def locale(self, tree: Tree):
         return tree
 
     @v_args(tree=True)

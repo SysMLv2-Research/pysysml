@@ -38,6 +38,20 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.dependency(self, tree)
 
     @v_args(tree=True)
+    def dependency_annotation_list(self, tree: Tree):
+        if 'dependency_annotation_list' not in self._rules_set:
+            self._rules_set.add('dependency_annotation_list')
+            self.rules.append('dependency_annotation_list')
+        return KerMLTransTemplate.dependency_annotation_list(self, tree)
+
+    @v_args(tree=True)
+    def dependency_list(self, tree: Tree):
+        if 'dependency_list' not in self._rules_set:
+            self._rules_set.add('dependency_list')
+            self.rules.append('dependency_list')
+        return KerMLTransTemplate.dependency_list(self, tree)
+
+    @v_args(tree=True)
     def comment(self, tree: Tree):
         if 'comment' not in self._rules_set:
             self._rules_set.add('comment')
@@ -45,11 +59,32 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.comment(self, tree)
 
     @v_args(tree=True)
+    def comment_prefix(self, tree: Tree):
+        if 'comment_prefix' not in self._rules_set:
+            self._rules_set.add('comment_prefix')
+            self.rules.append('comment_prefix')
+        return KerMLTransTemplate.comment_prefix(self, tree)
+
+    @v_args(tree=True)
+    def comment_about_list(self, tree: Tree):
+        if 'comment_about_list' not in self._rules_set:
+            self._rules_set.add('comment_about_list')
+            self.rules.append('comment_about_list')
+        return KerMLTransTemplate.comment_about_list(self, tree)
+
+    @v_args(tree=True)
     def documentation(self, tree: Tree):
         if 'documentation' not in self._rules_set:
             self._rules_set.add('documentation')
             self.rules.append('documentation')
         return KerMLTransTemplate.documentation(self, tree)
+
+    @v_args(tree=True)
+    def locale(self, tree: Tree):
+        if 'locale' not in self._rules_set:
+            self._rules_set.add('locale')
+            self.rules.append('locale')
+        return KerMLTransTemplate.locale(self, tree)
 
     @v_args(tree=True)
     def textual_representation(self, tree: Tree):

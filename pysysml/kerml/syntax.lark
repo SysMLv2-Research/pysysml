@@ -74,13 +74,17 @@ CONJUGATES: "~" | "conjugates"
 
 # 8.2.3 Root Concrete Syntax
 # 8.2.3.1 Elements and Relationships Concrete Syntax
-identification: ("<" NAME ">")? NAME?
+identification: ["<" NAME ">"] [NAME]
 relationship_body: ";" | "{" relationship_owned_element* "}"
 ?relationship_owned_element: owned_related_element | owned_annotation
 ?owned_related_element: non_feature_element | feature_element
 
 # 8.2.3.2 Dependencies Concrete Syntax
-dependency: prefix_metadata_annotation* "dependency" (identification? "from")? qualified_name ("," qualified_name)* "to" qualified_name ("," qualified_name)* relationship_body
+dependency: dependency_annotation_list "dependency" [identification? "from"] dependency_from "to" dependency_to relationship_body
+dependency_annotation_list: prefix_metadata_annotation*
+?dependency_to: dependency_list
+?dependency_from: dependency_list
+dependency_list: qualified_name ("," qualified_name)*
 
 # 8.2.3.3 Annotations Concrete Syntax
 # 8.2.3.3.1 Annotations
@@ -89,8 +93,13 @@ dependency: prefix_metadata_annotation* "dependency" (identification? "from")? q
 ?annotating_element: comment | documentation | textual_representation | metadata_feature
 
 # 8.2.3.3.2 Comments and Documentation
-comment: ("comment" identification ("about" annotation ("," annotation)*)?)? ("locale" STRING_VALUE)? REGULAR_COMMENT
-documentation: "doc" identification ("locale" STRING_VALUE)? REGULAR_COMMENT
+comment: [comment_prefix] [locale] REGULAR_COMMENT
+comment_prefix: "comment" identification [comment_about_list]
+comment_about_list: "about" annotation ("," annotation)*
+
+documentation: "doc" identification [locale] REGULAR_COMMENT
+
+locale: "locale" STRING_VALUE
 
 # 8.2.3.3.3 Textual Representation
 textual_representation: ("rep" identification)? "language" STRING_VALUE REGULAR_COMMENT
