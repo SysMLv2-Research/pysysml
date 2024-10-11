@@ -1,6 +1,7 @@
 import json
 import math
 from dataclasses import dataclass
+from typing import Union
 
 
 @dataclass
@@ -65,3 +66,6 @@ class InfValue:
     @property
     def value(self) -> float:
         return math.inf
+
+
+LiteralValue = Union[InfValue, IntValue, RealValue, StringValue, BoolValue]

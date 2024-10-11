@@ -3,6 +3,22 @@ from lark import Transformer, v_args, Tree
 
 class KerMLTransTemplate(Transformer):
     @v_args(tree=True)
+    def abstract_type_prefix(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def non_abstract_type_prefix(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def all_classifier_declaration(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def non_all_classifier_declaration(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def start(self, tree: Tree):
         return tree
 
@@ -119,10 +135,6 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def type_prefix(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def type_declaration(self, tree: Tree):
         return tree
 
@@ -172,10 +184,6 @@ class KerMLTransTemplate(Transformer):
 
     @v_args(tree=True)
     def classifier(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def classifier_declaration(self, tree: Tree):
         return tree
 
     @v_args(tree=True)

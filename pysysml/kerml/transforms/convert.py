@@ -6,7 +6,9 @@ from .template import KerMLTransTemplate
 from ..base import is_reserved_word
 from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, NullValue, QualifiedName, name_unescape, \
     MetadataAccessExpression, NamedArgument, InvocationExpression, Visibility, FeatureChain, PrefixMetadataAnnotation, \
-    Identification, Dependency, Comment, Documentation, TextualRepresentation, Namespace
+    Identification, Dependency, Comment, Documentation, TextualRepresentation, Namespace, NonFeatureMember, \
+    DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, MultiplicityBounds, ConjugationPart, \
+    SuperclassingPart, Class
 
 
 # noinspection PyPep8Naming
@@ -213,6 +215,96 @@ class KerMLTransformer(KerMLTransTemplate):
             annotations=tree.children[:-2],
             identification=tree.children[-2],
             body=tree.children[-1],
+        )
+
+    @v_args(tree=True)
+    def non_feature_member(self, tree: Tree):
+        assert len(tree.children) == 2
+        return NonFeatureMember(
+            visibility=tree.children[0],
+            element=tree.children[1],
+        )
+
+    @v_args(tree=True)
+    def abstract_type_prefix(self, tree: Tree):
+        return True, tree.children
+
+    @v_args(tree=True)
+    def non_abstract_type_prefix(self, tree: Tree):
+        return False, tree.children
+
+    @v_args(tree=True)
+    def all_classifier_declaration(self, tree: Tree):
+        return True, tree.children[0], tree.children[1], tree.children[2], tree.children[3:]
+
+    @v_args(tree=True)
+    def non_all_classifier_declaration(self, tree: Tree):
+        return False, tree.children[0], tree.children[1], tree.children[2], tree.children[3:]
+
+    @v_args(tree=True)
+    def disjoining_part(self, tree: Tree):
+        return DisjoiningPart(items=tree.children)
+
+    @v_args(tree=True)
+    def unioning_part(self, tree: Tree):
+        return UnioningPart(items=tree.children)
+
+    @v_args(tree=True)
+    def intersecting_part(self, tree: Tree):
+        return IntersectingPart(items=tree.children)
+
+    @v_args(tree=True)
+    def differencing_part(self, tree: Tree):
+        return DifferencingPart(items=tree.children)
+
+    @v_args(tree=True)
+    def conjugation_part(self, tree: Tree):
+        assert len(tree.children) == 2
+        assert tree.children[0].type == 'CONJUGATES'
+        return ConjugationPart(item=tree.children[1])
+
+    @v_args(tree=True)
+    def superclassing_part(self, tree: Tree):
+        assert len(tree.children) > 1
+        assert tree.children[0].type == 'SPECIALIZES'
+        return SuperclassingPart(items=tree.children[1:])
+
+    @v_args(tree=True)
+    def class_statement(self, tree: Tree):
+        assert len(tree.children) == 3
+        is_abstract, annotations = tree.children[0]
+        is_all, identification, multiplicity_bounds, spx, type_relationship_parts = tree.children[1]
+        if spx is None:
+            conjugation, superclassing = None, None
+        elif isinstance(spx, SuperclassingPart):
+            conjugation, superclassing = None, spx
+        elif isinstance(spx, ConjugationPart):
+            conjugation, superclassing = spx, None
+        else:
+            assert False, "Should not reach this line"  # pragma: no cover
+
+        return Class(
+            is_abstract=is_abstract,
+            annotations=annotations,
+            is_all=is_all,
+            identification=identification,
+            multiplicity_bounds=multiplicity_bounds,
+            conjugation=conjugation,
+            superclassing=superclassing,
+            relationships=type_relationship_parts,
+            body=tree.children[2],
+        )
+
+    @v_args(tree=True)
+    def type_body(self, tree: Tree):
+        return tree.children
+
+    @v_args(tree=True)
+    def multiplicity_bounds(self, tree: Tree):
+        assert len(tree.children) == 2
+        return MultiplicityBounds(
+            lower_bound=tree.children[0],
+            upper_bound=tree.children[1],
         )
 
 

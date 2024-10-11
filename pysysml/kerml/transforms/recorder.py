@@ -10,6 +10,34 @@ class KerMLTransRecorder(KerMLTransTemplate):
         self.rules = []
 
     @v_args(tree=True)
+    def abstract_type_prefix(self, tree: Tree):
+        if 'abstract_type_prefix' not in self._rules_set:
+            self._rules_set.add('abstract_type_prefix')
+            self.rules.append('abstract_type_prefix')
+        return KerMLTransTemplate.abstract_type_prefix(self, tree)
+
+    @v_args(tree=True)
+    def non_abstract_type_prefix(self, tree: Tree):
+        if 'non_abstract_type_prefix' not in self._rules_set:
+            self._rules_set.add('non_abstract_type_prefix')
+            self.rules.append('non_abstract_type_prefix')
+        return KerMLTransTemplate.non_abstract_type_prefix(self, tree)
+
+    @v_args(tree=True)
+    def all_classifier_declaration(self, tree: Tree):
+        if 'all_classifier_declaration' not in self._rules_set:
+            self._rules_set.add('all_classifier_declaration')
+            self.rules.append('all_classifier_declaration')
+        return KerMLTransTemplate.all_classifier_declaration(self, tree)
+
+    @v_args(tree=True)
+    def non_all_classifier_declaration(self, tree: Tree):
+        if 'non_all_classifier_declaration' not in self._rules_set:
+            self._rules_set.add('non_all_classifier_declaration')
+            self.rules.append('non_all_classifier_declaration')
+        return KerMLTransTemplate.non_all_classifier_declaration(self, tree)
+
+    @v_args(tree=True)
     def start(self, tree: Tree):
         if 'start' not in self._rules_set:
             self._rules_set.add('start')
@@ -213,13 +241,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.type(self, tree)
 
     @v_args(tree=True)
-    def type_prefix(self, tree: Tree):
-        if 'type_prefix' not in self._rules_set:
-            self._rules_set.add('type_prefix')
-            self.rules.append('type_prefix')
-        return KerMLTransTemplate.type_prefix(self, tree)
-
-    @v_args(tree=True)
     def type_declaration(self, tree: Tree):
         if 'type_declaration' not in self._rules_set:
             self._rules_set.add('type_declaration')
@@ -309,13 +330,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
             self._rules_set.add('classifier')
             self.rules.append('classifier')
         return KerMLTransTemplate.classifier(self, tree)
-
-    @v_args(tree=True)
-    def classifier_declaration(self, tree: Tree):
-        if 'classifier_declaration' not in self._rules_set:
-            self._rules_set.add('classifier_declaration')
-            self.rules.append('classifier_declaration')
-        return KerMLTransTemplate.classifier_declaration(self, tree)
 
     @v_args(tree=True)
     def superclassing_part(self, tree: Tree):

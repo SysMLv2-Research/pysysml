@@ -6,7 +6,6 @@ start: NAME
 %ignore WS
 %ignore SINGLE_LINE_NOTE
 %ignore MULTILINE_NOTE
-%ignore REGULAR_COMMENT
 
 
 # 8.2.2 Lexical Structure
@@ -121,7 +120,7 @@ alias_member: member_prefix "alias" ("<" NAME ">")? NAME? "for" qualified_name r
 qualified_name: (NAME "::")* NAME
 
 # 8.2.3.4.2 Imports
-import_statement: visibility_indicator? "import_statement" ("all")? import_declaration relationship_body
+import_statement: visibility_indicator? "import" ("all")? import_declaration relationship_body
 ?import_declaration: membership_import | namespace_import
 membership_import: qualified_name ("::" "**")?
 namespace_import: qualified_name "::" "*" ("::" "**")? | filter_package
@@ -130,7 +129,10 @@ filter_package_member: "[" owned_expression "]"
 
 # 8.2.3.4.3 Namespace Elements
 ?member_element: annotating_element | non_feature_element
-?non_feature_element: dependency | namespace | type | classifier | data_type | class_statement | structure | metaclass | association | association_structure | interaction | behavior | function | predicate | multiplicity | package | library_package | specialization | conjugation | subclassification | disjoining | feature_inverting | feature_typing | subsetting | redefinition | type_featuring
+?non_feature_element: dependency | namespace | type | classifier | data_type | class_statement | structure | metaclass
+                    | association | association_structure | interaction | behavior | function | predicate
+                    | multiplicity | package | library_package | specialization | conjugation | subclassification
+                    | disjoining | feature_inverting | feature_typing | subsetting | redefinition | type_featuring
 ?feature_element: feature | step | expression | boolean_expression | invariant | connector | binding_connector | succession | item_flow | succession_item_flow
 
 
@@ -139,7 +141,8 @@ filter_package_member: "[" owned_expression "]"
 
 # 8.2.4.1.1 Types
 type: type_prefix "type" type_declaration type_body
-type_prefix: ("abstract")? prefix_metadata_member*
+?type_prefix: "abstract" prefix_metadata_member* -> abstract_type_prefix
+            | prefix_metadata_member* -> non_abstract_type_prefix
 type_declaration: ("all")? identification owned_multiplicity? (specialization_part | conjugation_part)+ type_relationship_part*
 specialization_part: SPECIALIZES owned_specialization ("," owned_specialization)*
 conjugation_part: CONJUGATES owned_conjugation
@@ -178,7 +181,8 @@ type_feature_member: member_prefix "member" feature_element
 # 8.2.4.2 Classifiers Concrete Syntax
 # 8.2.4.2.1 Classifiers
 classifier: type_prefix "classifier" classifier_declaration type_body
-classifier_declaration: ("all")? identification owned_multiplicity? (superclassing_part | conjugation_part)? type_relationship_part*
+?classifier_declaration: "all" identification [owned_multiplicity] [superclassing_part | conjugation_part] type_relationship_part* -> all_classifier_declaration
+                       | identification [owned_multiplicity] [superclassing_part | conjugation_part] type_relationship_part* -> non_all_classifier_declaration
 superclassing_part: SPECIALIZES owned_subclassification ("," owned_subclassification)*
 
 # 8.2.4.2.2 Subclassification
@@ -245,7 +249,7 @@ type_featuring: "featuring" (identification "of")? qualified_name "by" qualified
 data_type: type_prefix "datatype" classifier_declaration type_body
 
 # 8.2.5.2 Classes Concrete Syntax
-class_statement: type_prefix "class_statement" classifier_declaration type_body
+class_statement: type_prefix "class" classifier_declaration type_body
 
 # 8.2.5.3 Structures Concrete Syntax
 structure: type_prefix "struct" classifier_declaration type_body
@@ -491,7 +495,7 @@ multiplicity_subset: "multiplicity" identification subsets type_body
 multiplicity_range: "multiplicity" identification multiplicity_bounds type_body
 ?owned_multiplicity: owned_multiplicity_range
 ?owned_multiplicity_range: multiplicity_bounds
-multiplicity_bounds: "[" (multiplicity_expression_member "..")? multiplicity_expression_member "]"
+multiplicity_bounds: "[" [multiplicity_expression_member ".."] multiplicity_expression_member "]"
 ?multiplicity_expression_member: literal_expression | feature_reference_expression
 
 # 8.2.5.12 Metadata Concrete Syntax

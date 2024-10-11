@@ -1,7 +1,7 @@
 import pytest
 
 from pysysml.kerml.models import Comment, Identification, QualifiedName, Documentation, Dependency, \
-    PrefixMetadataAnnotation, FeatureChain, TextualRepresentation
+    PrefixMetadataAnnotation, FeatureChain, TextualRepresentation, Namespace, NonFeatureMember, Visibility, Class
 from .base import _parser_for_rule
 
 
@@ -132,7 +132,6 @@ class TestKerMLTransformsRoot:
                         Comment(identification=None, about_list=None, locale=None,
                                 comment="/* 'Service Layer' is the client of this dependency,\n    * not its name. */")])),
     ])
-    @pytest.mark.focus
     def test_dependency(self, text, expected):
         parser = _parser_for_rule('dependency')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -151,7 +150,6 @@ class TestKerMLTransformsRoot:
          TextualRepresentation(identification=None, language='"alf"',
                                comment='/* c.x = newX;\n* WriteLine("Set new x");\n*/')),
     ])
-    @pytest.mark.focus
     def test_textual_representation(self, text, expected):
         parser = _parser_for_rule('textual_representation')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -161,3 +159,96 @@ class TestKerMLTransformsRoot:
             v, rules = parser(text)
             assert v == expected
             assert 'textual_representation' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ("namespace <'1.1'> N1; // This is an empty namespace.",
+         Namespace(annotations=[], identification=Identification(short_name='1.1', name='N1'), body=[])),
+        ("#command namespace <'1.1'> N1; // This is an empty namespace.",
+         Namespace(annotations=[PrefixMetadataAnnotation(feature=QualifiedName(names=['command']))],
+                   identification=Identification(short_name='1.1', name='N1'), body=[])),
+        ('namespace N5 {\n'
+         'comment Comment1 about A\n'
+         '/* This is a comment about class A. */\n'
+         'comment Comment2\n'
+         '/* This is a comment about namespace N5. */\n'
+         '/* This is also a comment about namespace N5. */\n'
+         'doc N9_Doc\n'
+         '/* This is documentation about namespace N5. */\n'
+         '}',
+         Namespace(annotations=[], identification=Identification(short_name=None, name='N5'), body=[
+             NonFeatureMember(visibility=None,
+                              element=Comment(identification=Identification(short_name=None, name='Comment1'),
+                                              about_list=[QualifiedName(names=['A'])], locale=None,
+                                              comment='/* This is a comment about class A. */')),
+             NonFeatureMember(visibility=None,
+                              element=Comment(identification=Identification(short_name=None, name='Comment2'),
+                                              about_list=None, locale=None,
+                                              comment='/* This is a comment about namespace N5. */')),
+             NonFeatureMember(visibility=None, element=Comment(identification=None, about_list=None, locale=None,
+                                                               comment='/* This is also a comment about namespace N5. */')),
+             NonFeatureMember(visibility=None,
+                              element=Documentation(identification=Identification(short_name=None, name='N9_Doc'),
+                                                    locale=None,
+                                                    comment='/* This is documentation about namespace N5. */'))])),
+        ('namespace N5 {\n'
+         '    public /* 1 2 3 */\n'
+         '    protected class X;\n'
+         '    private namespace Nested {\n'
+         '        doc A /* 4 5 6 */\n'
+         '    }\n'
+         '}',
+         Namespace(
+             annotations=[],
+             identification=Identification(short_name=None, name='N5'),
+             body=[
+                 NonFeatureMember(
+                     visibility=Visibility.PUBLIC,
+                     element=Comment(identification=None, about_list=None, locale=None,
+                                     comment='/* 1 2 3 */')),
+                 NonFeatureMember(
+                     visibility=Visibility.PROTECTED,
+                     element=Class(
+                         is_abstract=False,
+                         annotations=[],
+                         is_all=False,
+                         identification=Identification(
+                             short_name=None,
+                             name='X'
+                         ),
+                         multiplicity_bounds=None,
+                         conjugation=None,
+                         superclassing=None,
+                         relationships=[],
+                         body=[]
+                     ),
+                 ),
+                 NonFeatureMember(
+                     visibility=Visibility.PRIVATE,
+                     element=Namespace(
+                         annotations=[],
+                         identification=Identification(
+                             short_name=None, name='Nested'),
+                         body=[
+                             NonFeatureMember(visibility=None,
+                                              element=Documentation(
+                                                  identification=Identification(
+                                                      short_name=None,
+                                                      name='A'),
+                                                  locale=None,
+                                                  comment='/* 4 5 6 */'))
+                         ]
+                     )
+                 ),
+             ]
+         )
+         ),
+    ])
+    def test_namespace(self, text, expected):
+        parser = _parser_for_rule('namespace')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'namespace' in rules

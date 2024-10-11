@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Optional, Any
 
+from . import Visibility
 from .metadata import PrefixMetadataAnnotation
 from .name import Identification, QualifiedName
 
@@ -46,3 +47,15 @@ class Namespace:
     annotations: List[PrefixMetadataAnnotation]
     identification: Optional[Identification]
     body: List[Any]
+
+
+@dataclass
+class NonFeatureMember:
+    visibility: Optional[Visibility]
+    element: Any
+
+
+@dataclass
+class NamespaceFeatureMember:
+    visibility: Optional[Visibility]
+    element: Any
