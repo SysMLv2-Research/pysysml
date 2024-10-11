@@ -4,12 +4,12 @@ from dataclasses import dataclass
 
 
 @dataclass
-class IntegerValue:
+class IntValue:
     raw: str
 
     @property
     def value(self) -> int:
-        return int(self.raw)
+        return int(self.raw.lstrip('0') or '0')
 
 
 @dataclass

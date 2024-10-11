@@ -2,7 +2,7 @@ import pytest
 from lark import Lark, UnexpectedCharacters
 
 from pysysml.kerml import __grammar_file__
-from pysysml.kerml.models import BoolValue
+from pysysml.kerml.models import BoolValue, IntValue
 from pysysml.kerml.transforms import tree_to_cst, KerMLTransRecorder
 
 
@@ -50,3 +50,23 @@ class TestKerMLTransformsLiteral:
             assert v.raw == text
             assert v.value == expected
             assert rules == ['literal_boolean']
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ("42", 42),  # Valid: positive integer
+        ("0", 0),  # Valid: zero
+        ("007", 7),  # Valid: leading zeros
+
+        ("-42", UnexpectedCharacters),  # Invalid: negative sign not part of integer literal
+        ("3.14", UnexpectedCharacters),  # Invalid: decimal point not allowed in integer
+    ])
+    def test_literal_integer(self, text, expected):
+        parser = _parser_for_rule('literal_integer')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert isinstance(v, IntValue)
+            assert v.raw == text
+            assert v.value == expected
+            assert rules == ['literal_integer']

@@ -2,7 +2,7 @@ from lark import v_args, Tree, Token, GrammarError
 
 from .template import KerMLTransTemplate
 from ..base import is_reserved_word
-from ..models import BoolValue
+from ..models import BoolValue, IntValue
 
 
 # noinspection PyPep8Naming
@@ -18,6 +18,12 @@ class KerMLTransformer(KerMLTransTemplate):
         assert len(tree.children) == 1
         token: Token = tree.children[0]
         return BoolValue(token.value)
+
+    @v_args(tree=True)
+    def literal_integer(self, tree: Tree):
+        assert len(tree.children) == 1
+        token: Token = tree.children[0]
+        return IntValue(token.value)
 
 
 def tree_to_cst(tree: Tree):
