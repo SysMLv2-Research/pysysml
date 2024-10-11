@@ -5,7 +5,7 @@ from pysysml.kerml.models import QualifiedName
 from .base import _parser_for_rule
 
 
-@pytest.mark.focus
+@pytest.mark.unittest
 class TestKerMLTransformsName:
     @pytest.mark.parametrize(['text', 'expected'], [
         ("myFeature", ("myFeature",)),  # Valid: simple feature reference
