@@ -11,7 +11,7 @@ class Dependency:
     identification: Optional[Identification]
     from_list: List[QualifiedName]
     to_list: List[QualifiedName]
-    relationship_body: Any
+    body: List[Any]
 
 
 @dataclass
@@ -39,3 +39,10 @@ class TextualRepresentation:
 @dataclass
 class RelationshipBody:
     elements: List[Any]
+
+
+@dataclass
+class Namespace:
+    annotations: List[PrefixMetadataAnnotation]
+    identification: Optional[Identification]
+    body: List[Any]

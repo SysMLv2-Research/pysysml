@@ -1,7 +1,7 @@
 import pytest
 
 from pysysml.kerml.models import Comment, Identification, QualifiedName, Documentation, Dependency, \
-    PrefixMetadataAnnotation, RelationshipBody, FeatureChain, TextualRepresentation
+    PrefixMetadataAnnotation, FeatureChain, TextualRepresentation
 from .base import _parser_for_rule
 
 
@@ -108,7 +108,7 @@ class TestKerMLTransformsRoot:
         ("dependency Use from 'Application Layer' to 'Service Layer';",
          Dependency(annotations=[], identification=Identification(short_name=None, name='Use'),
                     from_list=[QualifiedName(names=['Application Layer'])],
-                    to_list=[QualifiedName(names=['Service Layer'])], relationship_body=RelationshipBody(elements=[]))),
+                    to_list=[QualifiedName(names=['Service Layer'])], body=[])),
         ("#command # xx::xx.xx dependency Use from 'Application Layer' to 'Service "
          "Layer';",
          Dependency(annotations=[PrefixMetadataAnnotation(feature=QualifiedName(names=['command'])),
@@ -116,11 +116,11 @@ class TestKerMLTransformsRoot:
                                      items=[QualifiedName(names=['xx', 'xx']), QualifiedName(names=['xx'])]))],
                     identification=Identification(short_name=None, name='Use'),
                     from_list=[QualifiedName(names=['Application Layer'])],
-                    to_list=[QualifiedName(names=['Service Layer'])], relationship_body=RelationshipBody(elements=[]))),
+                    to_list=[QualifiedName(names=['Service Layer'])], body=[])),
         ("dependency 'Service Layer' to 'Data Layer', 'External Interface Layer';",
          Dependency(annotations=[], identification=None, from_list=[QualifiedName(names=['Service Layer'])],
                     to_list=[QualifiedName(names=['Data Layer']), QualifiedName(names=['External Interface Layer'])],
-                    relationship_body=RelationshipBody(elements=[]))),
+                    body=[])),
         ("dependency 'Service Layer'\n"
          "    to 'Data Layer', 'External Interface Layer' {\n"
          "    /* 'Service Layer' is the client of this dependency,\n"
@@ -128,10 +128,11 @@ class TestKerMLTransformsRoot:
          '}',
          Dependency(annotations=[], identification=None, from_list=[QualifiedName(names=['Service Layer'])],
                     to_list=[QualifiedName(names=['Data Layer']), QualifiedName(names=['External Interface Layer'])],
-                    relationship_body=RelationshipBody(elements=[
+                    body=[
                         Comment(identification=None, about_list=None, locale=None,
-                                comment="/* 'Service Layer' is the client of this dependency,\n    * not its name. */")]))),
+                                comment="/* 'Service Layer' is the client of this dependency,\n    * not its name. */")])),
     ])
+    @pytest.mark.focus
     def test_dependency(self, text, expected):
         parser = _parser_for_rule('dependency')
         if isinstance(expected, type) and issubclass(expected, Exception):

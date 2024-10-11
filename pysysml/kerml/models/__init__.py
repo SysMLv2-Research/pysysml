@@ -4,4 +4,4 @@ from .literal_expression import InfValue, BoolValue, RealValue, StringValue, Int
 from .metadata import PrefixMetadataAnnotation
 from .name import name_escape, name_unescape, name_safe_repr, QualifiedName, Identification
 from .namespace import Visibility
-from .root import Comment, Dependency, Documentation, RelationshipBody, TextualRepresentation
+from .root import Comment, Dependency, Documentation, RelationshipBody, TextualRepresentation, Namespace

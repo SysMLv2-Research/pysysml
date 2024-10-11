@@ -6,7 +6,7 @@ from .template import KerMLTransTemplate
 from ..base import is_reserved_word
 from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, NullValue, QualifiedName, name_unescape, \
     MetadataAccessExpression, NamedArgument, InvocationExpression, Visibility, FeatureChain, PrefixMetadataAnnotation, \
-    Identification, Dependency, Comment, Documentation, RelationshipBody, TextualRepresentation
+    Identification, Dependency, Comment, Documentation, TextualRepresentation, Namespace
 
 
 # noinspection PyPep8Naming
@@ -108,6 +108,11 @@ class KerMLTransformer(KerMLTransTemplate):
         return PrefixMetadataAnnotation(tree.children[0])
 
     @v_args(tree=True)
+    def prefix_metadata_member(self, tree: Tree):
+        assert len(tree.children) == 1
+        return PrefixMetadataAnnotation(tree.children[0])
+
+    @v_args(tree=True)
     def dependency_list(self, tree: Tree):
         return tree.children
 
@@ -123,7 +128,7 @@ class KerMLTransformer(KerMLTransTemplate):
             identification=tree.children[1],
             from_list=tree.children[2],
             to_list=tree.children[3],
-            relationship_body=tree.children[4],
+            body=tree.children[4],
         )
 
     @v_args(tree=True)
@@ -176,7 +181,7 @@ class KerMLTransformer(KerMLTransTemplate):
 
     @v_args(tree=True)
     def relationship_body(self, tree: Tree):
-        return RelationshipBody(elements=tree.children)
+        return tree.children
 
     @v_args(tree=True)
     def textual_representation_rep(self, tree: Tree):
@@ -190,6 +195,24 @@ class KerMLTransformer(KerMLTransTemplate):
             identification=tree.children[0],
             language=name_unescape(tree.children[1].value) if tree.children[1] is not None else None,
             comment=tree.children[2].value,
+        )
+
+    @v_args(tree=True)
+    def namespace_declaration(self, tree: Tree):
+        assert len(tree.children) == 1
+        return tree.children[0]
+
+    @v_args(tree=True)
+    def namespace_body(self, tree: Tree):
+        return tree.children
+
+    @v_args(tree=True)
+    def namespace(self, tree: Tree):
+        assert len(tree.children) >= 2
+        return Namespace(
+            annotations=tree.children[:-2],
+            identification=tree.children[-2],
+            body=tree.children[-1],
         )
 
 
