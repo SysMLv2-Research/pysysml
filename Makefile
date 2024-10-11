@@ -44,3 +44,6 @@ docs:
 	$(MAKE) -C "${DOC_DIR}" build
 pdocs:
 	$(MAKE) -C "${DOC_DIR}" prod
+
+kerml:
+	$(PYTHON) -m tools.kerml.generate

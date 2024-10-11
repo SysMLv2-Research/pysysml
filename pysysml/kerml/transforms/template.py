@@ -1,16 +1,7 @@
-from lark import Transformer, v_args, Tree, Token, GrammarError
-
-from .base import is_reserved_word
+from lark import Transformer, v_args, Tree
 
 
-# noinspection PyPep8Naming
-class KerMLTransformer(Transformer):
-    @v_args(tree=True)
-    def NAME(self, token: Token):
-        if not token.value.startswith('\'') and is_reserved_word(token.value):
-            raise GrammarError(f'Do not use reserved word {token.value!r} as name in KerML.')
-        return token
-
+class KerMLTransTemplate(Transformer):
     @v_args(tree=True)
     def start(self, tree: Tree):
         return tree
@@ -979,7 +970,3 @@ class KerMLTransformer(Transformer):
     def element_filter_member(self, tree: Tree):
         return tree
 
-
-def tree_to_cst(tree: Tree):
-    trans = KerMLTransformer()
-    return trans.transform(tree)

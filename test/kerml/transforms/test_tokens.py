@@ -4,7 +4,7 @@ import pytest
 from hbutils.random import random_sha1_with_timestamp
 from lark import Lark, GrammarError, UnexpectedCharacters, Token, UnexpectedEOF
 
-from pysysml.kerml.transform import tree_to_cst
+from pysysml.kerml.transforms import tree_to_cst
 
 
 def _parser_for_token(token_name):
@@ -31,7 +31,7 @@ def _parser_for_token(token_name):
 
 
 @pytest.mark.unittest
-class TestKerMLTransform:
+class TestKerMLTransformsTokens:
     @pytest.mark.parametrize(['text', 'expected'], [
         # normal cases
         ('abc', 'abc'),
