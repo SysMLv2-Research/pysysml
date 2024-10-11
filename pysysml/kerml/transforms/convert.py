@@ -8,7 +8,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     MetadataAccessExpression, NamedArgument, InvocationExpression, Visibility, FeatureChain, PrefixMetadataAnnotation, \
     Identification, Dependency, Comment, Documentation, TextualRepresentation, Namespace, NonFeatureMember, \
     DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, MultiplicityBounds, ConjugationPart, \
-    SuperclassingPart, Class
+    SuperclassingPart, Class, Import
 
 
 # noinspection PyPep8Naming
@@ -305,6 +305,48 @@ class KerMLTransformer(KerMLTransTemplate):
         return MultiplicityBounds(
             lower_bound=tree.children[0],
             upper_bound=tree.children[1],
+        )
+
+    @v_args(tree=True)
+    def filter_package_list(self, tree: Tree):
+        return tree.children
+
+    @v_args(tree=True)
+    def non_recursive_membership_import(self, tree: Tree):
+        assert len(tree.children) == 1
+        return False, False, tree.children[0]
+
+    @v_args(tree=True)
+    def recursive_membership_import(self, tree: Tree):
+        assert len(tree.children) == 1
+        return True, False, tree.children[0]
+
+    @v_args(tree=True)
+    def non_recursive_namespace_import(self, tree: Tree):
+        assert len(tree.children) == 1
+        return False, True, tree.children[0]
+
+    @v_args(tree=True)
+    def recursive_namespace_import(self, tree: Tree):
+        assert len(tree.children) == 1
+        return True, True, tree.children[0]
+
+    @v_args(tree=True)
+    def import_declaration(self, tree: Tree):
+        return tree.children
+
+    @v_args(tree=True)
+    def import_statement(self, tree: Tree):
+        assert len(tree.children) == 4
+        visibility, is_all, ((is_recursive, is_namespace, import_name), filter_list), body = tree.children
+        return Import(
+            visibility=visibility,
+            is_all=bool(is_all),
+            is_recursive=is_recursive,
+            is_namespace=is_namespace,
+            name=import_name,
+            filters=filter_list,
+            body=body,
         )
 
 

@@ -14,3 +14,6 @@ class Visibility(Enum):
                 return value
 
         raise ValueError(f'Unknown value for visibility - {v!r}.')
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}.{self.name}'

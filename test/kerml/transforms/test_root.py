@@ -1,7 +1,8 @@
 import pytest
 
 from pysysml.kerml.models import Comment, Identification, QualifiedName, Documentation, Dependency, \
-    PrefixMetadataAnnotation, FeatureChain, TextualRepresentation, Namespace, NonFeatureMember, Visibility, Class
+    PrefixMetadataAnnotation, FeatureChain, TextualRepresentation, Namespace, NonFeatureMember, Visibility, Class, \
+    Import
 from .base import _parser_for_rule
 
 
@@ -226,23 +227,135 @@ class TestKerMLTransformsRoot:
                      visibility=Visibility.PRIVATE,
                      element=Namespace(
                          annotations=[],
-                         identification=Identification(
-                             short_name=None, name='Nested'),
+                         identification=Identification(short_name=None, name='Nested'),
                          body=[
-                             NonFeatureMember(visibility=None,
-                                              element=Documentation(
-                                                  identification=Identification(
-                                                      short_name=None,
-                                                      name='A'),
-                                                  locale=None,
-                                                  comment='/* 4 5 6 */'))
+                             NonFeatureMember(visibility=None, element=Documentation(
+                                 identification=Identification(short_name=None, name='A'), locale=None,
+                                 comment='/* 4 5 6 */'))
                          ]
                      )
                  ),
              ]
          )
          ),
+        ('namespace N6 {\n'
+         '    import N4::A;\n'
+         '    import N4::C; // Imported with name "C".\n'
+         '    namespace M {\n'
+         '        import C; // "C" is re-imported from N4 into M.\n'
+         '    }\n'
+         '}',
+         Namespace(annotations=[], identification=Identification(short_name=None, name='N6'), body=[
+             Import(visibility=None, is_all=False, is_recursive=False, is_namespace=False,
+                    name=QualifiedName(names=['N4', 'A']), filters=[], body=[]),
+             Import(visibility=None, is_all=False, is_recursive=False, is_namespace=False,
+                    name=QualifiedName(names=['N4', 'C']), filters=[], body=[]),
+             NonFeatureMember(
+                 visibility=None,
+                 element=Namespace(
+                     annotations=[],
+                     identification=Identification(short_name=None, name='M'),
+                     body=[Import(visibility=None, is_all=False, is_recursive=False, is_namespace=False,
+                                  name=QualifiedName(names=['C']), filters=[], body=[])]
+                 )
+             )
+         ]
+                   )
+         ),
+        ('namespace N7 {\n'
+         '    // Memberships A, B and C are all imported from N4.\n'
+         '    import N4::*;\n'
+         '}',
+         Namespace(annotations=[], identification=Identification(short_name=None, name='N7'), body=[
+             Import(visibility=None, is_all=False, is_recursive=False, is_namespace=True,
+                    name=QualifiedName(names=['N4']), filters=[], body=[])])),
+        ('namespace N8 {\n'
+         '    class A;\n'
+         '    class B;\n'
+         '    namespace M {\n'
+         '        class C;\n'
+         '    }\n'
+         '}',
+         Namespace(annotations=[], identification=Identification(short_name=None, name='N8'), body=[
+             NonFeatureMember(visibility=None,
+                              element=Class(is_abstract=False, annotations=[], is_all=False,
+                                            identification=Identification(short_name=None, name='A'),
+                                            multiplicity_bounds=None, conjugation=None,
+                                            superclassing=None, relationships=[], body=[])),
+             NonFeatureMember(visibility=None,
+                              element=Class(is_abstract=False, annotations=[], is_all=False,
+                                            identification=Identification(short_name=None, name='B'),
+                                            multiplicity_bounds=None, conjugation=None,
+                                            superclassing=None, relationships=[], body=[])),
+             NonFeatureMember(visibility=None,
+                              element=Namespace(
+                                  annotations=[],
+                                  identification=Identification(short_name=None, name='M'),
+                                  body=[
+                                      NonFeatureMember(
+                                          visibility=None,
+                                          element=Class(
+                                              is_abstract=False, annotations=[], is_all=False,
+                                              identification=Identification(short_name=None, name='C'),
+                                              multiplicity_bounds=None, conjugation=None,
+                                              superclassing=None, relationships=[],
+                                              body=[]
+                                          )
+                                      )
+                                  ]
+                              )
+                              )
+         ]
+                   )
+         ),
+        ('namespace N9 {\n'
+         '    import N8::**;\n'
+         '    // The above recursive import is equivalent to all\n'
+         '    // of the following taken together:\n'
+         '    // import N8;\n'
+         '    // import N8::*;\n'
+         '    // import N8::M::*;\n'
+         '}',
+         Namespace(annotations=[], identification=Identification(short_name=None, name='N9'), body=[
+             Import(visibility=None, is_all=False, is_recursive=True, is_namespace=False,
+                    name=QualifiedName(names=['N8']), filters=[], body=[])])),
+        ('namespace N10 {\n'
+         '    import N8::*::**;\n'
+         '    // The above recursive import is equivalent to all\n'
+         '    // of the following taken together:\n'
+         '    // import N8::*;\n'
+         '    // import N8::M::*;\n'
+         '    // (Note that N8 itself is not imported.)\n'
+         '}',
+         Namespace(annotations=[], identification=Identification(short_name=None, name='N10'), body=[
+             Import(visibility=None, is_all=False, is_recursive=True, is_namespace=True,
+                    name=QualifiedName(names=['N8']), filters=[], body=[])])),
+        ('namespace N11 {\n'
+         '    public import N4::A {\n'
+         '        /* The imported membership is visible outside N11. */\n'
+         '    }\n'
+         '    private import N5::* {\n'
+         '        doc /* None of the imported memberships are visible\n'
+         '        * outside of N11. */\n'
+         '    }\n'
+         '}',
+         Namespace(annotations=[], identification=Identification(short_name=None, name='N11'), body=[
+             Import(visibility=Visibility.PUBLIC, is_all=False, is_recursive=False, is_namespace=False,
+                    name=QualifiedName(names=['N4', 'A']), filters=[], body=[
+                     Comment(identification=None, about_list=None, locale=None,
+                             comment='/* The imported membership is visible outside N11. */')]),
+             Import(visibility=Visibility.PRIVATE, is_all=False, is_recursive=False, is_namespace=True,
+                    name=QualifiedName(names=['N5']), filters=[], body=[
+                     Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                                   comment='/* None of the imported memberships are visible\n        * outside of N11. */')])])),
+        ("namespace N12 {\n  import Annotations::*;\n  import NA::*[x::'1'];\n}",
+         Namespace(annotations=[], identification=Identification(short_name=None, name='N12'), body=[
+             Import(visibility=None, is_all=False, is_recursive=False, is_namespace=True,
+                    name=QualifiedName(names=['Annotations']), filters=[], body=[]),
+             Import(visibility=None, is_all=False, is_recursive=False, is_namespace=True,
+                    name=QualifiedName(names=['NA']), filters=[QualifiedName(names=['x', '1'])], body=[])])),
     ])
+    @pytest.mark.focus
     def test_namespace(self, text, expected):
         parser = _parser_for_rule('namespace')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -252,3 +365,49 @@ class TestKerMLTransformsRoot:
             v, rules = parser(text)
             assert v == expected
             assert 'namespace' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('import N4::C; // Imported with name "C".',
+         Import(visibility=None, is_all=False, is_recursive=False, is_namespace=False,
+                name=QualifiedName(names=['N4', 'C']), filters=[], body=[])),
+        ('import N4::*;',
+         Import(visibility=None, is_all=False, is_recursive=False, is_namespace=True, name=QualifiedName(names=['N4']),
+                filters=[], body=[])),
+        ('public import N4::A {\n'
+         '        /* The imported membership is visible outside N11. */\n'
+         '    }',
+         Import(visibility=Visibility.PUBLIC, is_all=False, is_recursive=False, is_namespace=False,
+                name=QualifiedName(names=['N4', 'A']), filters=[], body=[
+                 Comment(identification=None, about_list=None, locale=None,
+                         comment='/* The imported membership is visible outside N11. */')])),
+        ('private import N5::* {\n'
+         '    doc /* None of the imported memberships are visible\n'
+         '    * outside of N11. */\n'
+         '}',
+         Import(visibility=Visibility.PRIVATE, is_all=False, is_recursive=False, is_namespace=True,
+                name=QualifiedName(names=['N5']), filters=[], body=[
+                 Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                               comment='/* None of the imported memberships are visible\n    * outside of N11. */')])),
+        ('import N8::**;',
+         Import(visibility=None, is_all=False, is_recursive=True, is_namespace=False, name=QualifiedName(names=['N8']),
+                filters=[], body=[])),
+        ('import N8::*::**;',
+         Import(visibility=None, is_all=False, is_recursive=True, is_namespace=True, name=QualifiedName(names=['N8']),
+                filters=[], body=[])),
+        ("import all NA::*[x::'1'];",
+         Import(visibility=None, is_all=True, is_recursive=False, is_namespace=True, name=QualifiedName(names=['NA']),
+                filters=[QualifiedName(names=['x', '1'])], body=[])),
+        ("protected import NA::X[x::'1'];",
+         Import(visibility=Visibility.PROTECTED, is_all=False, is_recursive=False, is_namespace=False,
+                name=QualifiedName(names=['NA', 'X']), filters=[QualifiedName(names=['x', '1'])], body=[])),
+    ])
+    @pytest.mark.focus
+    def test_import_statement(self, text, expected):
+        parser = _parser_for_rule('import_statement')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'import_statement' in rules

@@ -10,6 +10,34 @@ class KerMLTransRecorder(KerMLTransTemplate):
         self.rules = []
 
     @v_args(tree=True)
+    def non_recursive_membership_import(self, tree: Tree):
+        if 'non_recursive_membership_import' not in self._rules_set:
+            self._rules_set.add('non_recursive_membership_import')
+            self.rules.append('non_recursive_membership_import')
+        return KerMLTransTemplate.non_recursive_membership_import(self, tree)
+
+    @v_args(tree=True)
+    def recursive_membership_import(self, tree: Tree):
+        if 'recursive_membership_import' not in self._rules_set:
+            self._rules_set.add('recursive_membership_import')
+            self.rules.append('recursive_membership_import')
+        return KerMLTransTemplate.recursive_membership_import(self, tree)
+
+    @v_args(tree=True)
+    def non_recursive_namespace_import(self, tree: Tree):
+        if 'non_recursive_namespace_import' not in self._rules_set:
+            self._rules_set.add('non_recursive_namespace_import')
+            self.rules.append('non_recursive_namespace_import')
+        return KerMLTransTemplate.non_recursive_namespace_import(self, tree)
+
+    @v_args(tree=True)
+    def recursive_namespace_import(self, tree: Tree):
+        if 'recursive_namespace_import' not in self._rules_set:
+            self._rules_set.add('recursive_namespace_import')
+            self.rules.append('recursive_namespace_import')
+        return KerMLTransTemplate.recursive_namespace_import(self, tree)
+
+    @v_args(tree=True)
     def abstract_type_prefix(self, tree: Tree):
         if 'abstract_type_prefix' not in self._rules_set:
             self._rules_set.add('abstract_type_prefix')
@@ -206,32 +234,18 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.import_statement(self, tree)
 
     @v_args(tree=True)
-    def membership_import(self, tree: Tree):
-        if 'membership_import' not in self._rules_set:
-            self._rules_set.add('membership_import')
-            self.rules.append('membership_import')
-        return KerMLTransTemplate.membership_import(self, tree)
+    def import_declaration(self, tree: Tree):
+        if 'import_declaration' not in self._rules_set:
+            self._rules_set.add('import_declaration')
+            self.rules.append('import_declaration')
+        return KerMLTransTemplate.import_declaration(self, tree)
 
     @v_args(tree=True)
-    def namespace_import(self, tree: Tree):
-        if 'namespace_import' not in self._rules_set:
-            self._rules_set.add('namespace_import')
-            self.rules.append('namespace_import')
-        return KerMLTransTemplate.namespace_import(self, tree)
-
-    @v_args(tree=True)
-    def filter_package(self, tree: Tree):
-        if 'filter_package' not in self._rules_set:
-            self._rules_set.add('filter_package')
-            self.rules.append('filter_package')
-        return KerMLTransTemplate.filter_package(self, tree)
-
-    @v_args(tree=True)
-    def filter_package_member(self, tree: Tree):
-        if 'filter_package_member' not in self._rules_set:
-            self._rules_set.add('filter_package_member')
-            self.rules.append('filter_package_member')
-        return KerMLTransTemplate.filter_package_member(self, tree)
+    def filter_package_list(self, tree: Tree):
+        if 'filter_package_list' not in self._rules_set:
+            self._rules_set.add('filter_package_list')
+            self.rules.append('filter_package_list')
+        return KerMLTransTemplate.filter_package_list(self, tree)
 
     @v_args(tree=True)
     def type(self, tree: Tree):

@@ -3,6 +3,22 @@ from lark import Transformer, v_args, Tree
 
 class KerMLTransTemplate(Transformer):
     @v_args(tree=True)
+    def non_recursive_membership_import(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def recursive_membership_import(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def non_recursive_namespace_import(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def recursive_namespace_import(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def abstract_type_prefix(self, tree: Tree):
         return tree
 
@@ -115,19 +131,11 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def membership_import(self, tree: Tree):
+    def import_declaration(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
-    def namespace_import(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def filter_package(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def filter_package_member(self, tree: Tree):
+    def filter_package_list(self, tree: Tree):
         return tree
 
     @v_args(tree=True)

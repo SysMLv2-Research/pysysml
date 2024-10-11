@@ -1,5 +1,5 @@
 # Start rule (placeholder, as the actual start rule is not provided in the given excerpt)
-start: NAME
+start: root_namespace
 
 # Ignore whitespace and comments
 %import common.WS
@@ -120,12 +120,15 @@ alias_member: member_prefix "alias" ("<" NAME ">")? NAME? "for" qualified_name r
 qualified_name: (NAME "::")* NAME
 
 # 8.2.3.4.2 Imports
-import_statement: visibility_indicator? "import" ("all")? import_declaration relationship_body
-?import_declaration: membership_import | namespace_import
-membership_import: qualified_name ("::" "**")?
-namespace_import: qualified_name "::" "*" ("::" "**")? | filter_package
-filter_package: import_declaration filter_package_member+
-filter_package_member: "[" owned_expression "]"
+import_statement: [visibility_indicator] "import" [import_all] import_declaration relationship_body
+?import_all: "all"
+import_declaration: (membership_import | namespace_import) filter_package_list
+?membership_import: qualified_name           -> non_recursive_membership_import
+                  | qualified_name "::" "**" -> recursive_membership_import
+?namespace_import: qualified_name "::" "*"           -> non_recursive_namespace_import
+                 | qualified_name "::" "*" "::" "**" -> recursive_namespace_import
+filter_package_list: filter_package_member*
+?filter_package_member: "[" owned_expression "]"
 
 # 8.2.3.4.3 Namespace Elements
 ?member_element: annotating_element | non_feature_element

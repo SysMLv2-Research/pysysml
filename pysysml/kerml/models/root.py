@@ -59,3 +59,14 @@ class NonFeatureMember:
 class NamespaceFeatureMember:
     visibility: Optional[Visibility]
     element: Any
+
+
+@dataclass
+class Import:
+    visibility: Optional[Visibility]
+    is_all: bool
+    is_recursive: bool
+    is_namespace: bool
+    name: QualifiedName
+    filters: List[Any]
+    body: List[Any]
