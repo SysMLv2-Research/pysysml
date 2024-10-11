@@ -103,7 +103,7 @@ namespace_declaration: "namespace" identification
 namespace_body: ";" | "{" namespace_body_element* "}"
 ?namespace_body_element: namespace_member | alias_member | import_statement
 member_prefix: visibility_indicator?
-visibility_indicator: "public" | "private" | "protected"
+!visibility_indicator: "public" | "private" | "protected"
 ?namespace_member: non_feature_member | namespace_feature_member
 non_feature_member: member_prefix member_element
 namespace_feature_member: member_prefix feature_element
@@ -273,7 +273,7 @@ function: type_prefix "function" classifier_declaration function_body
 
 function_body: ";" | "{" function_body_part "}"
 
-function_body_part: (type_body_element | return_feature_member)* result_expression_member?
+function_body_part: (return_feature_member | type_body_element)* result_expression_member?
 
 return_feature_member: member_prefix "return" feature_element
 
@@ -429,7 +429,7 @@ named_argument_list: named_argument_member ("," named_argument_member)*
 named_argument: parameter_redefinition "=" argument_value
 ?parameter_redefinition: qualified_name
 
-?body_expression: body_expression_member
+body_expression: body_expression_member
 ?body_expression_member: expression_body
 expression_body: "{" function_body_part "}"
 

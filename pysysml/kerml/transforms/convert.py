@@ -3,7 +3,7 @@ from lark import v_args, Tree, Token, GrammarError
 from .template import KerMLTransTemplate
 from ..base import is_reserved_word
 from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, NullValue, QualifiedName, name_unescape, \
-    MetadataAccessExpression, NamedArgument, InvocationExpression
+    MetadataAccessExpression, NamedArgument, InvocationExpression, Visibility
 
 
 # noinspection PyPep8Naming
@@ -83,6 +83,17 @@ class KerMLTransformer(KerMLTransTemplate):
     @v_args(tree=True)
     def positional_argument_list(self, tree: Tree):
         return tree.children
+
+    @v_args(tree=True)
+    def visibility_indicator(self, tree: Tree):
+        return Visibility.load(tree.children[0])
+
+    @v_args(tree=True)
+    def member_prefix(self, tree: Tree):
+        if tree.children:
+            return tree.children[0]
+        else:
+            return None
 
 
 def tree_to_cst(tree: Tree):

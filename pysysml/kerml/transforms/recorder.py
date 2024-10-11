@@ -836,6 +836,13 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.named_argument(self, tree)
 
     @v_args(tree=True)
+    def body_expression(self, tree: Tree):
+        if 'body_expression' not in self._rules_set:
+            self._rules_set.add('body_expression')
+            self.rules.append('body_expression')
+        return KerMLTransTemplate.body_expression(self, tree)
+
+    @v_args(tree=True)
     def expression_body(self, tree: Tree):
         if 'expression_body' not in self._rules_set:
             self._rules_set.add('expression_body')

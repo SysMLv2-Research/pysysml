@@ -183,7 +183,6 @@ class TestKerMLTransformsBaseExpression:
         ("feat(arg1, name2=, arg3)", UnexpectedInput),  # Invalid: incomplete named argument
         ("feat(arg1, name2=value2)", UnexpectedInput),  # Valid: mixed positional and named
     ])
-    @pytest.mark.focus
     def test_invocation_expression(self, text, expected):
         parser = _parser_for_rule('invocation_expression')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -193,3 +192,31 @@ class TestKerMLTransformsBaseExpression:
             v, rules = parser(text)
             assert v == expected
             assert 'invocation_expression' in rules
+
+    # TODO: recover this part
+    # @pytest.mark.parametrize(['text', 'expected'], [
+    #     ("{}", True),  # Valid: empty body
+    #     ("{ return x; }", True),  # Valid: simple return statement
+    #     # ("{ // Comment\n return result; }", True),  # Valid: with comment
+    #     # ("{ /* Multi-line\n comment */ return result; }", True),  # Valid: multi-line comment
+    #     ("{ return : DynamicState; }", True),  # Valid: return without value
+    #     ("{ return : DynamicState = x; }", True),  # Valid: return without value
+    #     ("{ in v_i : VelocityValue; return v_f : VelocityValue; }", True),  # Valid: Default Example
+    #     ("{ in scores[1..*] : Rational; return : Rational; sum(scores) / size(scores) }", True),
+    #     # Valid: Official Example
+    #
+    #     ("{ return x", UnexpectedInput),  # Invalid: missing closing brace
+    #     ("{ return x }}", UnexpectedInput),  # Invalid: extra closing brace
+    #     ("{ x = 5 return x; }", UnexpectedInput),  # Invalid: missing semicolon
+    #     ("return x;", UnexpectedInput),  # Invalid: missing braces
+    # ])
+    # @pytest.mark.focus
+    # def test_body_expression(self, text, expected):
+    #     parser = _parser_for_rule('body_expression')
+    #     if isinstance(expected, type) and issubclass(expected, Exception):
+    #         with pytest.raises(expected):
+    #             _ = parser(text)
+    #     else:
+    #         v, rules = parser(text)
+    #         print(v)
+    #         assert True

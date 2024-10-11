@@ -475,6 +475,10 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def body_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def expression_body(self, tree: Tree):
         return tree
 
