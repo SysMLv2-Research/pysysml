@@ -747,18 +747,6 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def feature_reference_expression(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def feature_reference_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def feature_reference(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def metadata_access_expression(self, tree: Tree):
         return tree
 

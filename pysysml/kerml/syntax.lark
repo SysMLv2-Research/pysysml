@@ -414,9 +414,9 @@ base_expression: null_expression
 
 null_expression: "null" | "(" ")"
 
-feature_reference_expression: feature_reference_member
-feature_reference_member: feature_reference
-feature_reference: qualified_name
+?feature_reference_expression: feature_reference_member
+?feature_reference_member: feature_reference
+?feature_reference: qualified_name
 
 metadata_access_expression: qualified_name "." "metadata"
 

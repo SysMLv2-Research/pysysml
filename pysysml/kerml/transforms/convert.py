@@ -2,7 +2,8 @@ from lark import v_args, Tree, Token, GrammarError
 
 from .template import KerMLTransTemplate
 from ..base import is_reserved_word
-from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, NullValue, QualifiedName, name_unescape
+from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, NullValue, QualifiedName, name_unescape, \
+    MetadataAccessExpression
 
 
 # noinspection PyPep8Naming
@@ -49,6 +50,11 @@ class KerMLTransformer(KerMLTransTemplate):
     def qualified_name(self, tree: Tree):
         assert len(tree.children) > 0
         return QualifiedName([name_unescape(item.value) for item in tree.children])
+
+    @v_args(tree=True)
+    def metadata_access_expression(self, tree: Tree):
+        assert len(tree.children) == 1
+        return MetadataAccessExpression(tree.children[0])
 
 
 def tree_to_cst(tree: Tree):

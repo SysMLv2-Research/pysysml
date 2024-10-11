@@ -1312,27 +1312,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.null_expression(self, tree)
 
     @v_args(tree=True)
-    def feature_reference_expression(self, tree: Tree):
-        if 'feature_reference_expression' not in self._rules_set:
-            self._rules_set.add('feature_reference_expression')
-            self.rules.append('feature_reference_expression')
-        return KerMLTransTemplate.feature_reference_expression(self, tree)
-
-    @v_args(tree=True)
-    def feature_reference_member(self, tree: Tree):
-        if 'feature_reference_member' not in self._rules_set:
-            self._rules_set.add('feature_reference_member')
-            self.rules.append('feature_reference_member')
-        return KerMLTransTemplate.feature_reference_member(self, tree)
-
-    @v_args(tree=True)
-    def feature_reference(self, tree: Tree):
-        if 'feature_reference' not in self._rules_set:
-            self._rules_set.add('feature_reference')
-            self.rules.append('feature_reference')
-        return KerMLTransTemplate.feature_reference(self, tree)
-
-    @v_args(tree=True)
     def metadata_access_expression(self, tree: Tree):
         if 'metadata_access_expression' not in self._rules_set:
             self._rules_set.add('metadata_access_expression')
