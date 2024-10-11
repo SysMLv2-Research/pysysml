@@ -3,7 +3,7 @@ from lark import v_args, Tree, Token, GrammarError
 from .template import KerMLTransTemplate
 from ..base import is_reserved_word
 from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, NullValue, QualifiedName, name_unescape, \
-    MetadataAccessExpression
+    MetadataAccessExpression, NamedArgument, InvocationExpression
 
 
 # noinspection PyPep8Naming
@@ -55,6 +55,34 @@ class KerMLTransformer(KerMLTransTemplate):
     def metadata_access_expression(self, tree: Tree):
         assert len(tree.children) == 1
         return MetadataAccessExpression(tree.children[0])
+
+    @v_args(tree=True)
+    def invocation_expression(self, tree: Tree):
+        assert len(tree.children) == 2
+        return InvocationExpression(
+            name=tree.children[0],
+            arguments=tree.children[1],
+        )
+
+    @v_args(tree=True)
+    def argument_list(self, tree: Tree):
+        if tree.children:
+            return tree.children[0]
+        else:
+            return []
+
+    @v_args(tree=True)
+    def named_argument(self, tree: Tree):
+        assert len(tree.children) == 2
+        return NamedArgument(name=tree.children[0], value=tree.children[1])
+
+    @v_args(tree=True)
+    def named_argument_list(self, tree: Tree):
+        return tree.children
+
+    @v_args(tree=True)
+    def positional_argument_list(self, tree: Tree):
+        return tree.children
 
 
 def tree_to_cst(tree: Tree):

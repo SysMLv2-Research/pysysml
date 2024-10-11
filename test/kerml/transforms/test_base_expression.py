@@ -1,7 +1,8 @@
 import pytest
 from lark import UnexpectedInput, GrammarError
 
-from pysysml.kerml.models import NullValue, MetadataAccessExpression, QualifiedName
+from pysysml.kerml.models import NullValue, MetadataAccessExpression, QualifiedName, IntValue, StringValue, \
+    InvocationExpression, NamedArgument
 from .base import _parser_for_rule
 
 
@@ -88,3 +89,107 @@ class TestKerMLTransformsBaseExpression:
             assert isinstance(v, QualifiedName)
             assert tuple(v.names) == expected
             assert set(rules) == {'qualified_name'}
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        (
+                "feat()",
+                InvocationExpression(name=QualifiedName(names=['feat']), arguments=[])
+        ),  # Valid: empty argument list
+        (
+                "feat(arg1, arg2)",
+                InvocationExpression(
+                    name=QualifiedName(names=['feat']),
+                    arguments=[QualifiedName(names=['arg1']), QualifiedName(names=['arg2'])]
+                )
+        ),  # Valid: multiple positional arguments
+        (
+                "feat(1, \"arg2\")",
+                InvocationExpression(
+                    name=QualifiedName(names=['feat']),
+                    arguments=[IntValue(raw='1'), StringValue(raw='"arg2"')]
+                )
+        ),  # Valid: literal values
+
+        (
+                "f()",
+                InvocationExpression(name=QualifiedName(names=['f']), arguments=[]),
+        ),  # Valid: empty argument list
+        (
+                "f(arg1, arg2)",
+                InvocationExpression(
+                    name=QualifiedName(names=['f']),
+                    arguments=[QualifiedName(names=['arg1']), QualifiedName(names=['arg2'])]
+                )
+        ),  # Valid: multiple positional arguments
+        (
+                "f(1, \"arg2\")",
+                InvocationExpression(
+                    name=QualifiedName(names=['f']),
+                    arguments=[IntValue(raw='1'), StringValue(raw='"arg2"')]
+                ),
+        ),  # Valid: literal values
+
+        (
+                "feat(name1=value1, name2=value2)",
+                InvocationExpression(
+                    name=QualifiedName(names=['feat']),
+                    arguments=[
+                        NamedArgument(name=QualifiedName(names=['name1']), value=QualifiedName(names=['value1'])),
+                        NamedArgument(name=QualifiedName(names=['name2']), value=QualifiedName(names=['value2']))
+                    ]
+                )
+        ),  # Valid: named arguments
+        (
+                "feat(name1=1, name2=\"1\")",
+                InvocationExpression(
+                    name=QualifiedName(names=['feat']),
+                    arguments=[
+                        NamedArgument(name=QualifiedName(names=['name1']), value=IntValue(raw='1')),
+                        NamedArgument(name=QualifiedName(names=['name2']), value=StringValue(raw='"1"'))
+                    ]
+                )
+        ),  # Valid: literal values
+        (
+                "feat(name1=1, 'name2 x'=\"1\", name3=null)",
+                InvocationExpression(
+                    name=QualifiedName(names=['feat']),
+                    arguments=[
+                        NamedArgument(name=QualifiedName(names=['name1']), value=IntValue(raw='1')),
+                        NamedArgument(name=QualifiedName(names=['name2 x']), value=StringValue(raw='"1"')),
+                        NamedArgument(name=QualifiedName(names=['name3']), value=NullValue()),
+                    ]
+                ),
+        ),  # Valid: named arguments
+        # ("feat((nested))", True),  # Valid: nested parentheses TODO: add this back when expression is fixed
+        (
+                "feat(very::long::qualified::name=value)",
+                InvocationExpression(
+                    name=QualifiedName(names=['feat']),
+                    arguments=[
+                        NamedArgument(
+                            name=QualifiedName(names=['very', 'long', 'qualified', 'name']),
+                            value=QualifiedName(names=['value'])
+                        ),
+                    ]
+                )
+        ),  # Valid: qualified name in named argument
+
+        ("feat(,)", UnexpectedInput),  # Invalid: empty argument with comma
+        ("feat(arg1,)", UnexpectedInput),  # Invalid: trailing comma
+        ("feat(arg1 arg2)", UnexpectedInput),  # Invalid: missing comma
+        ("feat(name1:value1)", UnexpectedInput),  # Invalid: colon instead of equals
+        ("feat(=value1)", UnexpectedInput),  # Invalid: missing parameter name
+        ("feat(arg1, , arg2)", UnexpectedInput),  # Invalid: double comma
+        ("feat(arg1, name2=, arg3)", UnexpectedInput),  # Invalid: incomplete named argument
+        ("feat(arg1, name2=value2)", UnexpectedInput),  # Valid: mixed positional and named
+    ])
+    @pytest.mark.focus
+    def test_invocation_expression(self, text, expected):
+        parser = _parser_for_rule('invocation_expression')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'invocation_expression' in rules

@@ -77,7 +77,7 @@ CONJUGATES: "~" | "conjugates"
 identification: ("<" NAME ">")? NAME?
 relationship_body: ";" | "{" relationship_owned_element* "}"
 relationship_owned_element: owned_related_element | owned_annotation
-owned_related_element: non_feature_element | feature_element
+?owned_related_element: non_feature_element | feature_element
 
 # 8.2.3.2 Dependencies Concrete Syntax
 dependency: prefix_metadata_annotation* "dependency" (identification? "from")? qualified_name ("," qualified_name)* "to" qualified_name ("," qualified_name)* relationship_body
@@ -85,7 +85,7 @@ dependency: prefix_metadata_annotation* "dependency" (identification? "from")? q
 # 8.2.3.3 Annotations Concrete Syntax
 # 8.2.3.3.1 Annotations
 annotation: qualified_name
-owned_annotation: annotating_element
+?owned_annotation: annotating_element
 annotating_element: comment | documentation | textual_representation | metadata_feature
 
 # 8.2.3.3.2 Comments and Documentation
@@ -143,17 +143,17 @@ type_body_element: non_feature_member | feature_member | alias_member | import_s
 
 # 8.2.4.1.2 Specialization
 specialization: ("specialization" identification)? "subtype" specific_type SPECIALIZES general_type relationship_body
-owned_specialization: general_type
-specific_type: qualified_name | owned_feature_chain
-general_type: qualified_name | owned_feature_chain
+?owned_specialization: general_type
+?specific_type: qualified_name | owned_feature_chain
+?general_type: qualified_name | owned_feature_chain
 
 # 8.2.4.1.3 Conjugation
 conjugation: ("conjugation" identification)? "conjugate" (qualified_name | feature_chain) CONJUGATES (qualified_name | feature_chain) relationship_body
-owned_conjugation: qualified_name | feature_chain
+?owned_conjugation: qualified_name | feature_chain
 
 # 8.2.4.1.4 Disjoining
 disjoining: ("disjoining" identification)? "disjoint" (qualified_name | feature_chain) "from" (qualified_name | feature_chain) relationship_body
-owned_disjoining: qualified_name | feature_chain
+?owned_disjoining: qualified_name | feature_chain
 
 # 8.2.4.1.5 Unioning, Intersecting and Differencing
 unioning: qualified_name | owned_feature_chain
@@ -163,7 +163,7 @@ differencing: qualified_name | owned_feature_chain
 # 8.2.4.1.6 Feature Membership
 feature_member: type_feature_member | owned_feature_member
 type_feature_member: member_prefix "member" feature_element
-owned_feature_member: member_prefix feature_element
+?owned_feature_member: member_prefix feature_element
 
 # 8.2.4.2 Classifiers Concrete Syntax
 # 8.2.4.2.1 Classifiers
@@ -173,7 +173,7 @@ superclassing_part: SPECIALIZES owned_subclassification ("," owned_subclassifica
 
 # 8.2.4.2.2 Subclassification
 subclassification: ("specialization" identification)? "subclassifier" qualified_name SPECIALIZES qualified_name relationship_body
-owned_subclassification: qualified_name
+?owned_subclassification: qualified_name
 
 # 8.2.4.3 Features Concrete Syntax
 # 8.2.4.3.1 Features
@@ -205,29 +205,29 @@ redefines: REDEFINES owned_redefinition
 
 # 8.2.4.3.2 Feature Typing
 feature_typing: ("specialization" identification)? "typing" qualified_name TYPED_BY general_type relationship_body
-owned_feature_typing: general_type
+?owned_feature_typing: general_type
 
 # 8.2.4.3.3 Subsetting
 subsetting: ("specialization" identification)? "subset" specific_type SUBSETS general_type relationship_body
-owned_subsetting: general_type
-owned_reference_subsetting: general_type
+?owned_subsetting: general_type
+?owned_reference_subsetting: general_type
 
 # 8.2.4.3.4 Redefinition
 redefinition: ("specialization" identification)? "redefinition" specific_type REDEFINES general_type relationship_body
-owned_redefinition: general_type
+?owned_redefinition: general_type
 
 # 8.2.4.3.5 Feature Chaining
-owned_feature_chain: feature_chain
+?owned_feature_chain: feature_chain
 feature_chain: owned_feature_chaining ("." owned_feature_chaining)+
-owned_feature_chaining: qualified_name
+?owned_feature_chaining: qualified_name
 
 # 8.2.4.3.6 Feature Inverting
 feature_inverting: ("inverting" identification?)? "inverse" (qualified_name | owned_feature_chain) "of" (qualified_name | owned_feature_chain) relationship_body
-owned_feature_inverting: qualified_name | owned_feature_chain
+?owned_feature_inverting: qualified_name | owned_feature_chain
 
 # 8.2.4.3.7 Type Featuring
 type_featuring: "featuring" (identification "of")? qualified_name "by" qualified_name relationship_body
-owned_type_featuring: qualified_name
+?owned_type_featuring: qualified_name
 
 
 # 8.2.5 Kernel Concrete Syntax
@@ -292,10 +292,10 @@ invariant: feature_prefix "inv" ("true" | "false")? feature_declaration value_pa
 
 # 8.2.5.8 Expressions Concrete Syntax
 # 8.2.5.8.1 Operator Expressions
-owned_expression_reference_member:  owned_expression_reference
-owned_expression_reference: owned_expression_member
-owned_expression_member: owned_expression
-owned_expression: conditional_expression
+?owned_expression_reference_member:  owned_expression_reference
+?owned_expression_reference: owned_expression_member
+?owned_expression_member: owned_expression
+?owned_expression: conditional_expression
                 | conditional_binary_operator_expression
                 | binary_operator_expression
                 | unary_operator_expression
@@ -325,36 +325,36 @@ cast_operator: "as"
 metaclassification_expression: metadata_argument_member (meta_classification_test_operator type_reference_member
                                                        | meta_cast_operator type_result_member)
 
-argument_member: argument
-argument: argument_value
-argument_value: owned_expression
-argument_expression_member: argument_expression
-argument_expression: argument_expression_value
-argument_expression_value: owned_expression_reference
+?argument_member: argument
+?argument: argument_value
+?argument_value: owned_expression
+?argument_expression_member: argument_expression
+?argument_expression: argument_expression_value
+?argument_expression_value: owned_expression_reference
 
-metadata_argument_member: metadata_argument
-metadata_argument: metadata_value
-metadata_value: metadata_reference
-metadata_reference: qualified_name
+?metadata_argument_member: metadata_argument
+?metadata_argument: metadata_value
+?metadata_value: metadata_reference
+?metadata_reference: qualified_name
 
 meta_classification_test_operator: "@@"
 meta_cast_operator: "meta"
 
 extent_expression: "all" type_reference_member
-type_reference_member: type_reference
-type_result_member: type_reference
-type_reference: reference_typing
-reference_typing: qualified_name
+?type_reference_member: type_reference
+?type_result_member: type_reference
+?type_reference: reference_typing
+?reference_typing: qualified_name
 
 
 # 8.2.5.8.2 Primary Expressions
-primary_expression: feature_chain_expression | non_feature_chain_primary_expression
+?primary_expression: feature_chain_expression | non_feature_chain_primary_expression
 
-primary_argument_value: primary_expression
-primary_argument: primary_argument_value
-primary_argument_member: primary_argument
+?primary_argument_value: primary_expression
+?primary_argument: primary_argument_value
+?primary_argument_member: primary_argument
 
-non_feature_chain_primary_expression: bracket_expression
+?non_feature_chain_primary_expression: bracket_expression
                                     | index_expression
                                     | sequence_expression
                                     | select_expression
@@ -362,9 +362,9 @@ non_feature_chain_primary_expression: bracket_expression
                                     | function_operation_expression
                                     | base_expression
 
-non_feature_chain_primary_argument_value: non_feature_chain_primary_expression
-non_feature_chain_primary_argument: non_feature_chain_primary_argument_value
-non_feature_chain_primary_argument_member: primary_argument
+?non_feature_chain_primary_argument_value: non_feature_chain_primary_expression
+?non_feature_chain_primary_argument: non_feature_chain_primary_argument_value
+?non_feature_chain_primary_argument_member: primary_argument
 
 # Bracket Expression
 bracket_expression: primary_argument_member "[" sequence_expression_list_member "]"
@@ -402,10 +402,10 @@ function_reference_member: function_reference
 function_reference: reference_typing
 
 feature_chain_member: feature_reference_member | owned_feature_chain_member
-owned_feature_chain_member: feature_chain
+?owned_feature_chain_member: feature_chain
 
 # 8.2.5.8.3 Base Expressions
-base_expression: null_expression
+?base_expression: null_expression
                | literal_expression
                | feature_reference_expression
                | metadata_access_expression
@@ -425,16 +425,16 @@ invocation_expression: (owned_feature_typing | owned_subsetting) argument_list
 argument_list: "(" (positional_argument_list | named_argument_list)? ")"
 positional_argument_list: argument_member ("," argument_member)*
 named_argument_list: named_argument_member ("," named_argument_member)*
-named_argument_member: named_argument
+?named_argument_member: named_argument
 named_argument: parameter_redefinition "=" argument_value
-parameter_redefinition: qualified_name
+?parameter_redefinition: qualified_name
 
 body_expression: body_expression_member
 body_expression_member: expression_body
 expression_body: "{" function_body_part "}"
 
 # 8.2.5.8.4 Literal Expressions
-literal_expression: literal_boolean
+?literal_expression: literal_boolean
                   | literal_string
                   | literal_integer
                   | literal_real
@@ -479,8 +479,8 @@ feature_value: ("=" | ":=" | "default" ("=" | ":=")?) owned_expression
 multiplicity: multiplicity_subset | multiplicity_range
 multiplicity_subset: "multiplicity" identification subsets type_body
 multiplicity_range: "multiplicity" identification multiplicity_bounds type_body
-owned_multiplicity: owned_multiplicity_range
-owned_multiplicity_range: multiplicity_bounds
+?owned_multiplicity: owned_multiplicity_range
+?owned_multiplicity_range: multiplicity_bounds
 multiplicity_bounds: "[" (multiplicity_expression_member "..")? multiplicity_expression_member "]"
 multiplicity_expression_member: literal_expression | feature_reference_expression
 

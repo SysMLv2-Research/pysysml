@@ -38,13 +38,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.relationship_owned_element(self, tree)
 
     @v_args(tree=True)
-    def owned_related_element(self, tree: Tree):
-        if 'owned_related_element' not in self._rules_set:
-            self._rules_set.add('owned_related_element')
-            self.rules.append('owned_related_element')
-        return KerMLTransTemplate.owned_related_element(self, tree)
-
-    @v_args(tree=True)
     def dependency(self, tree: Tree):
         if 'dependency' not in self._rules_set:
             self._rules_set.add('dependency')
@@ -57,13 +50,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
             self._rules_set.add('annotation')
             self.rules.append('annotation')
         return KerMLTransTemplate.annotation(self, tree)
-
-    @v_args(tree=True)
-    def owned_annotation(self, tree: Tree):
-        if 'owned_annotation' not in self._rules_set:
-            self._rules_set.add('owned_annotation')
-            self.rules.append('owned_annotation')
-        return KerMLTransTemplate.owned_annotation(self, tree)
 
     @v_args(tree=True)
     def annotating_element(self, tree: Tree):
@@ -332,27 +318,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.specialization(self, tree)
 
     @v_args(tree=True)
-    def owned_specialization(self, tree: Tree):
-        if 'owned_specialization' not in self._rules_set:
-            self._rules_set.add('owned_specialization')
-            self.rules.append('owned_specialization')
-        return KerMLTransTemplate.owned_specialization(self, tree)
-
-    @v_args(tree=True)
-    def specific_type(self, tree: Tree):
-        if 'specific_type' not in self._rules_set:
-            self._rules_set.add('specific_type')
-            self.rules.append('specific_type')
-        return KerMLTransTemplate.specific_type(self, tree)
-
-    @v_args(tree=True)
-    def general_type(self, tree: Tree):
-        if 'general_type' not in self._rules_set:
-            self._rules_set.add('general_type')
-            self.rules.append('general_type')
-        return KerMLTransTemplate.general_type(self, tree)
-
-    @v_args(tree=True)
     def conjugation(self, tree: Tree):
         if 'conjugation' not in self._rules_set:
             self._rules_set.add('conjugation')
@@ -360,25 +325,11 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.conjugation(self, tree)
 
     @v_args(tree=True)
-    def owned_conjugation(self, tree: Tree):
-        if 'owned_conjugation' not in self._rules_set:
-            self._rules_set.add('owned_conjugation')
-            self.rules.append('owned_conjugation')
-        return KerMLTransTemplate.owned_conjugation(self, tree)
-
-    @v_args(tree=True)
     def disjoining(self, tree: Tree):
         if 'disjoining' not in self._rules_set:
             self._rules_set.add('disjoining')
             self.rules.append('disjoining')
         return KerMLTransTemplate.disjoining(self, tree)
-
-    @v_args(tree=True)
-    def owned_disjoining(self, tree: Tree):
-        if 'owned_disjoining' not in self._rules_set:
-            self._rules_set.add('owned_disjoining')
-            self.rules.append('owned_disjoining')
-        return KerMLTransTemplate.owned_disjoining(self, tree)
 
     @v_args(tree=True)
     def unioning(self, tree: Tree):
@@ -416,13 +367,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.type_feature_member(self, tree)
 
     @v_args(tree=True)
-    def owned_feature_member(self, tree: Tree):
-        if 'owned_feature_member' not in self._rules_set:
-            self._rules_set.add('owned_feature_member')
-            self.rules.append('owned_feature_member')
-        return KerMLTransTemplate.owned_feature_member(self, tree)
-
-    @v_args(tree=True)
     def classifier(self, tree: Tree):
         if 'classifier' not in self._rules_set:
             self._rules_set.add('classifier')
@@ -449,13 +393,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
             self._rules_set.add('subclassification')
             self.rules.append('subclassification')
         return KerMLTransTemplate.subclassification(self, tree)
-
-    @v_args(tree=True)
-    def owned_subclassification(self, tree: Tree):
-        if 'owned_subclassification' not in self._rules_set:
-            self._rules_set.add('owned_subclassification')
-            self.rules.append('owned_subclassification')
-        return KerMLTransTemplate.owned_subclassification(self, tree)
 
     @v_args(tree=True)
     def feature(self, tree: Tree):
@@ -598,32 +535,11 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.feature_typing(self, tree)
 
     @v_args(tree=True)
-    def owned_feature_typing(self, tree: Tree):
-        if 'owned_feature_typing' not in self._rules_set:
-            self._rules_set.add('owned_feature_typing')
-            self.rules.append('owned_feature_typing')
-        return KerMLTransTemplate.owned_feature_typing(self, tree)
-
-    @v_args(tree=True)
     def subsetting(self, tree: Tree):
         if 'subsetting' not in self._rules_set:
             self._rules_set.add('subsetting')
             self.rules.append('subsetting')
         return KerMLTransTemplate.subsetting(self, tree)
-
-    @v_args(tree=True)
-    def owned_subsetting(self, tree: Tree):
-        if 'owned_subsetting' not in self._rules_set:
-            self._rules_set.add('owned_subsetting')
-            self.rules.append('owned_subsetting')
-        return KerMLTransTemplate.owned_subsetting(self, tree)
-
-    @v_args(tree=True)
-    def owned_reference_subsetting(self, tree: Tree):
-        if 'owned_reference_subsetting' not in self._rules_set:
-            self._rules_set.add('owned_reference_subsetting')
-            self.rules.append('owned_reference_subsetting')
-        return KerMLTransTemplate.owned_reference_subsetting(self, tree)
 
     @v_args(tree=True)
     def redefinition(self, tree: Tree):
@@ -633,32 +549,11 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.redefinition(self, tree)
 
     @v_args(tree=True)
-    def owned_redefinition(self, tree: Tree):
-        if 'owned_redefinition' not in self._rules_set:
-            self._rules_set.add('owned_redefinition')
-            self.rules.append('owned_redefinition')
-        return KerMLTransTemplate.owned_redefinition(self, tree)
-
-    @v_args(tree=True)
-    def owned_feature_chain(self, tree: Tree):
-        if 'owned_feature_chain' not in self._rules_set:
-            self._rules_set.add('owned_feature_chain')
-            self.rules.append('owned_feature_chain')
-        return KerMLTransTemplate.owned_feature_chain(self, tree)
-
-    @v_args(tree=True)
     def feature_chain(self, tree: Tree):
         if 'feature_chain' not in self._rules_set:
             self._rules_set.add('feature_chain')
             self.rules.append('feature_chain')
         return KerMLTransTemplate.feature_chain(self, tree)
-
-    @v_args(tree=True)
-    def owned_feature_chaining(self, tree: Tree):
-        if 'owned_feature_chaining' not in self._rules_set:
-            self._rules_set.add('owned_feature_chaining')
-            self.rules.append('owned_feature_chaining')
-        return KerMLTransTemplate.owned_feature_chaining(self, tree)
 
     @v_args(tree=True)
     def feature_inverting(self, tree: Tree):
@@ -668,25 +563,11 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.feature_inverting(self, tree)
 
     @v_args(tree=True)
-    def owned_feature_inverting(self, tree: Tree):
-        if 'owned_feature_inverting' not in self._rules_set:
-            self._rules_set.add('owned_feature_inverting')
-            self.rules.append('owned_feature_inverting')
-        return KerMLTransTemplate.owned_feature_inverting(self, tree)
-
-    @v_args(tree=True)
     def type_featuring(self, tree: Tree):
         if 'type_featuring' not in self._rules_set:
             self._rules_set.add('type_featuring')
             self.rules.append('type_featuring')
         return KerMLTransTemplate.type_featuring(self, tree)
-
-    @v_args(tree=True)
-    def owned_type_featuring(self, tree: Tree):
-        if 'owned_type_featuring' not in self._rules_set:
-            self._rules_set.add('owned_type_featuring')
-            self.rules.append('owned_type_featuring')
-        return KerMLTransTemplate.owned_type_featuring(self, tree)
 
     @v_args(tree=True)
     def data_type(self, tree: Tree):
@@ -871,34 +752,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.invariant(self, tree)
 
     @v_args(tree=True)
-    def owned_expression_reference_member(self, tree: Tree):
-        if 'owned_expression_reference_member' not in self._rules_set:
-            self._rules_set.add('owned_expression_reference_member')
-            self.rules.append('owned_expression_reference_member')
-        return KerMLTransTemplate.owned_expression_reference_member(self, tree)
-
-    @v_args(tree=True)
-    def owned_expression_reference(self, tree: Tree):
-        if 'owned_expression_reference' not in self._rules_set:
-            self._rules_set.add('owned_expression_reference')
-            self.rules.append('owned_expression_reference')
-        return KerMLTransTemplate.owned_expression_reference(self, tree)
-
-    @v_args(tree=True)
-    def owned_expression_member(self, tree: Tree):
-        if 'owned_expression_member' not in self._rules_set:
-            self._rules_set.add('owned_expression_member')
-            self.rules.append('owned_expression_member')
-        return KerMLTransTemplate.owned_expression_member(self, tree)
-
-    @v_args(tree=True)
-    def owned_expression(self, tree: Tree):
-        if 'owned_expression' not in self._rules_set:
-            self._rules_set.add('owned_expression')
-            self.rules.append('owned_expression')
-        return KerMLTransTemplate.owned_expression(self, tree)
-
-    @v_args(tree=True)
     def conditional_expression(self, tree: Tree):
         if 'conditional_expression' not in self._rules_set:
             self._rules_set.add('conditional_expression')
@@ -976,76 +829,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.metaclassification_expression(self, tree)
 
     @v_args(tree=True)
-    def argument_member(self, tree: Tree):
-        if 'argument_member' not in self._rules_set:
-            self._rules_set.add('argument_member')
-            self.rules.append('argument_member')
-        return KerMLTransTemplate.argument_member(self, tree)
-
-    @v_args(tree=True)
-    def argument(self, tree: Tree):
-        if 'argument' not in self._rules_set:
-            self._rules_set.add('argument')
-            self.rules.append('argument')
-        return KerMLTransTemplate.argument(self, tree)
-
-    @v_args(tree=True)
-    def argument_value(self, tree: Tree):
-        if 'argument_value' not in self._rules_set:
-            self._rules_set.add('argument_value')
-            self.rules.append('argument_value')
-        return KerMLTransTemplate.argument_value(self, tree)
-
-    @v_args(tree=True)
-    def argument_expression_member(self, tree: Tree):
-        if 'argument_expression_member' not in self._rules_set:
-            self._rules_set.add('argument_expression_member')
-            self.rules.append('argument_expression_member')
-        return KerMLTransTemplate.argument_expression_member(self, tree)
-
-    @v_args(tree=True)
-    def argument_expression(self, tree: Tree):
-        if 'argument_expression' not in self._rules_set:
-            self._rules_set.add('argument_expression')
-            self.rules.append('argument_expression')
-        return KerMLTransTemplate.argument_expression(self, tree)
-
-    @v_args(tree=True)
-    def argument_expression_value(self, tree: Tree):
-        if 'argument_expression_value' not in self._rules_set:
-            self._rules_set.add('argument_expression_value')
-            self.rules.append('argument_expression_value')
-        return KerMLTransTemplate.argument_expression_value(self, tree)
-
-    @v_args(tree=True)
-    def metadata_argument_member(self, tree: Tree):
-        if 'metadata_argument_member' not in self._rules_set:
-            self._rules_set.add('metadata_argument_member')
-            self.rules.append('metadata_argument_member')
-        return KerMLTransTemplate.metadata_argument_member(self, tree)
-
-    @v_args(tree=True)
-    def metadata_argument(self, tree: Tree):
-        if 'metadata_argument' not in self._rules_set:
-            self._rules_set.add('metadata_argument')
-            self.rules.append('metadata_argument')
-        return KerMLTransTemplate.metadata_argument(self, tree)
-
-    @v_args(tree=True)
-    def metadata_value(self, tree: Tree):
-        if 'metadata_value' not in self._rules_set:
-            self._rules_set.add('metadata_value')
-            self.rules.append('metadata_value')
-        return KerMLTransTemplate.metadata_value(self, tree)
-
-    @v_args(tree=True)
-    def metadata_reference(self, tree: Tree):
-        if 'metadata_reference' not in self._rules_set:
-            self._rules_set.add('metadata_reference')
-            self.rules.append('metadata_reference')
-        return KerMLTransTemplate.metadata_reference(self, tree)
-
-    @v_args(tree=True)
     def meta_classification_test_operator(self, tree: Tree):
         if 'meta_classification_test_operator' not in self._rules_set:
             self._rules_set.add('meta_classification_test_operator')
@@ -1065,90 +848,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
             self._rules_set.add('extent_expression')
             self.rules.append('extent_expression')
         return KerMLTransTemplate.extent_expression(self, tree)
-
-    @v_args(tree=True)
-    def type_reference_member(self, tree: Tree):
-        if 'type_reference_member' not in self._rules_set:
-            self._rules_set.add('type_reference_member')
-            self.rules.append('type_reference_member')
-        return KerMLTransTemplate.type_reference_member(self, tree)
-
-    @v_args(tree=True)
-    def type_result_member(self, tree: Tree):
-        if 'type_result_member' not in self._rules_set:
-            self._rules_set.add('type_result_member')
-            self.rules.append('type_result_member')
-        return KerMLTransTemplate.type_result_member(self, tree)
-
-    @v_args(tree=True)
-    def type_reference(self, tree: Tree):
-        if 'type_reference' not in self._rules_set:
-            self._rules_set.add('type_reference')
-            self.rules.append('type_reference')
-        return KerMLTransTemplate.type_reference(self, tree)
-
-    @v_args(tree=True)
-    def reference_typing(self, tree: Tree):
-        if 'reference_typing' not in self._rules_set:
-            self._rules_set.add('reference_typing')
-            self.rules.append('reference_typing')
-        return KerMLTransTemplate.reference_typing(self, tree)
-
-    @v_args(tree=True)
-    def primary_expression(self, tree: Tree):
-        if 'primary_expression' not in self._rules_set:
-            self._rules_set.add('primary_expression')
-            self.rules.append('primary_expression')
-        return KerMLTransTemplate.primary_expression(self, tree)
-
-    @v_args(tree=True)
-    def primary_argument_value(self, tree: Tree):
-        if 'primary_argument_value' not in self._rules_set:
-            self._rules_set.add('primary_argument_value')
-            self.rules.append('primary_argument_value')
-        return KerMLTransTemplate.primary_argument_value(self, tree)
-
-    @v_args(tree=True)
-    def primary_argument(self, tree: Tree):
-        if 'primary_argument' not in self._rules_set:
-            self._rules_set.add('primary_argument')
-            self.rules.append('primary_argument')
-        return KerMLTransTemplate.primary_argument(self, tree)
-
-    @v_args(tree=True)
-    def primary_argument_member(self, tree: Tree):
-        if 'primary_argument_member' not in self._rules_set:
-            self._rules_set.add('primary_argument_member')
-            self.rules.append('primary_argument_member')
-        return KerMLTransTemplate.primary_argument_member(self, tree)
-
-    @v_args(tree=True)
-    def non_feature_chain_primary_expression(self, tree: Tree):
-        if 'non_feature_chain_primary_expression' not in self._rules_set:
-            self._rules_set.add('non_feature_chain_primary_expression')
-            self.rules.append('non_feature_chain_primary_expression')
-        return KerMLTransTemplate.non_feature_chain_primary_expression(self, tree)
-
-    @v_args(tree=True)
-    def non_feature_chain_primary_argument_value(self, tree: Tree):
-        if 'non_feature_chain_primary_argument_value' not in self._rules_set:
-            self._rules_set.add('non_feature_chain_primary_argument_value')
-            self.rules.append('non_feature_chain_primary_argument_value')
-        return KerMLTransTemplate.non_feature_chain_primary_argument_value(self, tree)
-
-    @v_args(tree=True)
-    def non_feature_chain_primary_argument(self, tree: Tree):
-        if 'non_feature_chain_primary_argument' not in self._rules_set:
-            self._rules_set.add('non_feature_chain_primary_argument')
-            self.rules.append('non_feature_chain_primary_argument')
-        return KerMLTransTemplate.non_feature_chain_primary_argument(self, tree)
-
-    @v_args(tree=True)
-    def non_feature_chain_primary_argument_member(self, tree: Tree):
-        if 'non_feature_chain_primary_argument_member' not in self._rules_set:
-            self._rules_set.add('non_feature_chain_primary_argument_member')
-            self.rules.append('non_feature_chain_primary_argument_member')
-        return KerMLTransTemplate.non_feature_chain_primary_argument_member(self, tree)
 
     @v_args(tree=True)
     def bracket_expression(self, tree: Tree):
@@ -1291,20 +990,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.feature_chain_member(self, tree)
 
     @v_args(tree=True)
-    def owned_feature_chain_member(self, tree: Tree):
-        if 'owned_feature_chain_member' not in self._rules_set:
-            self._rules_set.add('owned_feature_chain_member')
-            self.rules.append('owned_feature_chain_member')
-        return KerMLTransTemplate.owned_feature_chain_member(self, tree)
-
-    @v_args(tree=True)
-    def base_expression(self, tree: Tree):
-        if 'base_expression' not in self._rules_set:
-            self._rules_set.add('base_expression')
-            self.rules.append('base_expression')
-        return KerMLTransTemplate.base_expression(self, tree)
-
-    @v_args(tree=True)
     def null_expression(self, tree: Tree):
         if 'null_expression' not in self._rules_set:
             self._rules_set.add('null_expression')
@@ -1347,25 +1032,11 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.named_argument_list(self, tree)
 
     @v_args(tree=True)
-    def named_argument_member(self, tree: Tree):
-        if 'named_argument_member' not in self._rules_set:
-            self._rules_set.add('named_argument_member')
-            self.rules.append('named_argument_member')
-        return KerMLTransTemplate.named_argument_member(self, tree)
-
-    @v_args(tree=True)
     def named_argument(self, tree: Tree):
         if 'named_argument' not in self._rules_set:
             self._rules_set.add('named_argument')
             self.rules.append('named_argument')
         return KerMLTransTemplate.named_argument(self, tree)
-
-    @v_args(tree=True)
-    def parameter_redefinition(self, tree: Tree):
-        if 'parameter_redefinition' not in self._rules_set:
-            self._rules_set.add('parameter_redefinition')
-            self.rules.append('parameter_redefinition')
-        return KerMLTransTemplate.parameter_redefinition(self, tree)
 
     @v_args(tree=True)
     def body_expression(self, tree: Tree):
@@ -1387,13 +1058,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
             self._rules_set.add('expression_body')
             self.rules.append('expression_body')
         return KerMLTransTemplate.expression_body(self, tree)
-
-    @v_args(tree=True)
-    def literal_expression(self, tree: Tree):
-        if 'literal_expression' not in self._rules_set:
-            self._rules_set.add('literal_expression')
-            self.rules.append('literal_expression')
-        return KerMLTransTemplate.literal_expression(self, tree)
 
     @v_args(tree=True)
     def literal_boolean(self, tree: Tree):
@@ -1548,20 +1212,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
             self._rules_set.add('multiplicity_range')
             self.rules.append('multiplicity_range')
         return KerMLTransTemplate.multiplicity_range(self, tree)
-
-    @v_args(tree=True)
-    def owned_multiplicity(self, tree: Tree):
-        if 'owned_multiplicity' not in self._rules_set:
-            self._rules_set.add('owned_multiplicity')
-            self.rules.append('owned_multiplicity')
-        return KerMLTransTemplate.owned_multiplicity(self, tree)
-
-    @v_args(tree=True)
-    def owned_multiplicity_range(self, tree: Tree):
-        if 'owned_multiplicity_range' not in self._rules_set:
-            self._rules_set.add('owned_multiplicity_range')
-            self.rules.append('owned_multiplicity_range')
-        return KerMLTransTemplate.owned_multiplicity_range(self, tree)
 
     @v_args(tree=True)
     def multiplicity_bounds(self, tree: Tree):

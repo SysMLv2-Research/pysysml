@@ -8,6 +8,10 @@ class IntValue:
     raw: str
 
     @property
+    def repr(self):
+        return self.raw
+
+    @property
     def value(self) -> int:
         return int(self.raw.lstrip('0') or '0')
 
@@ -15,6 +19,10 @@ class IntValue:
 @dataclass
 class RealValue:
     raw: str
+
+    @property
+    def repr(self):
+        return self.raw
 
     @property
     def value(self) -> float:
@@ -26,6 +34,10 @@ class BoolValue:
     raw: str
 
     @property
+    def repr(self):
+        return self.raw
+
+    @property
     def value(self) -> bool:
         return self.raw.lower() == 'true'
 
@@ -35,12 +47,21 @@ class StringValue:
     raw: str
 
     @property
+    def repr(self):
+        return self.raw
+
+    @property
     def value(self) -> str:
         return json.loads(self.raw)
 
 
 @dataclass
 class InfValue:
+
+    @property
+    def repr(self):
+        return '*'
+
     @property
     def value(self) -> float:
         return math.inf

@@ -19,19 +19,11 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def owned_related_element(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def dependency(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
     def annotation(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_annotation(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
@@ -187,31 +179,11 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def owned_specialization(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def specific_type(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def general_type(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def conjugation(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
-    def owned_conjugation(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def disjoining(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_disjoining(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
@@ -235,10 +207,6 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def owned_feature_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def classifier(self, tree: Tree):
         return tree
 
@@ -252,10 +220,6 @@ class KerMLTransTemplate(Transformer):
 
     @v_args(tree=True)
     def subclassification(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_subclassification(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
@@ -339,19 +303,7 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def owned_feature_typing(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def subsetting(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_subsetting(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_reference_subsetting(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
@@ -359,19 +311,7 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def owned_redefinition(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_feature_chain(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def feature_chain(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_feature_chaining(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
@@ -379,15 +319,7 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def owned_feature_inverting(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def type_featuring(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_type_featuring(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
@@ -495,22 +427,6 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def owned_expression_reference_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_expression_reference(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_expression_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_expression(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def conditional_expression(self, tree: Tree):
         return tree
 
@@ -555,46 +471,6 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def argument_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def argument(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def argument_value(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def argument_expression_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def argument_expression(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def argument_expression_value(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def metadata_argument_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def metadata_argument(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def metadata_value(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def metadata_reference(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def meta_classification_test_operator(self, tree: Tree):
         return tree
 
@@ -604,54 +480,6 @@ class KerMLTransTemplate(Transformer):
 
     @v_args(tree=True)
     def extent_expression(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def type_reference_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def type_result_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def type_reference(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def reference_typing(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def primary_expression(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def primary_argument_value(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def primary_argument(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def primary_argument_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def non_feature_chain_primary_expression(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def non_feature_chain_primary_argument_value(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def non_feature_chain_primary_argument(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def non_feature_chain_primary_argument_member(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
@@ -735,14 +563,6 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def owned_feature_chain_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def base_expression(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def null_expression(self, tree: Tree):
         return tree
 
@@ -767,15 +587,7 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def named_argument_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def named_argument(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def parameter_redefinition(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
@@ -788,10 +600,6 @@ class KerMLTransTemplate(Transformer):
 
     @v_args(tree=True)
     def expression_body(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def literal_expression(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
@@ -880,14 +688,6 @@ class KerMLTransTemplate(Transformer):
 
     @v_args(tree=True)
     def multiplicity_range(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_multiplicity(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def owned_multiplicity_range(self, tree: Tree):
         return tree
 
     @v_args(tree=True)

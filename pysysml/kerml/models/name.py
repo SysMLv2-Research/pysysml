@@ -28,3 +28,12 @@ class QualifiedName:
     @property
     def repr(self):
         return '::'.join(map(name_safe_repr, self.names))
+
+    def _value(self):
+        return tuple(self.names)
+
+    def __hash__(self):
+        return hash(self._value())
+
+    def __eq__(self, other):
+        return isinstance(other, QualifiedName) and self._value() == other._value()
