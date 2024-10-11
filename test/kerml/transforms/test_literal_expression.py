@@ -1,30 +1,14 @@
 import math
 
 import pytest
-from lark import Lark, UnexpectedCharacters
+from lark import UnexpectedCharacters
 
-from pysysml.kerml import __grammar_file__
 from pysysml.kerml.models import BoolValue, IntValue, RealValue, StringValue, InfValue
-from pysysml.kerml.transforms import tree_to_cst, KerMLTransRecorder
-
-
-def _parser_for_rule(rule_name):
-    lark = Lark.open(
-        grammar_filename=__grammar_file__,
-        start=[rule_name],
-    )
-
-    def _parse(x):
-        tree = lark.parse(x, start=rule_name)
-        recorder = KerMLTransRecorder()
-        recorder.transform(tree)
-        return tree_to_cst(tree), recorder.rules
-
-    return _parse
+from .base import _parser_for_rule
 
 
 @pytest.mark.unittest
-class TestKerMLTransformsLiteral:
+class TestKerMLTransformsLiteralExpression:
     @pytest.mark.parametrize(['text', 'expected'], [
         ('true', True),
         ('false', False),

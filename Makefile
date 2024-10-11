@@ -17,7 +17,7 @@ RANGE_DIR      ?= .
 RANGE_TEST_DIR := ${TEST_DIR}/${RANGE_DIR}
 RANGE_SRC_DIR  := ${SRC_DIR}/${RANGE_DIR}
 
-GAMES ?= arknights fgo genshin girlsfrontline azurlane
+UMODE ?= unittest
 
 COV_TYPES ?= xml term-missing
 
@@ -34,7 +34,7 @@ test: unittest
 unittest:
 	UNITTEST=1 \
 		pytest "${RANGE_TEST_DIR}" \
-		-sv -m unittest \
+		-sv -m "${UMODE}" \
 		$(shell for type in ${COV_TYPES}; do echo "--cov-report=$$type"; done) \
 		--cov="${RANGE_SRC_DIR}" \
 		$(if ${MIN_COVERAGE},--cov-fail-under=${MIN_COVERAGE},) \

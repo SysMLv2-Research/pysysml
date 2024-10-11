@@ -2,7 +2,7 @@ from lark import v_args, Tree, Token, GrammarError
 
 from .template import KerMLTransTemplate
 from ..base import is_reserved_word
-from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue
+from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, NullValue
 
 
 # noinspection PyPep8Naming
@@ -40,6 +40,10 @@ class KerMLTransformer(KerMLTransTemplate):
     @v_args(tree=True)
     def literal_infinity(self, tree: Tree):
         return InfValue()
+
+    @v_args(tree=True)
+    def null_expression(self, tree: Tree):
+        return NullValue()
 
 
 def tree_to_cst(tree: Tree):
