@@ -35,8 +35,27 @@ class TestKerMLTransformsRoot:
                 /* sgd */
                 """,
                 Comment(identification=None, about_list=None, locale=None, comment='/* sgd */')
-        )
-
+        ),
+        ('comment Comment1 about A, B\n/* This is the comment body text. */',
+         Comment(identification=Identification(short_name=None, name='Comment1'),
+                 about_list=[QualifiedName(names=['A']), QualifiedName(names=['B'])], locale=None,
+                 comment='/* This is the comment body text. */')),
+        ('comment C /* This is a comment about N. */',
+         Comment(identification=Identification(short_name=None, name='C'), about_list=None, locale=None,
+                 comment='/* This is a comment about N. */')),
+        ('/* This is also a comment about N. */',
+         Comment(identification=None, about_list=None, locale=None, comment='/* This is also a comment about N. */')),
+        ('comment C_US_English locale "en_US"\n/* This is US English comment text */',
+         Comment(identification=Identification(short_name=None, name='C_US_English'), about_list=None, locale='en_US',
+                 comment='/* This is US English comment text */')),
+        ('/*\n'
+         '* This is an example of multiline\n'
+         '* comment text with typical formatting\n'
+         '* for readable display in a text editor.\n'
+         '*/',
+         Comment(identification=None, about_list=None, locale=None,
+                 comment='/*\n* This is an example of multiline\n* comment text with typical formatting\n'
+                         '* for readable display in a text editor.\n*/')),
     ])
     def test_comment(self, text, expected):
         parser = _parser_for_rule('comment')
@@ -65,6 +84,15 @@ class TestKerMLTransformsRoot:
          Documentation(identification=Identification(short_name='fn', name=None), locale=None, comment='/* kdfg */')),
         ('doc   /* kdfg */',
          Documentation(identification=Identification(short_name=None, name=None), locale=None, comment='/* kdfg */')),
+        ('doc X_Comment\n/* This is a documentation comment about X. */',
+         Documentation(identification=Identification(short_name=None, name='X_Comment'), locale=None,
+                       comment='/* This is a documentation comment about X. */')),
+        ('doc /* This is more documentation about X. */',
+         Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                       comment='/* This is more documentation about X. */')),
+        ('doc P_Comment /* This is a documentation comment about P. */',
+         Documentation(identification=Identification(short_name=None, name='P_Comment'), locale=None,
+                       comment='/* This is a documentation comment about P. */')),
     ])
     def test_documentation(self, text, expected):
         parser = _parser_for_rule('documentation')
