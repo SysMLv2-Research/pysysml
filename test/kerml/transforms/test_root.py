@@ -1,7 +1,7 @@
 import pytest
 
 from pysysml.kerml.models import Comment, Identification, QualifiedName, Documentation, Dependency, \
-    PrefixMetadataAnnotation, RelationshipBody, FeatureChain
+    PrefixMetadataAnnotation, RelationshipBody, FeatureChain, TextualRepresentation
 from .base import _parser_for_rule
 
 
@@ -141,3 +141,22 @@ class TestKerMLTransformsRoot:
             v, rules = parser(text)
             assert v == expected
             assert 'dependency' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('rep inOCL language "ocl"\n/* self.x > 0.0 */',
+         TextualRepresentation(identification=Identification(short_name=None, name='inOCL'), language='"ocl"',
+                               comment='/* self.x > 0.0 */')),
+        ('language "alf"\n/* c.x = newX;\n* WriteLine("Set new x");\n*/',
+         TextualRepresentation(identification=None, language='"alf"',
+                               comment='/* c.x = newX;\n* WriteLine("Set new x");\n*/')),
+    ])
+    @pytest.mark.focus
+    def test_textual_representation(self, text, expected):
+        parser = _parser_for_rule('textual_representation')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'textual_representation' in rules

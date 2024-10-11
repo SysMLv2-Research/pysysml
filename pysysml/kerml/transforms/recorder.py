@@ -94,6 +94,13 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.textual_representation(self, tree)
 
     @v_args(tree=True)
+    def textual_representation_rep(self, tree: Tree):
+        if 'textual_representation_rep' not in self._rules_set:
+            self._rules_set.add('textual_representation_rep')
+            self.rules.append('textual_representation_rep')
+        return KerMLTransTemplate.textual_representation_rep(self, tree)
+
+    @v_args(tree=True)
     def root_namespace(self, tree: Tree):
         if 'root_namespace' not in self._rules_set:
             self._rules_set.add('root_namespace')

@@ -30,5 +30,12 @@ class Documentation:
 
 
 @dataclass
+class TextualRepresentation:
+    identification: Optional[Identification]
+    language: str
+    comment: str
+
+
+@dataclass
 class RelationshipBody:
     elements: List[Any]

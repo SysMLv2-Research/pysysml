@@ -51,6 +51,10 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def textual_representation_rep(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def root_namespace(self, tree: Tree):
         return tree
 
