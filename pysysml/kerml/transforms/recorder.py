@@ -1,9 +1,11 @@
-from lark import Transformer, v_args, Tree
+from lark import v_args, Tree
+
+from .template import KerMLTransTemplate
 
 
-class KerMLTransRecorder(Transformer):
-    def __init__(self):
-        Transformer.__init__(self)
+class KerMLTransRecorder(KerMLTransTemplate):
+    def __init__(self, visit_tokens: bool = True):
+        KerMLTransTemplate.__init__(self, visit_tokens=visit_tokens)
         self._rules_set = set()
         self.rules = []
 
@@ -12,1692 +14,1692 @@ class KerMLTransRecorder(Transformer):
         if 'start' not in self._rules_set:
             self._rules_set.add('start')
             self.rules.append('start')
-        return tree
+        return KerMLTransTemplate.start(self, tree)
 
     @v_args(tree=True)
     def identification(self, tree: Tree):
         if 'identification' not in self._rules_set:
             self._rules_set.add('identification')
             self.rules.append('identification')
-        return tree
+        return KerMLTransTemplate.identification(self, tree)
 
     @v_args(tree=True)
     def relationship_body(self, tree: Tree):
         if 'relationship_body' not in self._rules_set:
             self._rules_set.add('relationship_body')
             self.rules.append('relationship_body')
-        return tree
+        return KerMLTransTemplate.relationship_body(self, tree)
 
     @v_args(tree=True)
     def relationship_owned_element(self, tree: Tree):
         if 'relationship_owned_element' not in self._rules_set:
             self._rules_set.add('relationship_owned_element')
             self.rules.append('relationship_owned_element')
-        return tree
+        return KerMLTransTemplate.relationship_owned_element(self, tree)
 
     @v_args(tree=True)
     def owned_related_element(self, tree: Tree):
         if 'owned_related_element' not in self._rules_set:
             self._rules_set.add('owned_related_element')
             self.rules.append('owned_related_element')
-        return tree
+        return KerMLTransTemplate.owned_related_element(self, tree)
 
     @v_args(tree=True)
     def dependency(self, tree: Tree):
         if 'dependency' not in self._rules_set:
             self._rules_set.add('dependency')
             self.rules.append('dependency')
-        return tree
+        return KerMLTransTemplate.dependency(self, tree)
 
     @v_args(tree=True)
     def annotation(self, tree: Tree):
         if 'annotation' not in self._rules_set:
             self._rules_set.add('annotation')
             self.rules.append('annotation')
-        return tree
+        return KerMLTransTemplate.annotation(self, tree)
 
     @v_args(tree=True)
     def owned_annotation(self, tree: Tree):
         if 'owned_annotation' not in self._rules_set:
             self._rules_set.add('owned_annotation')
             self.rules.append('owned_annotation')
-        return tree
+        return KerMLTransTemplate.owned_annotation(self, tree)
 
     @v_args(tree=True)
     def annotating_element(self, tree: Tree):
         if 'annotating_element' not in self._rules_set:
             self._rules_set.add('annotating_element')
             self.rules.append('annotating_element')
-        return tree
+        return KerMLTransTemplate.annotating_element(self, tree)
 
     @v_args(tree=True)
     def comment(self, tree: Tree):
         if 'comment' not in self._rules_set:
             self._rules_set.add('comment')
             self.rules.append('comment')
-        return tree
+        return KerMLTransTemplate.comment(self, tree)
 
     @v_args(tree=True)
     def documentation(self, tree: Tree):
         if 'documentation' not in self._rules_set:
             self._rules_set.add('documentation')
             self.rules.append('documentation')
-        return tree
+        return KerMLTransTemplate.documentation(self, tree)
 
     @v_args(tree=True)
     def textual_representation(self, tree: Tree):
         if 'textual_representation' not in self._rules_set:
             self._rules_set.add('textual_representation')
             self.rules.append('textual_representation')
-        return tree
+        return KerMLTransTemplate.textual_representation(self, tree)
 
     @v_args(tree=True)
     def root_namespace(self, tree: Tree):
         if 'root_namespace' not in self._rules_set:
             self._rules_set.add('root_namespace')
             self.rules.append('root_namespace')
-        return tree
+        return KerMLTransTemplate.root_namespace(self, tree)
 
     @v_args(tree=True)
     def namespace(self, tree: Tree):
         if 'namespace' not in self._rules_set:
             self._rules_set.add('namespace')
             self.rules.append('namespace')
-        return tree
+        return KerMLTransTemplate.namespace(self, tree)
 
     @v_args(tree=True)
     def namespace_declaration(self, tree: Tree):
         if 'namespace_declaration' not in self._rules_set:
             self._rules_set.add('namespace_declaration')
             self.rules.append('namespace_declaration')
-        return tree
+        return KerMLTransTemplate.namespace_declaration(self, tree)
 
     @v_args(tree=True)
     def namespace_body(self, tree: Tree):
         if 'namespace_body' not in self._rules_set:
             self._rules_set.add('namespace_body')
             self.rules.append('namespace_body')
-        return tree
+        return KerMLTransTemplate.namespace_body(self, tree)
 
     @v_args(tree=True)
     def namespace_body_element(self, tree: Tree):
         if 'namespace_body_element' not in self._rules_set:
             self._rules_set.add('namespace_body_element')
             self.rules.append('namespace_body_element')
-        return tree
+        return KerMLTransTemplate.namespace_body_element(self, tree)
 
     @v_args(tree=True)
     def member_prefix(self, tree: Tree):
         if 'member_prefix' not in self._rules_set:
             self._rules_set.add('member_prefix')
             self.rules.append('member_prefix')
-        return tree
+        return KerMLTransTemplate.member_prefix(self, tree)
 
     @v_args(tree=True)
     def visibility_indicator(self, tree: Tree):
         if 'visibility_indicator' not in self._rules_set:
             self._rules_set.add('visibility_indicator')
             self.rules.append('visibility_indicator')
-        return tree
+        return KerMLTransTemplate.visibility_indicator(self, tree)
 
     @v_args(tree=True)
     def namespace_member(self, tree: Tree):
         if 'namespace_member' not in self._rules_set:
             self._rules_set.add('namespace_member')
             self.rules.append('namespace_member')
-        return tree
+        return KerMLTransTemplate.namespace_member(self, tree)
 
     @v_args(tree=True)
     def non_feature_member(self, tree: Tree):
         if 'non_feature_member' not in self._rules_set:
             self._rules_set.add('non_feature_member')
             self.rules.append('non_feature_member')
-        return tree
+        return KerMLTransTemplate.non_feature_member(self, tree)
 
     @v_args(tree=True)
     def namespace_feature_member(self, tree: Tree):
         if 'namespace_feature_member' not in self._rules_set:
             self._rules_set.add('namespace_feature_member')
             self.rules.append('namespace_feature_member')
-        return tree
+        return KerMLTransTemplate.namespace_feature_member(self, tree)
 
     @v_args(tree=True)
     def alias_member(self, tree: Tree):
         if 'alias_member' not in self._rules_set:
             self._rules_set.add('alias_member')
             self.rules.append('alias_member')
-        return tree
+        return KerMLTransTemplate.alias_member(self, tree)
 
     @v_args(tree=True)
     def qualified_name(self, tree: Tree):
         if 'qualified_name' not in self._rules_set:
             self._rules_set.add('qualified_name')
             self.rules.append('qualified_name')
-        return tree
+        return KerMLTransTemplate.qualified_name(self, tree)
 
     @v_args(tree=True)
     def import_statement(self, tree: Tree):
         if 'import_statement' not in self._rules_set:
             self._rules_set.add('import_statement')
             self.rules.append('import_statement')
-        return tree
+        return KerMLTransTemplate.import_statement(self, tree)
 
     @v_args(tree=True)
     def import_declaration(self, tree: Tree):
         if 'import_declaration' not in self._rules_set:
             self._rules_set.add('import_declaration')
             self.rules.append('import_declaration')
-        return tree
+        return KerMLTransTemplate.import_declaration(self, tree)
 
     @v_args(tree=True)
     def membership_import(self, tree: Tree):
         if 'membership_import' not in self._rules_set:
             self._rules_set.add('membership_import')
             self.rules.append('membership_import')
-        return tree
+        return KerMLTransTemplate.membership_import(self, tree)
 
     @v_args(tree=True)
     def namespace_import(self, tree: Tree):
         if 'namespace_import' not in self._rules_set:
             self._rules_set.add('namespace_import')
             self.rules.append('namespace_import')
-        return tree
+        return KerMLTransTemplate.namespace_import(self, tree)
 
     @v_args(tree=True)
     def filter_package(self, tree: Tree):
         if 'filter_package' not in self._rules_set:
             self._rules_set.add('filter_package')
             self.rules.append('filter_package')
-        return tree
+        return KerMLTransTemplate.filter_package(self, tree)
 
     @v_args(tree=True)
     def filter_package_member(self, tree: Tree):
         if 'filter_package_member' not in self._rules_set:
             self._rules_set.add('filter_package_member')
             self.rules.append('filter_package_member')
-        return tree
+        return KerMLTransTemplate.filter_package_member(self, tree)
 
     @v_args(tree=True)
     def member_element(self, tree: Tree):
         if 'member_element' not in self._rules_set:
             self._rules_set.add('member_element')
             self.rules.append('member_element')
-        return tree
+        return KerMLTransTemplate.member_element(self, tree)
 
     @v_args(tree=True)
     def non_feature_element(self, tree: Tree):
         if 'non_feature_element' not in self._rules_set:
             self._rules_set.add('non_feature_element')
             self.rules.append('non_feature_element')
-        return tree
+        return KerMLTransTemplate.non_feature_element(self, tree)
 
     @v_args(tree=True)
     def feature_element(self, tree: Tree):
         if 'feature_element' not in self._rules_set:
             self._rules_set.add('feature_element')
             self.rules.append('feature_element')
-        return tree
+        return KerMLTransTemplate.feature_element(self, tree)
 
     @v_args(tree=True)
     def type(self, tree: Tree):
         if 'type' not in self._rules_set:
             self._rules_set.add('type')
             self.rules.append('type')
-        return tree
+        return KerMLTransTemplate.type(self, tree)
 
     @v_args(tree=True)
     def type_prefix(self, tree: Tree):
         if 'type_prefix' not in self._rules_set:
             self._rules_set.add('type_prefix')
             self.rules.append('type_prefix')
-        return tree
+        return KerMLTransTemplate.type_prefix(self, tree)
 
     @v_args(tree=True)
     def type_declaration(self, tree: Tree):
         if 'type_declaration' not in self._rules_set:
             self._rules_set.add('type_declaration')
             self.rules.append('type_declaration')
-        return tree
+        return KerMLTransTemplate.type_declaration(self, tree)
 
     @v_args(tree=True)
     def specialization_part(self, tree: Tree):
         if 'specialization_part' not in self._rules_set:
             self._rules_set.add('specialization_part')
             self.rules.append('specialization_part')
-        return tree
+        return KerMLTransTemplate.specialization_part(self, tree)
 
     @v_args(tree=True)
     def conjugation_part(self, tree: Tree):
         if 'conjugation_part' not in self._rules_set:
             self._rules_set.add('conjugation_part')
             self.rules.append('conjugation_part')
-        return tree
+        return KerMLTransTemplate.conjugation_part(self, tree)
 
     @v_args(tree=True)
     def type_relationship_part(self, tree: Tree):
         if 'type_relationship_part' not in self._rules_set:
             self._rules_set.add('type_relationship_part')
             self.rules.append('type_relationship_part')
-        return tree
+        return KerMLTransTemplate.type_relationship_part(self, tree)
 
     @v_args(tree=True)
     def disjoining_part(self, tree: Tree):
         if 'disjoining_part' not in self._rules_set:
             self._rules_set.add('disjoining_part')
             self.rules.append('disjoining_part')
-        return tree
+        return KerMLTransTemplate.disjoining_part(self, tree)
 
     @v_args(tree=True)
     def unioning_part(self, tree: Tree):
         if 'unioning_part' not in self._rules_set:
             self._rules_set.add('unioning_part')
             self.rules.append('unioning_part')
-        return tree
+        return KerMLTransTemplate.unioning_part(self, tree)
 
     @v_args(tree=True)
     def intersecting_part(self, tree: Tree):
         if 'intersecting_part' not in self._rules_set:
             self._rules_set.add('intersecting_part')
             self.rules.append('intersecting_part')
-        return tree
+        return KerMLTransTemplate.intersecting_part(self, tree)
 
     @v_args(tree=True)
     def differencing_part(self, tree: Tree):
         if 'differencing_part' not in self._rules_set:
             self._rules_set.add('differencing_part')
             self.rules.append('differencing_part')
-        return tree
+        return KerMLTransTemplate.differencing_part(self, tree)
 
     @v_args(tree=True)
     def type_body(self, tree: Tree):
         if 'type_body' not in self._rules_set:
             self._rules_set.add('type_body')
             self.rules.append('type_body')
-        return tree
+        return KerMLTransTemplate.type_body(self, tree)
 
     @v_args(tree=True)
     def type_body_element(self, tree: Tree):
         if 'type_body_element' not in self._rules_set:
             self._rules_set.add('type_body_element')
             self.rules.append('type_body_element')
-        return tree
+        return KerMLTransTemplate.type_body_element(self, tree)
 
     @v_args(tree=True)
     def specialization(self, tree: Tree):
         if 'specialization' not in self._rules_set:
             self._rules_set.add('specialization')
             self.rules.append('specialization')
-        return tree
+        return KerMLTransTemplate.specialization(self, tree)
 
     @v_args(tree=True)
     def owned_specialization(self, tree: Tree):
         if 'owned_specialization' not in self._rules_set:
             self._rules_set.add('owned_specialization')
             self.rules.append('owned_specialization')
-        return tree
+        return KerMLTransTemplate.owned_specialization(self, tree)
 
     @v_args(tree=True)
     def specific_type(self, tree: Tree):
         if 'specific_type' not in self._rules_set:
             self._rules_set.add('specific_type')
             self.rules.append('specific_type')
-        return tree
+        return KerMLTransTemplate.specific_type(self, tree)
 
     @v_args(tree=True)
     def general_type(self, tree: Tree):
         if 'general_type' not in self._rules_set:
             self._rules_set.add('general_type')
             self.rules.append('general_type')
-        return tree
+        return KerMLTransTemplate.general_type(self, tree)
 
     @v_args(tree=True)
     def conjugation(self, tree: Tree):
         if 'conjugation' not in self._rules_set:
             self._rules_set.add('conjugation')
             self.rules.append('conjugation')
-        return tree
+        return KerMLTransTemplate.conjugation(self, tree)
 
     @v_args(tree=True)
     def owned_conjugation(self, tree: Tree):
         if 'owned_conjugation' not in self._rules_set:
             self._rules_set.add('owned_conjugation')
             self.rules.append('owned_conjugation')
-        return tree
+        return KerMLTransTemplate.owned_conjugation(self, tree)
 
     @v_args(tree=True)
     def disjoining(self, tree: Tree):
         if 'disjoining' not in self._rules_set:
             self._rules_set.add('disjoining')
             self.rules.append('disjoining')
-        return tree
+        return KerMLTransTemplate.disjoining(self, tree)
 
     @v_args(tree=True)
     def owned_disjoining(self, tree: Tree):
         if 'owned_disjoining' not in self._rules_set:
             self._rules_set.add('owned_disjoining')
             self.rules.append('owned_disjoining')
-        return tree
+        return KerMLTransTemplate.owned_disjoining(self, tree)
 
     @v_args(tree=True)
     def unioning(self, tree: Tree):
         if 'unioning' not in self._rules_set:
             self._rules_set.add('unioning')
             self.rules.append('unioning')
-        return tree
+        return KerMLTransTemplate.unioning(self, tree)
 
     @v_args(tree=True)
     def intersecting(self, tree: Tree):
         if 'intersecting' not in self._rules_set:
             self._rules_set.add('intersecting')
             self.rules.append('intersecting')
-        return tree
+        return KerMLTransTemplate.intersecting(self, tree)
 
     @v_args(tree=True)
     def differencing(self, tree: Tree):
         if 'differencing' not in self._rules_set:
             self._rules_set.add('differencing')
             self.rules.append('differencing')
-        return tree
+        return KerMLTransTemplate.differencing(self, tree)
 
     @v_args(tree=True)
     def feature_member(self, tree: Tree):
         if 'feature_member' not in self._rules_set:
             self._rules_set.add('feature_member')
             self.rules.append('feature_member')
-        return tree
+        return KerMLTransTemplate.feature_member(self, tree)
 
     @v_args(tree=True)
     def type_feature_member(self, tree: Tree):
         if 'type_feature_member' not in self._rules_set:
             self._rules_set.add('type_feature_member')
             self.rules.append('type_feature_member')
-        return tree
+        return KerMLTransTemplate.type_feature_member(self, tree)
 
     @v_args(tree=True)
     def owned_feature_member(self, tree: Tree):
         if 'owned_feature_member' not in self._rules_set:
             self._rules_set.add('owned_feature_member')
             self.rules.append('owned_feature_member')
-        return tree
+        return KerMLTransTemplate.owned_feature_member(self, tree)
 
     @v_args(tree=True)
     def classifier(self, tree: Tree):
         if 'classifier' not in self._rules_set:
             self._rules_set.add('classifier')
             self.rules.append('classifier')
-        return tree
+        return KerMLTransTemplate.classifier(self, tree)
 
     @v_args(tree=True)
     def classifier_declaration(self, tree: Tree):
         if 'classifier_declaration' not in self._rules_set:
             self._rules_set.add('classifier_declaration')
             self.rules.append('classifier_declaration')
-        return tree
+        return KerMLTransTemplate.classifier_declaration(self, tree)
 
     @v_args(tree=True)
     def superclassing_part(self, tree: Tree):
         if 'superclassing_part' not in self._rules_set:
             self._rules_set.add('superclassing_part')
             self.rules.append('superclassing_part')
-        return tree
+        return KerMLTransTemplate.superclassing_part(self, tree)
 
     @v_args(tree=True)
     def subclassification(self, tree: Tree):
         if 'subclassification' not in self._rules_set:
             self._rules_set.add('subclassification')
             self.rules.append('subclassification')
-        return tree
+        return KerMLTransTemplate.subclassification(self, tree)
 
     @v_args(tree=True)
     def owned_subclassification(self, tree: Tree):
         if 'owned_subclassification' not in self._rules_set:
             self._rules_set.add('owned_subclassification')
             self.rules.append('owned_subclassification')
-        return tree
+        return KerMLTransTemplate.owned_subclassification(self, tree)
 
     @v_args(tree=True)
     def feature(self, tree: Tree):
         if 'feature' not in self._rules_set:
             self._rules_set.add('feature')
             self.rules.append('feature')
-        return tree
+        return KerMLTransTemplate.feature(self, tree)
 
     @v_args(tree=True)
     def feature_prefix(self, tree: Tree):
         if 'feature_prefix' not in self._rules_set:
             self._rules_set.add('feature_prefix')
             self.rules.append('feature_prefix')
-        return tree
+        return KerMLTransTemplate.feature_prefix(self, tree)
 
     @v_args(tree=True)
     def feature_direction(self, tree: Tree):
         if 'feature_direction' not in self._rules_set:
             self._rules_set.add('feature_direction')
             self.rules.append('feature_direction')
-        return tree
+        return KerMLTransTemplate.feature_direction(self, tree)
 
     @v_args(tree=True)
     def feature_declaration(self, tree: Tree):
         if 'feature_declaration' not in self._rules_set:
             self._rules_set.add('feature_declaration')
             self.rules.append('feature_declaration')
-        return tree
+        return KerMLTransTemplate.feature_declaration(self, tree)
 
     @v_args(tree=True)
     def feature_identification(self, tree: Tree):
         if 'feature_identification' not in self._rules_set:
             self._rules_set.add('feature_identification')
             self.rules.append('feature_identification')
-        return tree
+        return KerMLTransTemplate.feature_identification(self, tree)
 
     @v_args(tree=True)
     def feature_relationship_part(self, tree: Tree):
         if 'feature_relationship_part' not in self._rules_set:
             self._rules_set.add('feature_relationship_part')
             self.rules.append('feature_relationship_part')
-        return tree
+        return KerMLTransTemplate.feature_relationship_part(self, tree)
 
     @v_args(tree=True)
     def chaining_part(self, tree: Tree):
         if 'chaining_part' not in self._rules_set:
             self._rules_set.add('chaining_part')
             self.rules.append('chaining_part')
-        return tree
+        return KerMLTransTemplate.chaining_part(self, tree)
 
     @v_args(tree=True)
     def inverting_part(self, tree: Tree):
         if 'inverting_part' not in self._rules_set:
             self._rules_set.add('inverting_part')
             self.rules.append('inverting_part')
-        return tree
+        return KerMLTransTemplate.inverting_part(self, tree)
 
     @v_args(tree=True)
     def type_featuring_part(self, tree: Tree):
         if 'type_featuring_part' not in self._rules_set:
             self._rules_set.add('type_featuring_part')
             self.rules.append('type_featuring_part')
-        return tree
+        return KerMLTransTemplate.type_featuring_part(self, tree)
 
     @v_args(tree=True)
     def feature_specialization_part(self, tree: Tree):
         if 'feature_specialization_part' not in self._rules_set:
             self._rules_set.add('feature_specialization_part')
             self.rules.append('feature_specialization_part')
-        return tree
+        return KerMLTransTemplate.feature_specialization_part(self, tree)
 
     @v_args(tree=True)
     def multiplicity_part(self, tree: Tree):
         if 'multiplicity_part' not in self._rules_set:
             self._rules_set.add('multiplicity_part')
             self.rules.append('multiplicity_part')
-        return tree
+        return KerMLTransTemplate.multiplicity_part(self, tree)
 
     @v_args(tree=True)
     def feature_specialization(self, tree: Tree):
         if 'feature_specialization' not in self._rules_set:
             self._rules_set.add('feature_specialization')
             self.rules.append('feature_specialization')
-        return tree
+        return KerMLTransTemplate.feature_specialization(self, tree)
 
     @v_args(tree=True)
     def typings(self, tree: Tree):
         if 'typings' not in self._rules_set:
             self._rules_set.add('typings')
             self.rules.append('typings')
-        return tree
+        return KerMLTransTemplate.typings(self, tree)
 
     @v_args(tree=True)
     def typed_by(self, tree: Tree):
         if 'typed_by' not in self._rules_set:
             self._rules_set.add('typed_by')
             self.rules.append('typed_by')
-        return tree
+        return KerMLTransTemplate.typed_by(self, tree)
 
     @v_args(tree=True)
     def subsettings(self, tree: Tree):
         if 'subsettings' not in self._rules_set:
             self._rules_set.add('subsettings')
             self.rules.append('subsettings')
-        return tree
+        return KerMLTransTemplate.subsettings(self, tree)
 
     @v_args(tree=True)
     def subsets(self, tree: Tree):
         if 'subsets' not in self._rules_set:
             self._rules_set.add('subsets')
             self.rules.append('subsets')
-        return tree
+        return KerMLTransTemplate.subsets(self, tree)
 
     @v_args(tree=True)
     def references(self, tree: Tree):
         if 'references' not in self._rules_set:
             self._rules_set.add('references')
             self.rules.append('references')
-        return tree
+        return KerMLTransTemplate.references(self, tree)
 
     @v_args(tree=True)
     def redefinitions(self, tree: Tree):
         if 'redefinitions' not in self._rules_set:
             self._rules_set.add('redefinitions')
             self.rules.append('redefinitions')
-        return tree
+        return KerMLTransTemplate.redefinitions(self, tree)
 
     @v_args(tree=True)
     def redefines(self, tree: Tree):
         if 'redefines' not in self._rules_set:
             self._rules_set.add('redefines')
             self.rules.append('redefines')
-        return tree
+        return KerMLTransTemplate.redefines(self, tree)
 
     @v_args(tree=True)
     def feature_typing(self, tree: Tree):
         if 'feature_typing' not in self._rules_set:
             self._rules_set.add('feature_typing')
             self.rules.append('feature_typing')
-        return tree
+        return KerMLTransTemplate.feature_typing(self, tree)
 
     @v_args(tree=True)
     def owned_feature_typing(self, tree: Tree):
         if 'owned_feature_typing' not in self._rules_set:
             self._rules_set.add('owned_feature_typing')
             self.rules.append('owned_feature_typing')
-        return tree
+        return KerMLTransTemplate.owned_feature_typing(self, tree)
 
     @v_args(tree=True)
     def subsetting(self, tree: Tree):
         if 'subsetting' not in self._rules_set:
             self._rules_set.add('subsetting')
             self.rules.append('subsetting')
-        return tree
+        return KerMLTransTemplate.subsetting(self, tree)
 
     @v_args(tree=True)
     def owned_subsetting(self, tree: Tree):
         if 'owned_subsetting' not in self._rules_set:
             self._rules_set.add('owned_subsetting')
             self.rules.append('owned_subsetting')
-        return tree
+        return KerMLTransTemplate.owned_subsetting(self, tree)
 
     @v_args(tree=True)
     def owned_reference_subsetting(self, tree: Tree):
         if 'owned_reference_subsetting' not in self._rules_set:
             self._rules_set.add('owned_reference_subsetting')
             self.rules.append('owned_reference_subsetting')
-        return tree
+        return KerMLTransTemplate.owned_reference_subsetting(self, tree)
 
     @v_args(tree=True)
     def redefinition(self, tree: Tree):
         if 'redefinition' not in self._rules_set:
             self._rules_set.add('redefinition')
             self.rules.append('redefinition')
-        return tree
+        return KerMLTransTemplate.redefinition(self, tree)
 
     @v_args(tree=True)
     def owned_redefinition(self, tree: Tree):
         if 'owned_redefinition' not in self._rules_set:
             self._rules_set.add('owned_redefinition')
             self.rules.append('owned_redefinition')
-        return tree
+        return KerMLTransTemplate.owned_redefinition(self, tree)
 
     @v_args(tree=True)
     def owned_feature_chain(self, tree: Tree):
         if 'owned_feature_chain' not in self._rules_set:
             self._rules_set.add('owned_feature_chain')
             self.rules.append('owned_feature_chain')
-        return tree
+        return KerMLTransTemplate.owned_feature_chain(self, tree)
 
     @v_args(tree=True)
     def feature_chain(self, tree: Tree):
         if 'feature_chain' not in self._rules_set:
             self._rules_set.add('feature_chain')
             self.rules.append('feature_chain')
-        return tree
+        return KerMLTransTemplate.feature_chain(self, tree)
 
     @v_args(tree=True)
     def owned_feature_chaining(self, tree: Tree):
         if 'owned_feature_chaining' not in self._rules_set:
             self._rules_set.add('owned_feature_chaining')
             self.rules.append('owned_feature_chaining')
-        return tree
+        return KerMLTransTemplate.owned_feature_chaining(self, tree)
 
     @v_args(tree=True)
     def feature_inverting(self, tree: Tree):
         if 'feature_inverting' not in self._rules_set:
             self._rules_set.add('feature_inverting')
             self.rules.append('feature_inverting')
-        return tree
+        return KerMLTransTemplate.feature_inverting(self, tree)
 
     @v_args(tree=True)
     def owned_feature_inverting(self, tree: Tree):
         if 'owned_feature_inverting' not in self._rules_set:
             self._rules_set.add('owned_feature_inverting')
             self.rules.append('owned_feature_inverting')
-        return tree
+        return KerMLTransTemplate.owned_feature_inverting(self, tree)
 
     @v_args(tree=True)
     def type_featuring(self, tree: Tree):
         if 'type_featuring' not in self._rules_set:
             self._rules_set.add('type_featuring')
             self.rules.append('type_featuring')
-        return tree
+        return KerMLTransTemplate.type_featuring(self, tree)
 
     @v_args(tree=True)
     def owned_type_featuring(self, tree: Tree):
         if 'owned_type_featuring' not in self._rules_set:
             self._rules_set.add('owned_type_featuring')
             self.rules.append('owned_type_featuring')
-        return tree
+        return KerMLTransTemplate.owned_type_featuring(self, tree)
 
     @v_args(tree=True)
     def data_type(self, tree: Tree):
         if 'data_type' not in self._rules_set:
             self._rules_set.add('data_type')
             self.rules.append('data_type')
-        return tree
+        return KerMLTransTemplate.data_type(self, tree)
 
     @v_args(tree=True)
     def class_statement(self, tree: Tree):
         if 'class_statement' not in self._rules_set:
             self._rules_set.add('class_statement')
             self.rules.append('class_statement')
-        return tree
+        return KerMLTransTemplate.class_statement(self, tree)
 
     @v_args(tree=True)
     def structure(self, tree: Tree):
         if 'structure' not in self._rules_set:
             self._rules_set.add('structure')
             self.rules.append('structure')
-        return tree
+        return KerMLTransTemplate.structure(self, tree)
 
     @v_args(tree=True)
     def association(self, tree: Tree):
         if 'association' not in self._rules_set:
             self._rules_set.add('association')
             self.rules.append('association')
-        return tree
+        return KerMLTransTemplate.association(self, tree)
 
     @v_args(tree=True)
     def association_structure(self, tree: Tree):
         if 'association_structure' not in self._rules_set:
             self._rules_set.add('association_structure')
             self.rules.append('association_structure')
-        return tree
+        return KerMLTransTemplate.association_structure(self, tree)
 
     @v_args(tree=True)
     def connector(self, tree: Tree):
         if 'connector' not in self._rules_set:
             self._rules_set.add('connector')
             self.rules.append('connector')
-        return tree
+        return KerMLTransTemplate.connector(self, tree)
 
     @v_args(tree=True)
     def connector_declaration(self, tree: Tree):
         if 'connector_declaration' not in self._rules_set:
             self._rules_set.add('connector_declaration')
             self.rules.append('connector_declaration')
-        return tree
+        return KerMLTransTemplate.connector_declaration(self, tree)
 
     @v_args(tree=True)
     def binary_connector_declaration(self, tree: Tree):
         if 'binary_connector_declaration' not in self._rules_set:
             self._rules_set.add('binary_connector_declaration')
             self.rules.append('binary_connector_declaration')
-        return tree
+        return KerMLTransTemplate.binary_connector_declaration(self, tree)
 
     @v_args(tree=True)
     def nary_connector_declaration(self, tree: Tree):
         if 'nary_connector_declaration' not in self._rules_set:
             self._rules_set.add('nary_connector_declaration')
             self.rules.append('nary_connector_declaration')
-        return tree
+        return KerMLTransTemplate.nary_connector_declaration(self, tree)
 
     @v_args(tree=True)
     def connector_end_member(self, tree: Tree):
         if 'connector_end_member' not in self._rules_set:
             self._rules_set.add('connector_end_member')
             self.rules.append('connector_end_member')
-        return tree
+        return KerMLTransTemplate.connector_end_member(self, tree)
 
     @v_args(tree=True)
     def connector_end(self, tree: Tree):
         if 'connector_end' not in self._rules_set:
             self._rules_set.add('connector_end')
             self.rules.append('connector_end')
-        return tree
+        return KerMLTransTemplate.connector_end(self, tree)
 
     @v_args(tree=True)
     def binding_connector(self, tree: Tree):
         if 'binding_connector' not in self._rules_set:
             self._rules_set.add('binding_connector')
             self.rules.append('binding_connector')
-        return tree
+        return KerMLTransTemplate.binding_connector(self, tree)
 
     @v_args(tree=True)
     def binding_connector_declaration(self, tree: Tree):
         if 'binding_connector_declaration' not in self._rules_set:
             self._rules_set.add('binding_connector_declaration')
             self.rules.append('binding_connector_declaration')
-        return tree
+        return KerMLTransTemplate.binding_connector_declaration(self, tree)
 
     @v_args(tree=True)
     def succession(self, tree: Tree):
         if 'succession' not in self._rules_set:
             self._rules_set.add('succession')
             self.rules.append('succession')
-        return tree
+        return KerMLTransTemplate.succession(self, tree)
 
     @v_args(tree=True)
     def succession_declaration(self, tree: Tree):
         if 'succession_declaration' not in self._rules_set:
             self._rules_set.add('succession_declaration')
             self.rules.append('succession_declaration')
-        return tree
+        return KerMLTransTemplate.succession_declaration(self, tree)
 
     @v_args(tree=True)
     def behavior(self, tree: Tree):
         if 'behavior' not in self._rules_set:
             self._rules_set.add('behavior')
             self.rules.append('behavior')
-        return tree
+        return KerMLTransTemplate.behavior(self, tree)
 
     @v_args(tree=True)
     def step(self, tree: Tree):
         if 'step' not in self._rules_set:
             self._rules_set.add('step')
             self.rules.append('step')
-        return tree
+        return KerMLTransTemplate.step(self, tree)
 
     @v_args(tree=True)
     def function(self, tree: Tree):
         if 'function' not in self._rules_set:
             self._rules_set.add('function')
             self.rules.append('function')
-        return tree
+        return KerMLTransTemplate.function(self, tree)
 
     @v_args(tree=True)
     def function_body(self, tree: Tree):
         if 'function_body' not in self._rules_set:
             self._rules_set.add('function_body')
             self.rules.append('function_body')
-        return tree
+        return KerMLTransTemplate.function_body(self, tree)
 
     @v_args(tree=True)
     def function_body_part(self, tree: Tree):
         if 'function_body_part' not in self._rules_set:
             self._rules_set.add('function_body_part')
             self.rules.append('function_body_part')
-        return tree
+        return KerMLTransTemplate.function_body_part(self, tree)
 
     @v_args(tree=True)
     def return_feature_member(self, tree: Tree):
         if 'return_feature_member' not in self._rules_set:
             self._rules_set.add('return_feature_member')
             self.rules.append('return_feature_member')
-        return tree
+        return KerMLTransTemplate.return_feature_member(self, tree)
 
     @v_args(tree=True)
     def result_expression_member(self, tree: Tree):
         if 'result_expression_member' not in self._rules_set:
             self._rules_set.add('result_expression_member')
             self.rules.append('result_expression_member')
-        return tree
+        return KerMLTransTemplate.result_expression_member(self, tree)
 
     @v_args(tree=True)
     def expression(self, tree: Tree):
         if 'expression' not in self._rules_set:
             self._rules_set.add('expression')
             self.rules.append('expression')
-        return tree
+        return KerMLTransTemplate.expression(self, tree)
 
     @v_args(tree=True)
     def predicate(self, tree: Tree):
         if 'predicate' not in self._rules_set:
             self._rules_set.add('predicate')
             self.rules.append('predicate')
-        return tree
+        return KerMLTransTemplate.predicate(self, tree)
 
     @v_args(tree=True)
     def boolean_expression(self, tree: Tree):
         if 'boolean_expression' not in self._rules_set:
             self._rules_set.add('boolean_expression')
             self.rules.append('boolean_expression')
-        return tree
+        return KerMLTransTemplate.boolean_expression(self, tree)
 
     @v_args(tree=True)
     def invariant(self, tree: Tree):
         if 'invariant' not in self._rules_set:
             self._rules_set.add('invariant')
             self.rules.append('invariant')
-        return tree
+        return KerMLTransTemplate.invariant(self, tree)
 
     @v_args(tree=True)
     def owned_expression_reference_member(self, tree: Tree):
         if 'owned_expression_reference_member' not in self._rules_set:
             self._rules_set.add('owned_expression_reference_member')
             self.rules.append('owned_expression_reference_member')
-        return tree
+        return KerMLTransTemplate.owned_expression_reference_member(self, tree)
 
     @v_args(tree=True)
     def owned_expression_reference(self, tree: Tree):
         if 'owned_expression_reference' not in self._rules_set:
             self._rules_set.add('owned_expression_reference')
             self.rules.append('owned_expression_reference')
-        return tree
+        return KerMLTransTemplate.owned_expression_reference(self, tree)
 
     @v_args(tree=True)
     def owned_expression_member(self, tree: Tree):
         if 'owned_expression_member' not in self._rules_set:
             self._rules_set.add('owned_expression_member')
             self.rules.append('owned_expression_member')
-        return tree
+        return KerMLTransTemplate.owned_expression_member(self, tree)
 
     @v_args(tree=True)
     def owned_expression(self, tree: Tree):
         if 'owned_expression' not in self._rules_set:
             self._rules_set.add('owned_expression')
             self.rules.append('owned_expression')
-        return tree
+        return KerMLTransTemplate.owned_expression(self, tree)
 
     @v_args(tree=True)
     def conditional_expression(self, tree: Tree):
         if 'conditional_expression' not in self._rules_set:
             self._rules_set.add('conditional_expression')
             self.rules.append('conditional_expression')
-        return tree
+        return KerMLTransTemplate.conditional_expression(self, tree)
 
     @v_args(tree=True)
     def conditional_binary_operator_expression(self, tree: Tree):
         if 'conditional_binary_operator_expression' not in self._rules_set:
             self._rules_set.add('conditional_binary_operator_expression')
             self.rules.append('conditional_binary_operator_expression')
-        return tree
+        return KerMLTransTemplate.conditional_binary_operator_expression(self, tree)
 
     @v_args(tree=True)
     def conditional_binary_operator(self, tree: Tree):
         if 'conditional_binary_operator' not in self._rules_set:
             self._rules_set.add('conditional_binary_operator')
             self.rules.append('conditional_binary_operator')
-        return tree
+        return KerMLTransTemplate.conditional_binary_operator(self, tree)
 
     @v_args(tree=True)
     def binary_operator_expression(self, tree: Tree):
         if 'binary_operator_expression' not in self._rules_set:
             self._rules_set.add('binary_operator_expression')
             self.rules.append('binary_operator_expression')
-        return tree
+        return KerMLTransTemplate.binary_operator_expression(self, tree)
 
     @v_args(tree=True)
     def binary_operator(self, tree: Tree):
         if 'binary_operator' not in self._rules_set:
             self._rules_set.add('binary_operator')
             self.rules.append('binary_operator')
-        return tree
+        return KerMLTransTemplate.binary_operator(self, tree)
 
     @v_args(tree=True)
     def unary_operator_expression(self, tree: Tree):
         if 'unary_operator_expression' not in self._rules_set:
             self._rules_set.add('unary_operator_expression')
             self.rules.append('unary_operator_expression')
-        return tree
+        return KerMLTransTemplate.unary_operator_expression(self, tree)
 
     @v_args(tree=True)
     def unary_operator(self, tree: Tree):
         if 'unary_operator' not in self._rules_set:
             self._rules_set.add('unary_operator')
             self.rules.append('unary_operator')
-        return tree
+        return KerMLTransTemplate.unary_operator(self, tree)
 
     @v_args(tree=True)
     def classification_expression(self, tree: Tree):
         if 'classification_expression' not in self._rules_set:
             self._rules_set.add('classification_expression')
             self.rules.append('classification_expression')
-        return tree
+        return KerMLTransTemplate.classification_expression(self, tree)
 
     @v_args(tree=True)
     def classification_test_operator(self, tree: Tree):
         if 'classification_test_operator' not in self._rules_set:
             self._rules_set.add('classification_test_operator')
             self.rules.append('classification_test_operator')
-        return tree
+        return KerMLTransTemplate.classification_test_operator(self, tree)
 
     @v_args(tree=True)
     def cast_operator(self, tree: Tree):
         if 'cast_operator' not in self._rules_set:
             self._rules_set.add('cast_operator')
             self.rules.append('cast_operator')
-        return tree
+        return KerMLTransTemplate.cast_operator(self, tree)
 
     @v_args(tree=True)
     def metaclassification_expression(self, tree: Tree):
         if 'metaclassification_expression' not in self._rules_set:
             self._rules_set.add('metaclassification_expression')
             self.rules.append('metaclassification_expression')
-        return tree
+        return KerMLTransTemplate.metaclassification_expression(self, tree)
 
     @v_args(tree=True)
     def argument_member(self, tree: Tree):
         if 'argument_member' not in self._rules_set:
             self._rules_set.add('argument_member')
             self.rules.append('argument_member')
-        return tree
+        return KerMLTransTemplate.argument_member(self, tree)
 
     @v_args(tree=True)
     def argument(self, tree: Tree):
         if 'argument' not in self._rules_set:
             self._rules_set.add('argument')
             self.rules.append('argument')
-        return tree
+        return KerMLTransTemplate.argument(self, tree)
 
     @v_args(tree=True)
     def argument_value(self, tree: Tree):
         if 'argument_value' not in self._rules_set:
             self._rules_set.add('argument_value')
             self.rules.append('argument_value')
-        return tree
+        return KerMLTransTemplate.argument_value(self, tree)
 
     @v_args(tree=True)
     def argument_expression_member(self, tree: Tree):
         if 'argument_expression_member' not in self._rules_set:
             self._rules_set.add('argument_expression_member')
             self.rules.append('argument_expression_member')
-        return tree
+        return KerMLTransTemplate.argument_expression_member(self, tree)
 
     @v_args(tree=True)
     def argument_expression(self, tree: Tree):
         if 'argument_expression' not in self._rules_set:
             self._rules_set.add('argument_expression')
             self.rules.append('argument_expression')
-        return tree
+        return KerMLTransTemplate.argument_expression(self, tree)
 
     @v_args(tree=True)
     def argument_expression_value(self, tree: Tree):
         if 'argument_expression_value' not in self._rules_set:
             self._rules_set.add('argument_expression_value')
             self.rules.append('argument_expression_value')
-        return tree
+        return KerMLTransTemplate.argument_expression_value(self, tree)
 
     @v_args(tree=True)
     def metadata_argument_member(self, tree: Tree):
         if 'metadata_argument_member' not in self._rules_set:
             self._rules_set.add('metadata_argument_member')
             self.rules.append('metadata_argument_member')
-        return tree
+        return KerMLTransTemplate.metadata_argument_member(self, tree)
 
     @v_args(tree=True)
     def metadata_argument(self, tree: Tree):
         if 'metadata_argument' not in self._rules_set:
             self._rules_set.add('metadata_argument')
             self.rules.append('metadata_argument')
-        return tree
+        return KerMLTransTemplate.metadata_argument(self, tree)
 
     @v_args(tree=True)
     def metadata_value(self, tree: Tree):
         if 'metadata_value' not in self._rules_set:
             self._rules_set.add('metadata_value')
             self.rules.append('metadata_value')
-        return tree
+        return KerMLTransTemplate.metadata_value(self, tree)
 
     @v_args(tree=True)
     def metadata_reference(self, tree: Tree):
         if 'metadata_reference' not in self._rules_set:
             self._rules_set.add('metadata_reference')
             self.rules.append('metadata_reference')
-        return tree
+        return KerMLTransTemplate.metadata_reference(self, tree)
 
     @v_args(tree=True)
     def meta_classification_test_operator(self, tree: Tree):
         if 'meta_classification_test_operator' not in self._rules_set:
             self._rules_set.add('meta_classification_test_operator')
             self.rules.append('meta_classification_test_operator')
-        return tree
+        return KerMLTransTemplate.meta_classification_test_operator(self, tree)
 
     @v_args(tree=True)
     def meta_cast_operator(self, tree: Tree):
         if 'meta_cast_operator' not in self._rules_set:
             self._rules_set.add('meta_cast_operator')
             self.rules.append('meta_cast_operator')
-        return tree
+        return KerMLTransTemplate.meta_cast_operator(self, tree)
 
     @v_args(tree=True)
     def extent_expression(self, tree: Tree):
         if 'extent_expression' not in self._rules_set:
             self._rules_set.add('extent_expression')
             self.rules.append('extent_expression')
-        return tree
+        return KerMLTransTemplate.extent_expression(self, tree)
 
     @v_args(tree=True)
     def type_reference_member(self, tree: Tree):
         if 'type_reference_member' not in self._rules_set:
             self._rules_set.add('type_reference_member')
             self.rules.append('type_reference_member')
-        return tree
+        return KerMLTransTemplate.type_reference_member(self, tree)
 
     @v_args(tree=True)
     def type_result_member(self, tree: Tree):
         if 'type_result_member' not in self._rules_set:
             self._rules_set.add('type_result_member')
             self.rules.append('type_result_member')
-        return tree
+        return KerMLTransTemplate.type_result_member(self, tree)
 
     @v_args(tree=True)
     def type_reference(self, tree: Tree):
         if 'type_reference' not in self._rules_set:
             self._rules_set.add('type_reference')
             self.rules.append('type_reference')
-        return tree
+        return KerMLTransTemplate.type_reference(self, tree)
 
     @v_args(tree=True)
     def reference_typing(self, tree: Tree):
         if 'reference_typing' not in self._rules_set:
             self._rules_set.add('reference_typing')
             self.rules.append('reference_typing')
-        return tree
+        return KerMLTransTemplate.reference_typing(self, tree)
 
     @v_args(tree=True)
     def primary_expression(self, tree: Tree):
         if 'primary_expression' not in self._rules_set:
             self._rules_set.add('primary_expression')
             self.rules.append('primary_expression')
-        return tree
+        return KerMLTransTemplate.primary_expression(self, tree)
 
     @v_args(tree=True)
     def primary_argument_value(self, tree: Tree):
         if 'primary_argument_value' not in self._rules_set:
             self._rules_set.add('primary_argument_value')
             self.rules.append('primary_argument_value')
-        return tree
+        return KerMLTransTemplate.primary_argument_value(self, tree)
 
     @v_args(tree=True)
     def primary_argument(self, tree: Tree):
         if 'primary_argument' not in self._rules_set:
             self._rules_set.add('primary_argument')
             self.rules.append('primary_argument')
-        return tree
+        return KerMLTransTemplate.primary_argument(self, tree)
 
     @v_args(tree=True)
     def primary_argument_member(self, tree: Tree):
         if 'primary_argument_member' not in self._rules_set:
             self._rules_set.add('primary_argument_member')
             self.rules.append('primary_argument_member')
-        return tree
+        return KerMLTransTemplate.primary_argument_member(self, tree)
 
     @v_args(tree=True)
     def non_feature_chain_primary_expression(self, tree: Tree):
         if 'non_feature_chain_primary_expression' not in self._rules_set:
             self._rules_set.add('non_feature_chain_primary_expression')
             self.rules.append('non_feature_chain_primary_expression')
-        return tree
+        return KerMLTransTemplate.non_feature_chain_primary_expression(self, tree)
 
     @v_args(tree=True)
     def non_feature_chain_primary_argument_value(self, tree: Tree):
         if 'non_feature_chain_primary_argument_value' not in self._rules_set:
             self._rules_set.add('non_feature_chain_primary_argument_value')
             self.rules.append('non_feature_chain_primary_argument_value')
-        return tree
+        return KerMLTransTemplate.non_feature_chain_primary_argument_value(self, tree)
 
     @v_args(tree=True)
     def non_feature_chain_primary_argument(self, tree: Tree):
         if 'non_feature_chain_primary_argument' not in self._rules_set:
             self._rules_set.add('non_feature_chain_primary_argument')
             self.rules.append('non_feature_chain_primary_argument')
-        return tree
+        return KerMLTransTemplate.non_feature_chain_primary_argument(self, tree)
 
     @v_args(tree=True)
     def non_feature_chain_primary_argument_member(self, tree: Tree):
         if 'non_feature_chain_primary_argument_member' not in self._rules_set:
             self._rules_set.add('non_feature_chain_primary_argument_member')
             self.rules.append('non_feature_chain_primary_argument_member')
-        return tree
+        return KerMLTransTemplate.non_feature_chain_primary_argument_member(self, tree)
 
     @v_args(tree=True)
     def bracket_expression(self, tree: Tree):
         if 'bracket_expression' not in self._rules_set:
             self._rules_set.add('bracket_expression')
             self.rules.append('bracket_expression')
-        return tree
+        return KerMLTransTemplate.bracket_expression(self, tree)
 
     @v_args(tree=True)
     def index_expression(self, tree: Tree):
         if 'index_expression' not in self._rules_set:
             self._rules_set.add('index_expression')
             self.rules.append('index_expression')
-        return tree
+        return KerMLTransTemplate.index_expression(self, tree)
 
     @v_args(tree=True)
     def sequence_expression(self, tree: Tree):
         if 'sequence_expression' not in self._rules_set:
             self._rules_set.add('sequence_expression')
             self.rules.append('sequence_expression')
-        return tree
+        return KerMLTransTemplate.sequence_expression(self, tree)
 
     @v_args(tree=True)
     def sequence_expression_list(self, tree: Tree):
         if 'sequence_expression_list' not in self._rules_set:
             self._rules_set.add('sequence_expression_list')
             self.rules.append('sequence_expression_list')
-        return tree
+        return KerMLTransTemplate.sequence_expression_list(self, tree)
 
     @v_args(tree=True)
     def sequence_operator_expression(self, tree: Tree):
         if 'sequence_operator_expression' not in self._rules_set:
             self._rules_set.add('sequence_operator_expression')
             self.rules.append('sequence_operator_expression')
-        return tree
+        return KerMLTransTemplate.sequence_operator_expression(self, tree)
 
     @v_args(tree=True)
     def sequence_expression_list_member(self, tree: Tree):
         if 'sequence_expression_list_member' not in self._rules_set:
             self._rules_set.add('sequence_expression_list_member')
             self.rules.append('sequence_expression_list_member')
-        return tree
+        return KerMLTransTemplate.sequence_expression_list_member(self, tree)
 
     @v_args(tree=True)
     def feature_chain_expression(self, tree: Tree):
         if 'feature_chain_expression' not in self._rules_set:
             self._rules_set.add('feature_chain_expression')
             self.rules.append('feature_chain_expression')
-        return tree
+        return KerMLTransTemplate.feature_chain_expression(self, tree)
 
     @v_args(tree=True)
     def collect_expression(self, tree: Tree):
         if 'collect_expression' not in self._rules_set:
             self._rules_set.add('collect_expression')
             self.rules.append('collect_expression')
-        return tree
+        return KerMLTransTemplate.collect_expression(self, tree)
 
     @v_args(tree=True)
     def select_expression(self, tree: Tree):
         if 'select_expression' not in self._rules_set:
             self._rules_set.add('select_expression')
             self.rules.append('select_expression')
-        return tree
+        return KerMLTransTemplate.select_expression(self, tree)
 
     @v_args(tree=True)
     def function_operation_expression(self, tree: Tree):
         if 'function_operation_expression' not in self._rules_set:
             self._rules_set.add('function_operation_expression')
             self.rules.append('function_operation_expression')
-        return tree
+        return KerMLTransTemplate.function_operation_expression(self, tree)
 
     @v_args(tree=True)
     def body_argument_member(self, tree: Tree):
         if 'body_argument_member' not in self._rules_set:
             self._rules_set.add('body_argument_member')
             self.rules.append('body_argument_member')
-        return tree
+        return KerMLTransTemplate.body_argument_member(self, tree)
 
     @v_args(tree=True)
     def body_argument(self, tree: Tree):
         if 'body_argument' not in self._rules_set:
             self._rules_set.add('body_argument')
             self.rules.append('body_argument')
-        return tree
+        return KerMLTransTemplate.body_argument(self, tree)
 
     @v_args(tree=True)
     def body_argument_value(self, tree: Tree):
         if 'body_argument_value' not in self._rules_set:
             self._rules_set.add('body_argument_value')
             self.rules.append('body_argument_value')
-        return tree
+        return KerMLTransTemplate.body_argument_value(self, tree)
 
     @v_args(tree=True)
     def function_reference_argument_member(self, tree: Tree):
         if 'function_reference_argument_member' not in self._rules_set:
             self._rules_set.add('function_reference_argument_member')
             self.rules.append('function_reference_argument_member')
-        return tree
+        return KerMLTransTemplate.function_reference_argument_member(self, tree)
 
     @v_args(tree=True)
     def function_reference_argument(self, tree: Tree):
         if 'function_reference_argument' not in self._rules_set:
             self._rules_set.add('function_reference_argument')
             self.rules.append('function_reference_argument')
-        return tree
+        return KerMLTransTemplate.function_reference_argument(self, tree)
 
     @v_args(tree=True)
     def function_reference_argument_value(self, tree: Tree):
         if 'function_reference_argument_value' not in self._rules_set:
             self._rules_set.add('function_reference_argument_value')
             self.rules.append('function_reference_argument_value')
-        return tree
+        return KerMLTransTemplate.function_reference_argument_value(self, tree)
 
     @v_args(tree=True)
     def function_reference_expression(self, tree: Tree):
         if 'function_reference_expression' not in self._rules_set:
             self._rules_set.add('function_reference_expression')
             self.rules.append('function_reference_expression')
-        return tree
+        return KerMLTransTemplate.function_reference_expression(self, tree)
 
     @v_args(tree=True)
     def function_reference_member(self, tree: Tree):
         if 'function_reference_member' not in self._rules_set:
             self._rules_set.add('function_reference_member')
             self.rules.append('function_reference_member')
-        return tree
+        return KerMLTransTemplate.function_reference_member(self, tree)
 
     @v_args(tree=True)
     def function_reference(self, tree: Tree):
         if 'function_reference' not in self._rules_set:
             self._rules_set.add('function_reference')
             self.rules.append('function_reference')
-        return tree
+        return KerMLTransTemplate.function_reference(self, tree)
 
     @v_args(tree=True)
     def feature_chain_member(self, tree: Tree):
         if 'feature_chain_member' not in self._rules_set:
             self._rules_set.add('feature_chain_member')
             self.rules.append('feature_chain_member')
-        return tree
+        return KerMLTransTemplate.feature_chain_member(self, tree)
 
     @v_args(tree=True)
     def owned_feature_chain_member(self, tree: Tree):
         if 'owned_feature_chain_member' not in self._rules_set:
             self._rules_set.add('owned_feature_chain_member')
             self.rules.append('owned_feature_chain_member')
-        return tree
+        return KerMLTransTemplate.owned_feature_chain_member(self, tree)
 
     @v_args(tree=True)
     def base_expression(self, tree: Tree):
         if 'base_expression' not in self._rules_set:
             self._rules_set.add('base_expression')
             self.rules.append('base_expression')
-        return tree
+        return KerMLTransTemplate.base_expression(self, tree)
 
     @v_args(tree=True)
     def null_expression(self, tree: Tree):
         if 'null_expression' not in self._rules_set:
             self._rules_set.add('null_expression')
             self.rules.append('null_expression')
-        return tree
+        return KerMLTransTemplate.null_expression(self, tree)
 
     @v_args(tree=True)
     def feature_reference_expression(self, tree: Tree):
         if 'feature_reference_expression' not in self._rules_set:
             self._rules_set.add('feature_reference_expression')
             self.rules.append('feature_reference_expression')
-        return tree
+        return KerMLTransTemplate.feature_reference_expression(self, tree)
 
     @v_args(tree=True)
     def feature_reference_member(self, tree: Tree):
         if 'feature_reference_member' not in self._rules_set:
             self._rules_set.add('feature_reference_member')
             self.rules.append('feature_reference_member')
-        return tree
+        return KerMLTransTemplate.feature_reference_member(self, tree)
 
     @v_args(tree=True)
     def feature_reference(self, tree: Tree):
         if 'feature_reference' not in self._rules_set:
             self._rules_set.add('feature_reference')
             self.rules.append('feature_reference')
-        return tree
+        return KerMLTransTemplate.feature_reference(self, tree)
 
     @v_args(tree=True)
     def metadata_access_expression(self, tree: Tree):
         if 'metadata_access_expression' not in self._rules_set:
             self._rules_set.add('metadata_access_expression')
             self.rules.append('metadata_access_expression')
-        return tree
+        return KerMLTransTemplate.metadata_access_expression(self, tree)
 
     @v_args(tree=True)
     def invocation_expression(self, tree: Tree):
         if 'invocation_expression' not in self._rules_set:
             self._rules_set.add('invocation_expression')
             self.rules.append('invocation_expression')
-        return tree
+        return KerMLTransTemplate.invocation_expression(self, tree)
 
     @v_args(tree=True)
     def argument_list(self, tree: Tree):
         if 'argument_list' not in self._rules_set:
             self._rules_set.add('argument_list')
             self.rules.append('argument_list')
-        return tree
+        return KerMLTransTemplate.argument_list(self, tree)
 
     @v_args(tree=True)
     def positional_argument_list(self, tree: Tree):
         if 'positional_argument_list' not in self._rules_set:
             self._rules_set.add('positional_argument_list')
             self.rules.append('positional_argument_list')
-        return tree
+        return KerMLTransTemplate.positional_argument_list(self, tree)
 
     @v_args(tree=True)
     def named_argument_list(self, tree: Tree):
         if 'named_argument_list' not in self._rules_set:
             self._rules_set.add('named_argument_list')
             self.rules.append('named_argument_list')
-        return tree
+        return KerMLTransTemplate.named_argument_list(self, tree)
 
     @v_args(tree=True)
     def named_argument_member(self, tree: Tree):
         if 'named_argument_member' not in self._rules_set:
             self._rules_set.add('named_argument_member')
             self.rules.append('named_argument_member')
-        return tree
+        return KerMLTransTemplate.named_argument_member(self, tree)
 
     @v_args(tree=True)
     def named_argument(self, tree: Tree):
         if 'named_argument' not in self._rules_set:
             self._rules_set.add('named_argument')
             self.rules.append('named_argument')
-        return tree
+        return KerMLTransTemplate.named_argument(self, tree)
 
     @v_args(tree=True)
     def parameter_redefinition(self, tree: Tree):
         if 'parameter_redefinition' not in self._rules_set:
             self._rules_set.add('parameter_redefinition')
             self.rules.append('parameter_redefinition')
-        return tree
+        return KerMLTransTemplate.parameter_redefinition(self, tree)
 
     @v_args(tree=True)
     def body_expression(self, tree: Tree):
         if 'body_expression' not in self._rules_set:
             self._rules_set.add('body_expression')
             self.rules.append('body_expression')
-        return tree
+        return KerMLTransTemplate.body_expression(self, tree)
 
     @v_args(tree=True)
     def body_expression_member(self, tree: Tree):
         if 'body_expression_member' not in self._rules_set:
             self._rules_set.add('body_expression_member')
             self.rules.append('body_expression_member')
-        return tree
+        return KerMLTransTemplate.body_expression_member(self, tree)
 
     @v_args(tree=True)
     def expression_body(self, tree: Tree):
         if 'expression_body' not in self._rules_set:
             self._rules_set.add('expression_body')
             self.rules.append('expression_body')
-        return tree
+        return KerMLTransTemplate.expression_body(self, tree)
 
     @v_args(tree=True)
     def literal_expression(self, tree: Tree):
         if 'literal_expression' not in self._rules_set:
             self._rules_set.add('literal_expression')
             self.rules.append('literal_expression')
-        return tree
+        return KerMLTransTemplate.literal_expression(self, tree)
 
     @v_args(tree=True)
     def literal_boolean(self, tree: Tree):
         if 'literal_boolean' not in self._rules_set:
             self._rules_set.add('literal_boolean')
             self.rules.append('literal_boolean')
-        return tree
+        return KerMLTransTemplate.literal_boolean(self, tree)
 
     @v_args(tree=True)
     def literal_string(self, tree: Tree):
         if 'literal_string' not in self._rules_set:
             self._rules_set.add('literal_string')
             self.rules.append('literal_string')
-        return tree
+        return KerMLTransTemplate.literal_string(self, tree)
 
     @v_args(tree=True)
     def literal_integer(self, tree: Tree):
         if 'literal_integer' not in self._rules_set:
             self._rules_set.add('literal_integer')
             self.rules.append('literal_integer')
-        return tree
+        return KerMLTransTemplate.literal_integer(self, tree)
 
     @v_args(tree=True)
     def literal_real(self, tree: Tree):
         if 'literal_real' not in self._rules_set:
             self._rules_set.add('literal_real')
             self.rules.append('literal_real')
-        return tree
+        return KerMLTransTemplate.literal_real(self, tree)
 
     @v_args(tree=True)
     def literal_infinity(self, tree: Tree):
         if 'literal_infinity' not in self._rules_set:
             self._rules_set.add('literal_infinity')
             self.rules.append('literal_infinity')
-        return tree
+        return KerMLTransTemplate.literal_infinity(self, tree)
 
     @v_args(tree=True)
     def interaction(self, tree: Tree):
         if 'interaction' not in self._rules_set:
             self._rules_set.add('interaction')
             self.rules.append('interaction')
-        return tree
+        return KerMLTransTemplate.interaction(self, tree)
 
     @v_args(tree=True)
     def item_flow(self, tree: Tree):
         if 'item_flow' not in self._rules_set:
             self._rules_set.add('item_flow')
             self.rules.append('item_flow')
-        return tree
+        return KerMLTransTemplate.item_flow(self, tree)
 
     @v_args(tree=True)
     def succession_item_flow(self, tree: Tree):
         if 'succession_item_flow' not in self._rules_set:
             self._rules_set.add('succession_item_flow')
             self.rules.append('succession_item_flow')
-        return tree
+        return KerMLTransTemplate.succession_item_flow(self, tree)
 
     @v_args(tree=True)
     def item_flow_declaration(self, tree: Tree):
         if 'item_flow_declaration' not in self._rules_set:
             self._rules_set.add('item_flow_declaration')
             self.rules.append('item_flow_declaration')
-        return tree
+        return KerMLTransTemplate.item_flow_declaration(self, tree)
 
     @v_args(tree=True)
     def item_feature_member(self, tree: Tree):
         if 'item_feature_member' not in self._rules_set:
             self._rules_set.add('item_feature_member')
             self.rules.append('item_feature_member')
-        return tree
+        return KerMLTransTemplate.item_feature_member(self, tree)
 
     @v_args(tree=True)
     def item_feature(self, tree: Tree):
         if 'item_feature' not in self._rules_set:
             self._rules_set.add('item_feature')
             self.rules.append('item_feature')
-        return tree
+        return KerMLTransTemplate.item_feature(self, tree)
 
     @v_args(tree=True)
     def item_feature_specialization_part(self, tree: Tree):
         if 'item_feature_specialization_part' not in self._rules_set:
             self._rules_set.add('item_feature_specialization_part')
             self.rules.append('item_feature_specialization_part')
-        return tree
+        return KerMLTransTemplate.item_feature_specialization_part(self, tree)
 
     @v_args(tree=True)
     def item_flow_end_member(self, tree: Tree):
         if 'item_flow_end_member' not in self._rules_set:
             self._rules_set.add('item_flow_end_member')
             self.rules.append('item_flow_end_member')
-        return tree
+        return KerMLTransTemplate.item_flow_end_member(self, tree)
 
     @v_args(tree=True)
     def item_flow_end(self, tree: Tree):
         if 'item_flow_end' not in self._rules_set:
             self._rules_set.add('item_flow_end')
             self.rules.append('item_flow_end')
-        return tree
+        return KerMLTransTemplate.item_flow_end(self, tree)
 
     @v_args(tree=True)
     def item_flow_feature_member(self, tree: Tree):
         if 'item_flow_feature_member' not in self._rules_set:
             self._rules_set.add('item_flow_feature_member')
             self.rules.append('item_flow_feature_member')
-        return tree
+        return KerMLTransTemplate.item_flow_feature_member(self, tree)
 
     @v_args(tree=True)
     def item_flow_feature(self, tree: Tree):
         if 'item_flow_feature' not in self._rules_set:
             self._rules_set.add('item_flow_feature')
             self.rules.append('item_flow_feature')
-        return tree
+        return KerMLTransTemplate.item_flow_feature(self, tree)
 
     @v_args(tree=True)
     def item_flow_redefinition(self, tree: Tree):
         if 'item_flow_redefinition' not in self._rules_set:
             self._rules_set.add('item_flow_redefinition')
             self.rules.append('item_flow_redefinition')
-        return tree
+        return KerMLTransTemplate.item_flow_redefinition(self, tree)
 
     @v_args(tree=True)
     def value_part(self, tree: Tree):
         if 'value_part' not in self._rules_set:
             self._rules_set.add('value_part')
             self.rules.append('value_part')
-        return tree
+        return KerMLTransTemplate.value_part(self, tree)
 
     @v_args(tree=True)
     def feature_value(self, tree: Tree):
         if 'feature_value' not in self._rules_set:
             self._rules_set.add('feature_value')
             self.rules.append('feature_value')
-        return tree
+        return KerMLTransTemplate.feature_value(self, tree)
 
     @v_args(tree=True)
     def multiplicity(self, tree: Tree):
         if 'multiplicity' not in self._rules_set:
             self._rules_set.add('multiplicity')
             self.rules.append('multiplicity')
-        return tree
+        return KerMLTransTemplate.multiplicity(self, tree)
 
     @v_args(tree=True)
     def multiplicity_subset(self, tree: Tree):
         if 'multiplicity_subset' not in self._rules_set:
             self._rules_set.add('multiplicity_subset')
             self.rules.append('multiplicity_subset')
-        return tree
+        return KerMLTransTemplate.multiplicity_subset(self, tree)
 
     @v_args(tree=True)
     def multiplicity_range(self, tree: Tree):
         if 'multiplicity_range' not in self._rules_set:
             self._rules_set.add('multiplicity_range')
             self.rules.append('multiplicity_range')
-        return tree
+        return KerMLTransTemplate.multiplicity_range(self, tree)
 
     @v_args(tree=True)
     def owned_multiplicity(self, tree: Tree):
         if 'owned_multiplicity' not in self._rules_set:
             self._rules_set.add('owned_multiplicity')
             self.rules.append('owned_multiplicity')
-        return tree
+        return KerMLTransTemplate.owned_multiplicity(self, tree)
 
     @v_args(tree=True)
     def owned_multiplicity_range(self, tree: Tree):
         if 'owned_multiplicity_range' not in self._rules_set:
             self._rules_set.add('owned_multiplicity_range')
             self.rules.append('owned_multiplicity_range')
-        return tree
+        return KerMLTransTemplate.owned_multiplicity_range(self, tree)
 
     @v_args(tree=True)
     def multiplicity_bounds(self, tree: Tree):
         if 'multiplicity_bounds' not in self._rules_set:
             self._rules_set.add('multiplicity_bounds')
             self.rules.append('multiplicity_bounds')
-        return tree
+        return KerMLTransTemplate.multiplicity_bounds(self, tree)
 
     @v_args(tree=True)
     def multiplicity_expression_member(self, tree: Tree):
         if 'multiplicity_expression_member' not in self._rules_set:
             self._rules_set.add('multiplicity_expression_member')
             self.rules.append('multiplicity_expression_member')
-        return tree
+        return KerMLTransTemplate.multiplicity_expression_member(self, tree)
 
     @v_args(tree=True)
     def metaclass(self, tree: Tree):
         if 'metaclass' not in self._rules_set:
             self._rules_set.add('metaclass')
             self.rules.append('metaclass')
-        return tree
+        return KerMLTransTemplate.metaclass(self, tree)
 
     @v_args(tree=True)
     def prefix_metadata_annotation(self, tree: Tree):
         if 'prefix_metadata_annotation' not in self._rules_set:
             self._rules_set.add('prefix_metadata_annotation')
             self.rules.append('prefix_metadata_annotation')
-        return tree
+        return KerMLTransTemplate.prefix_metadata_annotation(self, tree)
 
     @v_args(tree=True)
     def prefix_metadata_member(self, tree: Tree):
         if 'prefix_metadata_member' not in self._rules_set:
             self._rules_set.add('prefix_metadata_member')
             self.rules.append('prefix_metadata_member')
-        return tree
+        return KerMLTransTemplate.prefix_metadata_member(self, tree)
 
     @v_args(tree=True)
     def prefix_metadata_feature(self, tree: Tree):
         if 'prefix_metadata_feature' not in self._rules_set:
             self._rules_set.add('prefix_metadata_feature')
             self.rules.append('prefix_metadata_feature')
-        return tree
+        return KerMLTransTemplate.prefix_metadata_feature(self, tree)
 
     @v_args(tree=True)
     def metadata_feature(self, tree: Tree):
         if 'metadata_feature' not in self._rules_set:
             self._rules_set.add('metadata_feature')
             self.rules.append('metadata_feature')
-        return tree
+        return KerMLTransTemplate.metadata_feature(self, tree)
 
     @v_args(tree=True)
     def metadata_feature_declaration(self, tree: Tree):
         if 'metadata_feature_declaration' not in self._rules_set:
             self._rules_set.add('metadata_feature_declaration')
             self.rules.append('metadata_feature_declaration')
-        return tree
+        return KerMLTransTemplate.metadata_feature_declaration(self, tree)
 
     @v_args(tree=True)
     def metadata_body(self, tree: Tree):
         if 'metadata_body' not in self._rules_set:
             self._rules_set.add('metadata_body')
             self.rules.append('metadata_body')
-        return tree
+        return KerMLTransTemplate.metadata_body(self, tree)
 
     @v_args(tree=True)
     def metadata_body_element(self, tree: Tree):
         if 'metadata_body_element' not in self._rules_set:
             self._rules_set.add('metadata_body_element')
             self.rules.append('metadata_body_element')
-        return tree
+        return KerMLTransTemplate.metadata_body_element(self, tree)
 
     @v_args(tree=True)
     def metadata_body_feature_member(self, tree: Tree):
         if 'metadata_body_feature_member' not in self._rules_set:
             self._rules_set.add('metadata_body_feature_member')
             self.rules.append('metadata_body_feature_member')
-        return tree
+        return KerMLTransTemplate.metadata_body_feature_member(self, tree)
 
     @v_args(tree=True)
     def metadata_body_feature(self, tree: Tree):
         if 'metadata_body_feature' not in self._rules_set:
             self._rules_set.add('metadata_body_feature')
             self.rules.append('metadata_body_feature')
-        return tree
+        return KerMLTransTemplate.metadata_body_feature(self, tree)
 
     @v_args(tree=True)
     def package(self, tree: Tree):
         if 'package' not in self._rules_set:
             self._rules_set.add('package')
             self.rules.append('package')
-        return tree
+        return KerMLTransTemplate.package(self, tree)
 
     @v_args(tree=True)
     def library_package(self, tree: Tree):
         if 'library_package' not in self._rules_set:
             self._rules_set.add('library_package')
             self.rules.append('library_package')
-        return tree
+        return KerMLTransTemplate.library_package(self, tree)
 
     @v_args(tree=True)
     def package_declaration(self, tree: Tree):
         if 'package_declaration' not in self._rules_set:
             self._rules_set.add('package_declaration')
             self.rules.append('package_declaration')
-        return tree
+        return KerMLTransTemplate.package_declaration(self, tree)
 
     @v_args(tree=True)
     def package_body(self, tree: Tree):
         if 'package_body' not in self._rules_set:
             self._rules_set.add('package_body')
             self.rules.append('package_body')
-        return tree
+        return KerMLTransTemplate.package_body(self, tree)
 
     @v_args(tree=True)
     def element_filter_member(self, tree: Tree):
         if 'element_filter_member' not in self._rules_set:
             self._rules_set.add('element_filter_member')
             self.rules.append('element_filter_member')
-        return tree
+        return KerMLTransTemplate.element_filter_member(self, tree)
 

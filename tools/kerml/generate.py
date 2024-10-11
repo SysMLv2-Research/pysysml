@@ -28,12 +28,14 @@ def main():
 
     recorder_file = os.path.normpath(os.path.join(_template_file, '..', 'recorder.py'))
     with open(recorder_file, 'w') as f:
-        print(f'from lark import Transformer, v_args, Tree', file=f)
+        print(f'from lark import v_args, Tree', file=f)
+        print(f'', file=f)
+        print(f'from .template import KerMLTransTemplate', file=f)
         print(f'', file=f)
         print(f'', file=f)
-        print(f'class KerMLTransRecorder(Transformer):', file=f)
-        print(f'    def __init__(self):', file=f)
-        print(f'        Transformer.__init__(self)', file=f)
+        print(f'class KerMLTransRecorder(KerMLTransTemplate):', file=f)
+        print(f'    def __init__(self, visit_tokens: bool = True):', file=f)
+        print(f'        KerMLTransTemplate.__init__(self, visit_tokens=visit_tokens)', file=f)
         print(f'        self._rules_set = set()', file=f)
         print(f'        self.rules = []', file=f)
         print(f'', file=f)
@@ -43,7 +45,7 @@ def main():
             print(f'        if {s!r} not in self._rules_set:', file=f)
             print(f'            self._rules_set.add({s!r})', file=f)
             print(f'            self.rules.append({s!r})', file=f)
-            print(f'        return tree', file=f)
+            print(f'        return KerMLTransTemplate.{s}(self, tree)', file=f)
             print(f'', file=f)
 
 
