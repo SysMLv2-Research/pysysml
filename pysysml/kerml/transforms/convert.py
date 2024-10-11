@@ -8,7 +8,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     MetadataAccessExpression, NamedArgument, InvocationExpression, Visibility, FeatureChain, PrefixMetadataAnnotation, \
     Identification, Dependency, Comment, Documentation, TextualRepresentation, Namespace, NonFeatureMember, \
     DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, MultiplicityBounds, ConjugationPart, \
-    SuperclassingPart, Class, Import
+    SuperclassingPart, Class, Import, SpecializationPart, Type
 
 
 # noinspection PyPep8Naming
@@ -270,6 +270,12 @@ class KerMLTransformer(KerMLTransTemplate):
         return SuperclassingPart(items=tree.children[1:])
 
     @v_args(tree=True)
+    def specialization_part(self, tree: Tree):
+        assert len(tree.children) > 1
+        assert tree.children[0].type == 'SPECIALIZES'
+        return SpecializationPart(items=tree.children[1:])
+
+    @v_args(tree=True)
     def class_statement(self, tree: Tree):
         assert len(tree.children) == 3
         is_abstract, annotations = tree.children[0]
@@ -347,6 +353,36 @@ class KerMLTransformer(KerMLTransTemplate):
             name=import_name,
             filters=filter_list,
             body=body,
+        )
+
+    @v_args(tree=True)
+    def type_declaration(self, tree: Tree):
+        return bool(tree.children[0]), tree.children[1], tree.children[2], tree.children[3], tree.children[4:]
+
+    @v_args(tree=True)
+    def type(self, tree: Tree):
+        assert len(tree.children) == 3
+        (is_abstract, annotations), (is_all, identification, multiplicity_bounds,
+                                     spx, type_relationship_parts), body = tree.children
+        if spx is None:
+            conjugation, specialization = None, None
+        elif isinstance(spx, SpecializationPart):
+            conjugation, specialization = None, spx
+        elif isinstance(spx, ConjugationPart):
+            conjugation, specialization = spx, None
+        else:
+            assert False, "Should not reach this line"  # pragma: no cover
+
+        return Type(
+            is_abstract=is_abstract,
+            annotations=annotations,
+            is_all=is_all,
+            identification=identification,
+            multiplicity_bounds=multiplicity_bounds,
+            conjugation=conjugation,
+            specialization=specialization,
+            relationships=type_relationship_parts,
+            body=tree.children[2],
         )
 
 

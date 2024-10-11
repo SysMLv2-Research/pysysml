@@ -2,7 +2,7 @@ import pytest
 
 from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation, QualifiedName, SuperclassingPart, \
     MultiplicityBounds, IntValue, ConjugationPart, DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, \
-    NonFeatureMember, Documentation, Comment
+    NonFeatureMember, Documentation, Comment, Type, SpecializationPart, Visibility
 from .base import _parser_for_rule
 
 
@@ -88,3 +88,51 @@ class TestKerMLTransformsCore:
             v, rules = parser(text)
             assert v == expected
             assert 'class_statement' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('type A  disjoint from B;',
+         Type(is_abstract=False, annotations=[], is_all=False, identification=Identification(short_name=None, name='A'),
+              multiplicity_bounds=None, conjugation=None, specialization=None,
+              relationships=[DisjoiningPart(items=[QualifiedName(names=['B'])])], body=[])),
+        ('type A specializes Base::Anything disjoint from B;',
+         Type(is_abstract=False, annotations=[], is_all=False, identification=Identification(short_name=None, name='A'),
+              multiplicity_bounds=None, conjugation=None,
+              specialization=SpecializationPart(items=[QualifiedName(names=['Base', 'Anything'])]),
+              relationships=[DisjoiningPart(items=[QualifiedName(names=['B'])])], body=[])),
+        ("type <'+'> C conjugates A;",
+         Type(is_abstract=False, annotations=[], is_all=False, identification=Identification(short_name='+', name='C'),
+              multiplicity_bounds=None, conjugation=ConjugationPart(item=QualifiedName(names=['A'])),
+              specialization=None, relationships=[], body=[])),
+        ('#command type C ~ A;',
+         Type(is_abstract=False, annotations=[PrefixMetadataAnnotation(feature=QualifiedName(names=['command']))],
+              is_all=False, identification=Identification(short_name=None, name='C'), multiplicity_bounds=None,
+              conjugation=ConjugationPart(item=QualifiedName(names=['A'])), specialization=None, relationships=[],
+              body=[])),
+        ('abstract type A specializes Base::Anything;',
+         Type(is_abstract=True, annotations=[], is_all=False, identification=Identification(short_name=None, name='A'),
+              multiplicity_bounds=None, conjugation=None,
+              specialization=SpecializationPart(items=[QualifiedName(names=['Base', 'Anything'])]), relationships=[],
+              body=[])),
+        ('type all A1 specializes A;',
+         Type(is_abstract=False, annotations=[], is_all=True, identification=Identification(short_name=None, name='A1'),
+              multiplicity_bounds=None, conjugation=None,
+              specialization=SpecializationPart(items=[QualifiedName(names=['A'])]), relationships=[], body=[])),
+        ('type A2 [1..10] :> A {\n    private /* 123 */\n}',
+         Type(is_abstract=False, annotations=[], is_all=False,
+              identification=Identification(short_name=None, name='A2'),
+              multiplicity_bounds=MultiplicityBounds(lower_bound=IntValue(raw='1'), upper_bound=IntValue(raw='10')),
+              conjugation=None, specialization=SpecializationPart(items=[QualifiedName(names=['A'])]), relationships=[],
+              body=[NonFeatureMember(visibility=Visibility.PRIVATE,
+                                     element=Comment(identification=None, about_list=None, locale=None,
+                                                     comment='/* 123 */'))])),
+    ])
+    @pytest.mark.focus
+    def test_type(self, text, expected):
+        parser = _parser_for_rule('type')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'type' in rules

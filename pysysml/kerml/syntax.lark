@@ -70,6 +70,7 @@ REFERENCES: "::>" | "references"
 REDEFINES: ":>>" | "redefines"
 CONJUGATES: "~" | "conjugates"
 
+ALL: "all"
 
 # 8.2.3 Root Concrete Syntax
 # 8.2.3.1 Elements and Relationships Concrete Syntax
@@ -146,7 +147,7 @@ filter_package_list: filter_package_member*
 type: type_prefix "type" type_declaration type_body
 ?type_prefix: "abstract" prefix_metadata_member* -> abstract_type_prefix
             | prefix_metadata_member* -> non_abstract_type_prefix
-type_declaration: ("all")? identification owned_multiplicity? (specialization_part | conjugation_part)+ type_relationship_part*
+type_declaration: [ALL] identification [owned_multiplicity] [specialization_part | conjugation_part] type_relationship_part*
 specialization_part: SPECIALIZES owned_specialization ("," owned_specialization)*
 conjugation_part: CONJUGATES owned_conjugation
 ?type_relationship_part: disjoining_part | unioning_part | intersecting_part | differencing_part

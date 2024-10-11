@@ -13,6 +13,11 @@ class SuperclassingPart:
 
 
 @dataclass
+class SpecializationPart:
+    items: List[QualifiedName]
+
+
+@dataclass
 class ConjugationPart:
     item: Union[FeatureChain, QualifiedName]
 
@@ -46,5 +51,18 @@ class Class:
     multiplicity_bounds: Optional[MultiplicityBounds]
     conjugation: Optional[ConjugationPart]
     superclassing: Optional[SuperclassingPart]
+    relationships: List[Union[DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart]]
+    body: List[Any]
+
+
+@dataclass
+class Type:
+    is_abstract: bool
+    annotations: List[PrefixMetadataAnnotation]
+    is_all: bool
+    identification: Identification
+    multiplicity_bounds: Optional[MultiplicityBounds]
+    conjugation: Optional[ConjugationPart]
+    specialization: Optional[SpecializationPart]
     relationships: List[Union[DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart]]
     body: List[Any]
