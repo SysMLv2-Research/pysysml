@@ -27,3 +27,8 @@ class Documentation:
     identification: Identification
     locale: Optional[str]
     comment: str
+
+
+@dataclass
+class RelationshipBody:
+    elements: List[Any]

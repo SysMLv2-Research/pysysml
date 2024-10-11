@@ -6,7 +6,7 @@ from .template import KerMLTransTemplate
 from ..base import is_reserved_word
 from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, NullValue, QualifiedName, name_unescape, \
     MetadataAccessExpression, NamedArgument, InvocationExpression, Visibility, FeatureChain, PrefixMetadataAnnotation, \
-    Identification, Dependency, Comment, Documentation
+    Identification, Dependency, Comment, Documentation, RelationshipBody
 
 
 # noinspection PyPep8Naming
@@ -173,6 +173,10 @@ class KerMLTransformer(KerMLTransTemplate):
         assert len(tree.children) == 1
         token: Token = tree.children[0]
         return json.loads(token.value)
+
+    @v_args(tree=True)
+    def relationship_body(self, tree: Tree):
+        return RelationshipBody(elements=tree.children)
 
 
 def tree_to_cst(tree: Tree):
