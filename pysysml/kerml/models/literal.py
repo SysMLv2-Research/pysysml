@@ -41,8 +41,6 @@ class StringValue:
 
 @dataclass
 class InfValue:
-    raw: str
-
     @property
     def value(self) -> float:
         return math.inf

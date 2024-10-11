@@ -1,8 +1,10 @@
+import math
+
 import pytest
 from lark import Lark, UnexpectedCharacters
 
 from pysysml.kerml import __grammar_file__
-from pysysml.kerml.models import BoolValue, IntValue
+from pysysml.kerml.models import BoolValue, IntValue, RealValue, StringValue, InfValue
 from pysysml.kerml.transforms import tree_to_cst, KerMLTransRecorder
 
 
@@ -70,3 +72,61 @@ class TestKerMLTransformsLiteral:
             assert v.raw == text
             assert v.value == expected
             assert rules == ['literal_integer']
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ("3.14", 3.14),  # Valid: simple real number
+        (".5", 0.5),  # Valid: leading decimal point
+        ("1e10", 1e10),  # Valid: exponential notation
+        ("6.022E23", 6.022e23),  # Valid: exponential notation with capital E
+        ("1.6e-19", 1.6e-19),  # Valid: negative exponent
+
+        ("1e", UnexpectedCharacters),  # Invalid: incomplete exponential notation
+        ("1.2.3", UnexpectedCharacters),  # Invalid: multiple decimal points
+        ("2.", UnexpectedCharacters),  # Invalid: point must have suffix
+    ])
+    def test_literal_real(self, text, expected):
+        parser = _parser_for_rule('literal_real')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert isinstance(v, RealValue)
+            assert v.raw == text
+            assert v.value == pytest.approx(expected)
+            assert rules == ['literal_real']
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('"Hello, World!"', "Hello, World!"),  # Valid: simple string
+        ('"Escape \\"quotes\\""', "Escape \"quotes\""),  # Valid: escaped quotes
+        ('"Line\\nbreak"', "Line\nbreak"),  # Valid: escaped newline
+
+        ('"Incomplete string', UnexpectedCharacters),  # Invalid: unclosed string
+        ('"Invalid \escape"', UnexpectedCharacters),  # Invalid: incorrect escape sequence
+    ])
+    def test_literal_string(self, text, expected):
+        parser = _parser_for_rule('literal_string')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert isinstance(v, StringValue)
+            assert v.raw == text
+            assert v.value == expected
+            assert rules == ['literal_string']
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ("*", math.inf),  # Valid: infinity symbol
+        ("**", UnexpectedCharacters),  # Invalid: multiple asterisks
+    ])
+    def test_literal_infinity(self, text, expected):
+        parser = _parser_for_rule('literal_infinity')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert isinstance(v, InfValue)
+            assert v.value == pytest.approx(expected)
+            assert rules == ['literal_infinity']
