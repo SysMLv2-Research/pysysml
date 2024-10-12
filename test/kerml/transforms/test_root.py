@@ -2,7 +2,7 @@ import pytest
 
 from pysysml.kerml.models import Comment, Identification, QualifiedName, Documentation, Dependency, \
     PrefixMetadataAnnotation, FeatureChain, TextualRepresentation, Namespace, NonFeatureMember, Visibility, Class, \
-    Import, Alias
+    Import, Alias, NamespaceFeatureMember, Feature
 from .base import _parser_for_rule
 
 
@@ -354,6 +354,29 @@ class TestKerMLTransformsRoot:
                     name=QualifiedName(names=['Annotations']), filters=[], body=[]),
              Import(visibility=None, is_all=False, is_recursive=False, is_namespace=True,
                     name=QualifiedName(names=['NA']), filters=[QualifiedName(names=['x', '1'])], body=[])])),
+        ('namespace N4 {\n'
+         '    alias <C> CCC for B {\n'
+         '        doc /* Documentation of the alias. */\n'
+         '    }\n'
+         '    private alias D for B;\n'
+         '}',
+         Namespace(annotations=[], identification=Identification(short_name=None, name='N4'), body=[
+             Alias(visibility=None, identification=Identification(short_name='C', name='CCC'),
+                   name=QualifiedName(names=['B']), body=[
+                     Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                                   comment='/* Documentation of the alias. */')]),
+             Alias(visibility=Visibility.PRIVATE, identification=Identification(short_name=None, name='D'),
+                   name=QualifiedName(names=['B']), body=[])])),
+        ("namespace <'+'> {\n    protected feature x;\n}",
+         Namespace(annotations=[], identification=Identification(short_name='+', name=None), body=[
+             NamespaceFeatureMember(visibility=Visibility.PROTECTED,
+                                    element=Feature(direction=None, is_abstract=False, relationship_type=None,
+                                                    is_readonly=False, is_derived=False, is_end=False, annotations=[],
+                                                    is_all=False,
+                                                    identification=Identification(short_name=None, name='x'),
+                                                    specializations=[], multiplicity=None, is_ordered=False,
+                                                    is_nonunique=False, conjugation=None, relationships=[],
+                                                    is_default=False, value_type=None, value=None, body=[]))])),
     ])
     def test_namespace(self, text, expected):
         parser = _parser_for_rule('namespace')
@@ -420,7 +443,6 @@ class TestKerMLTransformsRoot:
          Alias(visibility=Visibility.PRIVATE, identification=Identification(short_name=None, name='D'),
                name=QualifiedName(names=['B']), body=[])),
     ])
-    @pytest.mark.focus
     def test_alias_member(self, text, expected):
         parser = _parser_for_rule('alias_member')
         if isinstance(expected, type) and issubclass(expected, Exception):

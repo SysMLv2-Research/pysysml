@@ -521,7 +521,6 @@ class TestKerMLTransformsCore:
                  is_nonunique=False, conjugation=None, relationships=[], is_default=False,
                  value_type=FeatureValueType.INITIAL, value=IntValue(raw='0'), body=[])),
     ])
-    @pytest.mark.focus
     def test_feature(self, text, expected):
         parser = _parser_for_rule('feature')
         if isinstance(expected, type) and issubclass(expected, Exception):
