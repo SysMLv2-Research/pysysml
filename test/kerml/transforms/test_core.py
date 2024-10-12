@@ -572,6 +572,36 @@ class TestKerMLTransformsCore:
                  multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=IntValue(raw='1')), is_ordered=False,
                  is_nonunique=False, conjugation=None, relationships=[], is_default=False,
                  value_type=FeatureValueType.INITIAL, value=IntValue(raw='0'), body=[])),
+        ('feature dependents : Child[*];',
+         Feature(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                 is_end=False, annotations=[], is_all=False,
+                 identification=Identification(short_name=None, name='dependents'),
+                 specializations=[TypingsPart(items=[QualifiedName(names=['Child'])])],
+                 multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=InfValue()), is_ordered=False,
+                 is_nonunique=False, conjugation=None, relationships=[], is_default=False, value_type=None, value=None,
+                 body=[])),
+        ('feature grownOffspring : Adult[*] :> offspring;',
+         Feature(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                 is_end=False, annotations=[], is_all=False,
+                 identification=Identification(short_name=None, name='grownOffspring'),
+                 specializations=[TypingsPart(items=[QualifiedName(names=['Adult'])]),
+                                  SubsettingsPart(items=[QualifiedName(names=['offspring'])])],
+                 multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=InfValue()), is_ordered=False,
+                 is_nonunique=False, conjugation=None, relationships=[], is_default=False, value_type=None, value=None,
+                 body=[])),
+        ('feature dependentOffspring : Child[*] :> dependents, offspring\n'
+         '    differences offspring, grownOffspring\n'
+         '    intersects dependents, offspring;',
+         Feature(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                 is_end=False, annotations=[], is_all=False,
+                 identification=Identification(short_name=None, name='dependentOffspring'),
+                 specializations=[TypingsPart(items=[QualifiedName(names=['Child'])]), SubsettingsPart(
+                     items=[QualifiedName(names=['dependents']), QualifiedName(names=['offspring'])])],
+                 multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=InfValue()), is_ordered=False,
+                 is_nonunique=False, conjugation=None, relationships=[
+                 DifferencingPart(items=[QualifiedName(names=['offspring']), QualifiedName(names=['grownOffspring'])]),
+                 IntersectingPart(items=[QualifiedName(names=['dependents']), QualifiedName(names=['offspring'])])],
+                 is_default=False, value_type=None, value=None, body=[])),
     ])
     def test_feature(self, text, expected):
         parser = _parser_for_rule('feature')
@@ -598,7 +628,6 @@ class TestKerMLTransformsCore:
                         body=[Documentation(identification=Identification(short_name=None, name=None), locale=None,
                                             comment='/* This specialization is unnamed. */')])),
     ])
-    @pytest.mark.focus
     def test_specialization(self, text, expected):
         parser = _parser_for_rule('specialization')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -629,7 +658,6 @@ class TestKerMLTransformsCore:
          Conjugation(identification=None, conjugate_type=QualifiedName(names=['Conjugate2']),
                      conjugated_type=QualifiedName(names=['Original', 'X']), body=[])),
     ])
-    @pytest.mark.focus
     def test_conjugation(self, text, expected):
         parser = _parser_for_rule('conjugation')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -666,7 +694,6 @@ class TestKerMLTransformsCore:
          Disjoining(identification=None, disjoint_type=QualifiedName(names=['Person', 'parents']),
                     separated_type=QualifiedName(names=['Person', 'children']), body=[])),
     ])
-    @pytest.mark.focus
     def test_disjoining(self, text, expected):
         parser = _parser_for_rule('disjoining')
         if isinstance(expected, type) and issubclass(expected, Exception):
