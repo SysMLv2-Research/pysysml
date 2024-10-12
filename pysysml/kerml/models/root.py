@@ -82,3 +82,11 @@ class Import:
     name: QualifiedName
     filters: List[Any]
     body: List[Any]
+
+
+@dataclass
+class Alias:
+    visibility: Optional[Visibility]
+    identification: Identification
+    name: QualifiedName
+    body: List[Any]

@@ -10,7 +10,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, MultiplicityBounds, ConjugationPart, \
     SuperclassingPart, Class, Import, SpecializationPart, Type, ChainingPart, InvertingPart, TypeFeaturingPart, \
     TypingsPart, SubsettingsPart, RedefinitionsPart, ReferencesPart, FeatureDirection, FeatureRelationshipType, \
-    FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember
+    FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember, Alias
 
 
 # noinspection PyPep8Naming
@@ -613,6 +613,16 @@ class KerMLTransformer(KerMLTransTemplate):
         return TypeFeatureMember(
             visibility=tree.children[0],
             element=tree.children[1],
+        )
+
+    @v_args(tree=True)
+    def alias_member(self, tree: Tree):
+        assert len(tree.children) == 4
+        return Alias(
+            visibility=tree.children[0],
+            identification=tree.children[1],
+            name=tree.children[2],
+            body=tree.children[3],
         )
 
 

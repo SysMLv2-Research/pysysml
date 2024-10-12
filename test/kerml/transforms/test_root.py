@@ -2,7 +2,7 @@ import pytest
 
 from pysysml.kerml.models import Comment, Identification, QualifiedName, Documentation, Dependency, \
     PrefixMetadataAnnotation, FeatureChain, TextualRepresentation, Namespace, NonFeatureMember, Visibility, Class, \
-    Import
+    Import, Alias
 from .base import _parser_for_rule
 
 
@@ -409,3 +409,24 @@ class TestKerMLTransformsRoot:
             v, rules = parser(text)
             assert v == expected
             assert 'import_statement' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('alias <C> CCC for B {\n    doc /* Documentation of the alias. */\n}',
+         Alias(visibility=None, identification=Identification(short_name='C', name='CCC'),
+               name=QualifiedName(names=['B']), body=[
+                 Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                               comment='/* Documentation of the alias. */')])),
+        ('private alias D for B;',
+         Alias(visibility=Visibility.PRIVATE, identification=Identification(short_name=None, name='D'),
+               name=QualifiedName(names=['B']), body=[])),
+    ])
+    @pytest.mark.focus
+    def test_alias_member(self, text, expected):
+        parser = _parser_for_rule('alias_member')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'alias_member' in rules
