@@ -56,6 +56,12 @@ class NonFeatureMember:
 
 
 @dataclass
+class OwnedFeatureMember:
+    visibility: Optional[Visibility]
+    element: Any
+
+
+@dataclass
 class NamespaceFeatureMember:
     visibility: Optional[Visibility]
     element: Any

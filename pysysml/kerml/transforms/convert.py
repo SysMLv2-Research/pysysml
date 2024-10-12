@@ -10,7 +10,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, MultiplicityBounds, ConjugationPart, \
     SuperclassingPart, Class, Import, SpecializationPart, Type, ChainingPart, InvertingPart, TypeFeaturingPart, \
     TypingsPart, SubsettingsPart, RedefinitionsPart, ReferencesPart, FeatureDirection, FeatureRelationshipType, \
-    FeatureValueType, Feature
+    FeatureValueType, Feature, OwnedFeatureMember
 
 
 # noinspection PyPep8Naming
@@ -597,6 +597,14 @@ class KerMLTransformer(KerMLTransTemplate):
             value=v,
 
             body=body,
+        )
+
+    @v_args(tree=True)
+    def owned_feature_member(self, tree: Tree):
+        assert len(tree.children) == 2
+        return OwnedFeatureMember(
+            visibility=tree.children[0],
+            element=tree.children[1],
         )
 
 
