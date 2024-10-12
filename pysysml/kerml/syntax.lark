@@ -234,7 +234,7 @@ redefines: REDEFINES owned_redefinition
 
 
 # 8.2.4.3.2 Feature Typing
-feature_typing: ("specialization" identification)? "typing" qualified_name TYPED_BY general_type relationship_body
+feature_typing: ["specialization" identification] "typing" qualified_name TYPED_BY general_type relationship_body
 ?owned_feature_typing: general_type
 
 # 8.2.4.3.3 Subsetting

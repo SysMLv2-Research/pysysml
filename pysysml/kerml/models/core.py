@@ -227,6 +227,14 @@ class Classifier:
 @dataclass
 class Subclassification:
     identification: Optional[Identification]
-    sub_type: Union[QualifiedName, FeatureChain]
-    parent_type: Union[QualifiedName, FeatureChain]
+    subclassifier: Union[QualifiedName, FeatureChain]
+    superclassifier: Union[QualifiedName, FeatureChain]
+    body: List[Any]
+
+
+@dataclass
+class FeatureTyping:
+    identification: Optional[Identification]
+    typed_entity: Union[QualifiedName, FeatureChain]
+    typing_type: Union[QualifiedName, FeatureChain]
     body: List[Any]

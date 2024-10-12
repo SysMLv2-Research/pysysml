@@ -5,7 +5,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     NonFeatureMember, Documentation, Comment, Type, SpecializationPart, Visibility, Feature, SubsettingsPart, \
     RedefinitionsPart, TypingsPart, ReferencesPart, ChainingPart, InvertingPart, TypeFeaturingPart, FeatureDirection, \
     FeatureRelationshipType, OwnedFeatureMember, InfValue, FeatureChain, RealValue, FeatureValueType, Namespace, \
-    TypeFeatureMember, Specialization, Conjugation, Disjoining, Classifier, Subclassification
+    TypeFeatureMember, Specialization, Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping
 from .base import _parser_for_rule
 
 
@@ -602,6 +602,13 @@ class TestKerMLTransformsCore:
                  DifferencingPart(items=[QualifiedName(names=['offspring']), QualifiedName(names=['grownOffspring'])]),
                  IntersectingPart(items=[QualifiedName(names=['dependents']), QualifiedName(names=['offspring'])])],
                  is_default=False, value_type=None, value=None, body=[])),
+        ('feature foodItem typed by Food, InventoryItem;',
+         Feature(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                 is_end=False, annotations=[], is_all=False,
+                 identification=Identification(short_name=None, name='foodItem'), specializations=[
+                 TypingsPart(items=[QualifiedName(names=['Food']), QualifiedName(names=['InventoryItem'])])],
+                 multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                 is_default=False, value_type=None, value=None, body=[])),
     ])
     def test_feature(self, text, expected):
         parser = _parser_for_rule('feature')
@@ -766,18 +773,20 @@ class TestKerMLTransformsCore:
     @pytest.mark.parametrize(['text', 'expected'], [
         ("specialization <'+'> Super subclassifier A specializes B;",
          Subclassification(identification=Identification(short_name='+', name='Super'),
-                           sub_type=QualifiedName(names=['A']), parent_type=QualifiedName(names=['B']), body=[])),
+                           subclassifier=QualifiedName(names=['A']), superclassifier=QualifiedName(names=['B']),
+                           body=[])),
         ('specialization subclassifier B :> A {\n'
          '    /* This subclassification is unnamed. */\n'
          '}',
          Subclassification(identification=Identification(short_name=None, name=None),
-                           sub_type=QualifiedName(names=['B']), parent_type=QualifiedName(names=['A']), body=[
+                           subclassifier=QualifiedName(names=['B']), superclassifier=QualifiedName(names=['A']), body=[
                  Comment(identification=None, about_list=None, locale=None,
                          comment='/* This subclassification is unnamed. */')])),
         ('subclassifier C specializes A;',
-         Subclassification(identification=None, sub_type=QualifiedName(names=['C']),
-                           parent_type=QualifiedName(names=['A']), body=[])),
+         Subclassification(identification=None, subclassifier=QualifiedName(names=['C']),
+                           superclassifier=QualifiedName(names=['A']), body=[])),
     ])
+    @pytest.mark.focus
     def test_subclassification(self, text, expected):
         parser = _parser_for_rule('subclassification')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -787,3 +796,34 @@ class TestKerMLTransformsCore:
             v, rules = parser(text)
             assert v == expected
             assert 'subclassification' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('specialization t1 typing customer typed by Person;',
+         FeatureTyping(identification=Identification(short_name=None, name='t1'),
+                       typed_entity=QualifiedName(names=['customer']), typing_type=QualifiedName(names=['Person']),
+                       body=[])),
+        ('specialization t2 typing employer : Organization {\n'
+         '    doc /* An employer is an Organization. */\n'
+         '}',
+         FeatureTyping(identification=Identification(short_name=None, name='t2'),
+                       typed_entity=QualifiedName(names=['employer']),
+                       typing_type=QualifiedName(names=['Organization']), body=[
+                 Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                               comment='/* An employer is an Organization. */')])),
+        ('typing customer typed by Person;',
+         FeatureTyping(identification=None, typed_entity=QualifiedName(names=['customer']),
+                       typing_type=QualifiedName(names=['Person']), body=[])),
+        ('typing employer : Organization;',
+         FeatureTyping(identification=None, typed_entity=QualifiedName(names=['employer']),
+                       typing_type=QualifiedName(names=['Organization']), body=[])),
+    ])
+    @pytest.mark.focus
+    def test_feature_typing(self, text, expected):
+        parser = _parser_for_rule('feature_typing')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'feature_typing' in rules
