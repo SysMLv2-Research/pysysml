@@ -9,6 +9,7 @@ class LarkRuleVisitor(Visitor):
     def __init__(self):
         self._rule_set = set()
         self.rule_dicts: Dict[str, List[str]] = {}
+        self.rule_names = []
 
     def _add_rule_name(self, name, rule_type: str):
         name = str(name)
@@ -17,6 +18,7 @@ class LarkRuleVisitor(Visitor):
             if rule_type not in self.rule_dicts:
                 self.rule_dicts[rule_type] = []
             self.rule_dicts[rule_type].append(name)
+            self.rule_names.append(name)
 
     def alias(self, tree: Tree):
         assert len(tree.children) == 2
@@ -36,9 +38,10 @@ def list_rules_from_grammar(grammar_code: str, show_inner: bool = False, show_co
     visitor = LarkRuleVisitor()
     visitor.visit(ast)
     result = []
-    rule_names = visitor.rule_dicts.get('rule') or []
-    if show_alias and 'alias' in visitor.rule_dicts:
-        rule_names.extend(visitor.rule_dicts['alias'])
+    if show_alias:
+        rule_names = visitor.rule_names
+    else:
+        rule_names = visitor.rule_dicts.get('rule') or []
     for rule_name in rule_names:
         if rule_name.startswith('!'):
             is_pinned = True

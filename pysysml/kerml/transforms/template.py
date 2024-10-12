@@ -3,6 +3,74 @@ from lark import Transformer, v_args, Tree
 
 class KerMLTransTemplate(Transformer):
     @v_args(tree=True)
+    def explicit_identification_with_short(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def explicit_identification_plain(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def non_recursive_membership_import(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def recursive_membership_import(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def non_recursive_namespace_import(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def recursive_namespace_import(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def abstract_type_prefix(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def non_abstract_type_prefix(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def all_classifier_declaration(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def non_all_classifier_declaration(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def feature_declaration_idx(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def feature_declaration_spc(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def feature_declaration_coj(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def fv_bind(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def fv_initial(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def fv_default_bind(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def fv_default_initial(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def start(self, tree: Tree):
         return tree
 
@@ -600,73 +668,5 @@ class KerMLTransTemplate(Transformer):
 
     @v_args(tree=True)
     def element_filter_member(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def explicit_identification_with_short(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def explicit_identification_plain(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def non_recursive_membership_import(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def recursive_membership_import(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def non_recursive_namespace_import(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def recursive_namespace_import(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def abstract_type_prefix(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def non_abstract_type_prefix(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def all_classifier_declaration(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def non_all_classifier_declaration(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def feature_declaration_idx(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def feature_declaration_spc(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def feature_declaration_coj(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def fv_bind(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def fv_initial(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def fv_default_bind(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def fv_default_initial(self, tree: Tree):
         return tree
 
