@@ -185,3 +185,27 @@ class Feature:
     value: Optional[Any]
 
     body: List[Any]
+
+
+@dataclass
+class Specialization:
+    identification: Optional[Identification]
+    specific_type: Union[QualifiedName, FeatureChain]
+    general_type: Union[QualifiedName, FeatureChain]
+    body: List[Any]
+
+
+@dataclass
+class Conjugation:
+    identification: Optional[Identification]
+    conjugate_type: Union[QualifiedName, FeatureChain]
+    conjugated_type: Union[QualifiedName, FeatureChain]
+    body: List[Any]
+
+
+@dataclass
+class Disjoining:
+    identification: Optional[Identification]
+    disjoint_type: Union[QualifiedName, FeatureChain]
+    separated_type: Union[QualifiedName, FeatureChain]
+    body: List[Any]

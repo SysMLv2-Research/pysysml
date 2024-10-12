@@ -161,17 +161,17 @@ type_body: ";" | "{" type_body_element* "}"
 ?type_body_element: non_feature_member | feature_member | alias_member | import_statement
 
 # 8.2.4.1.2 Specialization
-specialization: ("specialization" identification)? "subtype" specific_type SPECIALIZES general_type relationship_body
+specialization: ["specialization" identification] "subtype" specific_type SPECIALIZES general_type relationship_body
 ?owned_specialization: general_type
 ?specific_type: qualified_name | owned_feature_chain
 ?general_type: qualified_name | owned_feature_chain
 
 # 8.2.4.1.3 Conjugation
-conjugation: ("conjugation" identification)? "conjugate" (qualified_name | feature_chain) CONJUGATES (qualified_name | feature_chain) relationship_body
+conjugation: ["conjugation" identification] "conjugate" (qualified_name | feature_chain) CONJUGATES (qualified_name | feature_chain) relationship_body
 ?owned_conjugation: qualified_name | feature_chain
 
 # 8.2.4.1.4 Disjoining
-disjoining: ("disjoining" identification)? "disjoint" (qualified_name | feature_chain) "from" (qualified_name | feature_chain) relationship_body
+disjoining: ["disjoining" identification] "disjoint" (qualified_name | feature_chain) "from" (qualified_name | feature_chain) relationship_body
 ?owned_disjoining: qualified_name | feature_chain
 
 # 8.2.4.1.5 Unioning, Intersecting and Differencing

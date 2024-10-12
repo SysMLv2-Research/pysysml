@@ -10,7 +10,8 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, MultiplicityBounds, ConjugationPart, \
     SuperclassingPart, Class, Import, SpecializationPart, Type, ChainingPart, InvertingPart, TypeFeaturingPart, \
     TypingsPart, SubsettingsPart, RedefinitionsPart, ReferencesPart, FeatureDirection, FeatureRelationshipType, \
-    FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember, Alias, NamespaceFeatureMember
+    FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember, Alias, NamespaceFeatureMember, Specialization, \
+    Conjugation, Disjoining
 
 
 # noinspection PyPep8Naming
@@ -630,6 +631,36 @@ class KerMLTransformer(KerMLTransTemplate):
             visibility=tree.children[0],
             identification=tree.children[1],
             name=tree.children[2],
+            body=tree.children[3],
+        )
+
+    @v_args(tree=True)
+    def specialization(self, tree: Tree):
+        assert len(tree.children) == 5
+        return Specialization(
+            identification=tree.children[0],
+            specific_type=tree.children[1],
+            general_type=tree.children[3],
+            body=tree.children[4],
+        )
+
+    @v_args(tree=True)
+    def conjugation(self, tree: Tree):
+        assert len(tree.children) == 5
+        return Conjugation(
+            identification=tree.children[0],
+            conjugate_type=tree.children[1],
+            conjugated_type=tree.children[3],
+            body=tree.children[4],
+        )
+
+    @v_args(tree=True)
+    def disjoining(self, tree: Tree):
+        assert len(tree.children) == 4
+        return Disjoining(
+            identification=tree.children[0],
+            disjoint_type=tree.children[1],
+            separated_type=tree.children[2],
             body=tree.children[3],
         )
 

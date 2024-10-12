@@ -5,7 +5,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     NonFeatureMember, Documentation, Comment, Type, SpecializationPart, Visibility, Feature, SubsettingsPart, \
     RedefinitionsPart, TypingsPart, ReferencesPart, ChainingPart, InvertingPart, TypeFeaturingPart, FeatureDirection, \
     FeatureRelationshipType, OwnedFeatureMember, InfValue, FeatureChain, RealValue, FeatureValueType, Namespace, \
-    TypeFeatureMember
+    TypeFeatureMember, Specialization, Conjugation, Disjoining
 from .base import _parser_for_rule
 
 
@@ -582,3 +582,97 @@ class TestKerMLTransformsCore:
             v, rules = parser(text)
             assert v == expected
             assert 'feature' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('specialization Gen subtype A specializes B;',
+         Specialization(identification=Identification(short_name=None, name='Gen'),
+                        specific_type=QualifiedName(names=['A']), general_type=QualifiedName(names=['B']), body=[])),
+        ('subtype A specializes B;',
+         Specialization(identification=None, specific_type=QualifiedName(names=['A']),
+                        general_type=QualifiedName(names=['B']), body=[])),
+        ('specialization subtype x :> Base::things {\n'
+         '    doc /* This specialization is unnamed. */\n'
+         '}',
+         Specialization(identification=Identification(short_name=None, name=None),
+                        specific_type=QualifiedName(names=['x']), general_type=QualifiedName(names=['Base', 'things']),
+                        body=[Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                                            comment='/* This specialization is unnamed. */')])),
+    ])
+    @pytest.mark.focus
+    def test_specialization(self, text, expected):
+        parser = _parser_for_rule('specialization')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'specialization' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('conjugation c1 conjugate Conjugate1 conjugates Original;',
+         Conjugation(identification=Identification(short_name=None, name='c1'),
+                     conjugate_type=QualifiedName(names=['Conjugate1']),
+                     conjugated_type=QualifiedName(names=['Original']), body=[])),
+        ('conjugation c2 conjugate Conjugate2 ~ Original {\n'
+         '    doc /* This conjugation is equivalent to c1. */\n'
+         '}',
+         Conjugation(identification=Identification(short_name=None, name='c2'),
+                     conjugate_type=QualifiedName(names=['Conjugate2']),
+                     conjugated_type=QualifiedName(names=['Original']), body=[
+                 Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                               comment='/* This conjugation is equivalent to c1. */')])),
+        ('conjugate Conjugate1 conjugates Original;',
+         Conjugation(identification=None, conjugate_type=QualifiedName(names=['Conjugate1']),
+                     conjugated_type=QualifiedName(names=['Original']), body=[])),
+        ('conjugate Conjugate2 ~ Original::X;',
+         Conjugation(identification=None, conjugate_type=QualifiedName(names=['Conjugate2']),
+                     conjugated_type=QualifiedName(names=['Original', 'X']), body=[])),
+    ])
+    @pytest.mark.focus
+    def test_conjugation(self, text, expected):
+        parser = _parser_for_rule('conjugation')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'conjugation' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('disjoining Disj disjoint A from B;',
+         Disjoining(identification=Identification(short_name=None, name='Disj'),
+                    disjoint_type=QualifiedName(names=['A']), separated_type=QualifiedName(names=['B']), body=[])),
+        ('disjoining disjoint Mammal from Mineral;',
+         Disjoining(identification=Identification(short_name=None, name=None),
+                    disjoint_type=QualifiedName(names=['Mammal']), separated_type=QualifiedName(names=['Mineral']),
+                    body=[])),
+        ('disjoining disjoint Person::parents from Person::children {\n'
+         'doc /* No Person can have a parent as a child. */\n'
+         '}',
+         Disjoining(identification=Identification(short_name=None, name=None),
+                    disjoint_type=QualifiedName(names=['Person', 'parents']),
+                    separated_type=QualifiedName(names=['Person', 'children']), body=[
+                 Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                               comment='/* No Person can have a parent as a child. */')])),
+        ('disjoint A from B;',
+         Disjoining(identification=None, disjoint_type=QualifiedName(names=['A']),
+                    separated_type=QualifiedName(names=['B']), body=[])),
+        ('disjoint Mammal from Mineral;',
+         Disjoining(identification=None, disjoint_type=QualifiedName(names=['Mammal']),
+                    separated_type=QualifiedName(names=['Mineral']), body=[])),
+        ('disjoint Person::parents from Person::children;',
+         Disjoining(identification=None, disjoint_type=QualifiedName(names=['Person', 'parents']),
+                    separated_type=QualifiedName(names=['Person', 'children']), body=[])),
+    ])
+    @pytest.mark.focus
+    def test_disjoining(self, text, expected):
+        parser = _parser_for_rule('disjoining')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'disjoining' in rules
