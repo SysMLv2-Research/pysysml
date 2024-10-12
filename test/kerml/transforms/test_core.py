@@ -6,7 +6,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     RedefinitionsPart, TypingsPart, ReferencesPart, ChainingPart, InvertingPart, TypeFeaturingPart, FeatureDirection, \
     FeatureRelationshipType, OwnedFeatureMember, InfValue, FeatureChain, RealValue, FeatureValueType, Namespace, \
     TypeFeatureMember, Specialization, Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, \
-    Subsetting, Redefinition
+    Subsetting, Redefinition, FeatureInverting, TypeFeaturing
 from .base import _parser_for_rule
 
 
@@ -885,3 +885,60 @@ class TestKerMLTransformsCore:
             v, rules = parser(text)
             assert v == expected
             assert 'redefinition' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('inverting parent_child inverse Person::parent of Person::child {\n'
+         '    doc /* A Person is the parent of their children. */\n'
+         '}',
+         FeatureInverting(identification=Identification(short_name=None, name='parent_child'),
+                          inverted=QualifiedName(names=['Person', 'parent']),
+                          target=QualifiedName(names=['Person', 'child']), body=[
+                 Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                               comment='/* A Person is the parent of their children. */')])),
+        ('inverse Person::parents of Person::children;',
+         FeatureInverting(identification=None, inverted=QualifiedName(names=['Person', 'parents']),
+                          target=QualifiedName(names=['Person', 'children']), body=[])),
+    ])
+    def test_feature_inverting(self, text, expected):
+        parser = _parser_for_rule('feature_inverting')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'feature_inverting' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('featuring engine_by_Vehicle of engine featured by Vehicle;',
+         TypeFeaturing(identification=Identification(short_name=None, name='engine_by_Vehicle'),
+                       featured_entity=QualifiedName(names=['engine']),
+                       feature_provider=QualifiedName(names=['Vehicle']), body=[])),
+        ('featuring engine_by_Vehicle of engine by Vehicle;',
+         TypeFeaturing(identification=Identification(short_name=None, name='engine_by_Vehicle'),
+                       featured_entity=QualifiedName(names=['engine']),
+                       feature_provider=QualifiedName(names=['Vehicle']), body=[])),
+        ('featuring power featured by engine {\n'
+         '    doc /* The engine of a Vehicle has power. */\n'
+         '}',
+         TypeFeaturing(identification=None, featured_entity=QualifiedName(names=['power']),
+                       feature_provider=QualifiedName(names=['engine']), body=[
+                 Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                               comment='/* The engine of a Vehicle has power. */')])),
+        ('featuring power by engine {\n'
+         '    doc /* The engine of a Vehicle has power. */\n'
+         '}',
+         TypeFeaturing(identification=None, featured_entity=QualifiedName(names=['power']),
+                       feature_provider=QualifiedName(names=['engine']), body=[
+                 Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                               comment='/* The engine of a Vehicle has power. */')])),
+    ])
+    def test_type_featuring(self, text, expected):
+        parser = _parser_for_rule('type_featuring')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'type_featuring' in rules

@@ -256,7 +256,11 @@ feature_inverting: ["inverting" identification] "inverse" (qualified_name | owne
 ?owned_feature_inverting: qualified_name | owned_feature_chain
 
 # 8.2.4.3.7 Type Featuring
-type_featuring: "featuring" [identification "of"] qualified_name "by" qualified_name relationship_body
+// note 20241013:
+// in 8.2.4.3.7 it says using "by"
+// but in 7.3.4.8 is says using "featured by"
+// since these 2 are different syntax, so i decide to support both of them
+type_featuring: "featuring" [identification "of"] qualified_name "featured"? "by" qualified_name relationship_body
 ?owned_type_featuring: qualified_name
 
 
