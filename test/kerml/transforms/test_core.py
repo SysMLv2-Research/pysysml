@@ -5,7 +5,8 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     NonFeatureMember, Documentation, Comment, Type, SpecializationPart, Visibility, Feature, SubsettingsPart, \
     RedefinitionsPart, TypingsPart, ReferencesPart, ChainingPart, InvertingPart, TypeFeaturingPart, FeatureDirection, \
     FeatureRelationshipType, OwnedFeatureMember, InfValue, FeatureChain, RealValue, FeatureValueType, Namespace, \
-    TypeFeatureMember, Specialization, Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping
+    TypeFeatureMember, Specialization, Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, \
+    Subsetting, Redefinition
 from .base import _parser_for_rule
 
 
@@ -786,7 +787,6 @@ class TestKerMLTransformsCore:
          Subclassification(identification=None, subclassifier=QualifiedName(names=['C']),
                            superclassifier=QualifiedName(names=['A']), body=[])),
     ])
-    @pytest.mark.focus
     def test_subclassification(self, text, expected):
         parser = _parser_for_rule('subclassification')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -817,7 +817,6 @@ class TestKerMLTransformsCore:
          FeatureTyping(identification=None, typed_entity=QualifiedName(names=['employer']),
                        typing_type=QualifiedName(names=['Organization']), body=[])),
     ])
-    @pytest.mark.focus
     def test_feature_typing(self, text, expected):
         parser = _parser_for_rule('feature_typing')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -827,3 +826,62 @@ class TestKerMLTransformsCore:
             v, rules = parser(text)
             assert v == expected
             assert 'feature_typing' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('specialization Sub subset parent subsets person;',
+         Subsetting(identification=Identification(short_name=None, name='Sub'), subset=QualifiedName(names=['parent']),
+                    superset=QualifiedName(names=['person']), body=[])),
+        ('specialization subset mother subsets parent {\n'
+         '    doc /* All mothers are parents. */\n'
+         '}',
+         Subsetting(identification=Identification(short_name=None, name=None), subset=QualifiedName(names=['mother']),
+                    superset=QualifiedName(names=['parent']), body=[
+                 Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                               comment='/* All mothers are parents. */')])),
+        ('subset rearWheels subsets driveWheels;',
+         Subsetting(identification=None, subset=QualifiedName(names=['rearWheels']),
+                    superset=QualifiedName(names=['driveWheels']), body=[])),
+        ('subset rearWheels subsets wheels;',
+         Subsetting(identification=None, subset=QualifiedName(names=['rearWheels']),
+                    superset=QualifiedName(names=['wheels']), body=[])),
+    ])
+    def test_subsetting(self, text, expected):
+        parser = _parser_for_rule('subsetting')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'subsetting' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('specialization Redef redefinition LegalRecord::guardian redefines parent;',
+         Redefinition(identification=Identification(short_name=None, name='Redef'),
+                      entity=QualifiedName(names=['LegalRecord', 'guardian']),
+                      redefined_to=QualifiedName(names=['parent']), body=[])),
+        ('specialization redefinition Vehicle::vin redefines '
+         'RegisteredAsset::identifier {\n'
+         'doc /* A "vin" is a Vehicle Identification Number. */\n'
+         '}',
+         Redefinition(identification=Identification(short_name=None, name=None),
+                      entity=QualifiedName(names=['Vehicle', 'vin']),
+                      redefined_to=QualifiedName(names=['RegisteredAsset', 'identifier']), body=[
+                 Documentation(identification=Identification(short_name=None, name=None), locale=None,
+                               comment='/* A "vin" is a Vehicle Identification Number. */')])),
+        ('redefinition Vehicle::vin redefines RegisteredAsset::identifier;',
+         Redefinition(identification=None, entity=QualifiedName(names=['Vehicle', 'vin']),
+                      redefined_to=QualifiedName(names=['RegisteredAsset', 'identifier']), body=[])),
+        ('redefinition Vehicle::vin redefines legalIdentification;',
+         Redefinition(identification=None, entity=QualifiedName(names=['Vehicle', 'vin']),
+                      redefined_to=QualifiedName(names=['legalIdentification']), body=[])),
+    ])
+    def test_redefinition(self, text, expected):
+        parser = _parser_for_rule('redefinition')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'redefinition' in rules

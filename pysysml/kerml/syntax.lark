@@ -238,12 +238,12 @@ feature_typing: ["specialization" identification] "typing" qualified_name TYPED_
 ?owned_feature_typing: general_type
 
 # 8.2.4.3.3 Subsetting
-subsetting: ("specialization" identification)? "subset" specific_type SUBSETS general_type relationship_body
+subsetting: ["specialization" identification] "subset" specific_type SUBSETS general_type relationship_body
 ?owned_subsetting: general_type
 ?owned_reference_subsetting: general_type
 
 # 8.2.4.3.4 Redefinition
-redefinition: ("specialization" identification)? "redefinition" specific_type REDEFINES general_type relationship_body
+redefinition: ["specialization" identification] "redefinition" specific_type REDEFINES general_type relationship_body
 ?owned_redefinition: general_type
 
 # 8.2.4.3.5 Feature Chaining
@@ -252,11 +252,11 @@ feature_chain: owned_feature_chaining ("." owned_feature_chaining)+
 ?owned_feature_chaining: qualified_name
 
 # 8.2.4.3.6 Feature Inverting
-feature_inverting: ("inverting" identification?)? "inverse" (qualified_name | owned_feature_chain) "of" (qualified_name | owned_feature_chain) relationship_body
+feature_inverting: ["inverting" identification] "inverse" (qualified_name | owned_feature_chain) "of" (qualified_name | owned_feature_chain) relationship_body
 ?owned_feature_inverting: qualified_name | owned_feature_chain
 
 # 8.2.4.3.7 Type Featuring
-type_featuring: "featuring" (identification "of")? qualified_name "by" qualified_name relationship_body
+type_featuring: "featuring" [identification "of"] qualified_name "by" qualified_name relationship_body
 ?owned_type_featuring: qualified_name
 
 

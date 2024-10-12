@@ -227,14 +227,46 @@ class Classifier:
 @dataclass
 class Subclassification:
     identification: Optional[Identification]
-    subclassifier: Union[QualifiedName, FeatureChain]
-    superclassifier: Union[QualifiedName, FeatureChain]
+    subclassifier: QualifiedName
+    superclassifier: QualifiedName
     body: List[Any]
 
 
 @dataclass
 class FeatureTyping:
     identification: Optional[Identification]
-    typed_entity: Union[QualifiedName, FeatureChain]
+    typed_entity: QualifiedName
     typing_type: Union[QualifiedName, FeatureChain]
+    body: List[Any]
+
+
+@dataclass
+class Subsetting:
+    identification: Optional[Identification]
+    subset: Union[QualifiedName, FeatureChain]
+    superset: Union[QualifiedName, FeatureChain]
+    body: List[Any]
+
+
+@dataclass
+class Redefinition:
+    identification: Optional[Identification]
+    entity: Union[QualifiedName, FeatureChain]
+    redefined_to: Union[QualifiedName, FeatureChain]
+    body: List[Any]
+
+
+@dataclass
+class FeatureInverting:
+    identification: Optional[Identification]
+    inverted: Union[QualifiedName, FeatureChain]
+    target: Union[QualifiedName, FeatureChain]
+    body: List[Any]
+
+
+@dataclass
+class TypeFeaturing:
+    identification: Optional[Identification]
+    featured_entity: Union[QualifiedName, FeatureChain]
+    feature_provider: Union[QualifiedName, FeatureChain]
     body: List[Any]

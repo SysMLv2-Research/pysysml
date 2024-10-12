@@ -11,7 +11,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     SuperclassingPart, Class, Import, SpecializationPart, Type, ChainingPart, InvertingPart, TypeFeaturingPart, \
     TypingsPart, SubsettingsPart, RedefinitionsPart, ReferencesPart, FeatureDirection, FeatureRelationshipType, \
     FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember, Alias, NamespaceFeatureMember, Specialization, \
-    Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping
+    Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition
 
 
 # noinspection PyPep8Naming
@@ -707,6 +707,26 @@ class KerMLTransformer(KerMLTransTemplate):
             identification=tree.children[0],
             typed_entity=tree.children[1],
             typing_type=tree.children[3],
+            body=tree.children[4],
+        )
+
+    @v_args(tree=True)
+    def subsetting(self, tree: Tree):
+        assert len(tree.children) == 5
+        return Subsetting(
+            identification=tree.children[0],
+            subset=tree.children[1],
+            superset=tree.children[3],
+            body=tree.children[4],
+        )
+
+    @v_args(tree=True)
+    def redefinition(self, tree: Tree):
+        assert len(tree.children) == 5
+        return Redefinition(
+            identification=tree.children[0],
+            entity=tree.children[1],
+            redefined_to=tree.children[3],
             body=tree.children[4],
         )
 
