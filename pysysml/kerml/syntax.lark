@@ -3,9 +3,8 @@ start: root_namespace
 
 # Ignore whitespace and comments
 %import common.WS
-%ignore WS
-%ignore SINGLE_LINE_NOTE
-%ignore MULTILINE_NOTE
+IGNORANCE: WS | SINGLE_LINE_NOTE | MULTILINE_NOTE
+%ignore IGNORANCE
 
 
 # 8.2.2 Lexical Structure
