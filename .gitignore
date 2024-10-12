@@ -1211,3 +1211,4 @@ fabric.properties
 /extra
 !/test/testfile/**/*
 .benchmarks
+/sysml.library

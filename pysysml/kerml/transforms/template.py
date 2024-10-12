@@ -35,6 +35,42 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def feature_declaration_idx(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def feature_declaration_spc(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def feature_declaration_coj(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def feature_identification_with_short(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def feature_identification_plain(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def fv_bind(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def fv_initial(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def fv_default_bind(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def fv_default_initial(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def start(self, tree: Tree):
         return tree
 
@@ -191,6 +227,10 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def owned_feature_member(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def classifier(self, tree: Tree):
         return tree
 
@@ -215,15 +255,11 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def feature_relationship_type(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def feature_declaration(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def feature_identification(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def feature_relationship_part(self, tree: Tree):
         return tree
 
     @v_args(tree=True)

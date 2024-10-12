@@ -355,7 +355,6 @@ class TestKerMLTransformsRoot:
              Import(visibility=None, is_all=False, is_recursive=False, is_namespace=True,
                     name=QualifiedName(names=['NA']), filters=[QualifiedName(names=['x', '1'])], body=[])])),
     ])
-    @pytest.mark.focus
     def test_namespace(self, text, expected):
         parser = _parser_for_rule('namespace')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -401,7 +400,6 @@ class TestKerMLTransformsRoot:
          Import(visibility=Visibility.PROTECTED, is_all=False, is_recursive=False, is_namespace=False,
                 name=QualifiedName(names=['NA', 'X']), filters=[QualifiedName(names=['x', '1'])], body=[])),
     ])
-    @pytest.mark.focus
     def test_import_statement(self, text, expected):
         parser = _parser_for_rule('import_statement')
         if isinstance(expected, type) and issubclass(expected, Exception):

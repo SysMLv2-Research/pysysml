@@ -66,6 +66,69 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.non_all_classifier_declaration(self, tree)
 
     @v_args(tree=True)
+    def feature_declaration_idx(self, tree: Tree):
+        if 'feature_declaration_idx' not in self._rules_set:
+            self._rules_set.add('feature_declaration_idx')
+            self.rules.append('feature_declaration_idx')
+        return KerMLTransTemplate.feature_declaration_idx(self, tree)
+
+    @v_args(tree=True)
+    def feature_declaration_spc(self, tree: Tree):
+        if 'feature_declaration_spc' not in self._rules_set:
+            self._rules_set.add('feature_declaration_spc')
+            self.rules.append('feature_declaration_spc')
+        return KerMLTransTemplate.feature_declaration_spc(self, tree)
+
+    @v_args(tree=True)
+    def feature_declaration_coj(self, tree: Tree):
+        if 'feature_declaration_coj' not in self._rules_set:
+            self._rules_set.add('feature_declaration_coj')
+            self.rules.append('feature_declaration_coj')
+        return KerMLTransTemplate.feature_declaration_coj(self, tree)
+
+    @v_args(tree=True)
+    def feature_identification_with_short(self, tree: Tree):
+        if 'feature_identification_with_short' not in self._rules_set:
+            self._rules_set.add('feature_identification_with_short')
+            self.rules.append('feature_identification_with_short')
+        return KerMLTransTemplate.feature_identification_with_short(self, tree)
+
+    @v_args(tree=True)
+    def feature_identification_plain(self, tree: Tree):
+        if 'feature_identification_plain' not in self._rules_set:
+            self._rules_set.add('feature_identification_plain')
+            self.rules.append('feature_identification_plain')
+        return KerMLTransTemplate.feature_identification_plain(self, tree)
+
+    @v_args(tree=True)
+    def fv_bind(self, tree: Tree):
+        if 'fv_bind' not in self._rules_set:
+            self._rules_set.add('fv_bind')
+            self.rules.append('fv_bind')
+        return KerMLTransTemplate.fv_bind(self, tree)
+
+    @v_args(tree=True)
+    def fv_initial(self, tree: Tree):
+        if 'fv_initial' not in self._rules_set:
+            self._rules_set.add('fv_initial')
+            self.rules.append('fv_initial')
+        return KerMLTransTemplate.fv_initial(self, tree)
+
+    @v_args(tree=True)
+    def fv_default_bind(self, tree: Tree):
+        if 'fv_default_bind' not in self._rules_set:
+            self._rules_set.add('fv_default_bind')
+            self.rules.append('fv_default_bind')
+        return KerMLTransTemplate.fv_default_bind(self, tree)
+
+    @v_args(tree=True)
+    def fv_default_initial(self, tree: Tree):
+        if 'fv_default_initial' not in self._rules_set:
+            self._rules_set.add('fv_default_initial')
+            self.rules.append('fv_default_initial')
+        return KerMLTransTemplate.fv_default_initial(self, tree)
+
+    @v_args(tree=True)
     def start(self, tree: Tree):
         if 'start' not in self._rules_set:
             self._rules_set.add('start')
@@ -339,6 +402,13 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.type_feature_member(self, tree)
 
     @v_args(tree=True)
+    def owned_feature_member(self, tree: Tree):
+        if 'owned_feature_member' not in self._rules_set:
+            self._rules_set.add('owned_feature_member')
+            self.rules.append('owned_feature_member')
+        return KerMLTransTemplate.owned_feature_member(self, tree)
+
+    @v_args(tree=True)
     def classifier(self, tree: Tree):
         if 'classifier' not in self._rules_set:
             self._rules_set.add('classifier')
@@ -381,25 +451,18 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.feature_direction(self, tree)
 
     @v_args(tree=True)
+    def feature_relationship_type(self, tree: Tree):
+        if 'feature_relationship_type' not in self._rules_set:
+            self._rules_set.add('feature_relationship_type')
+            self.rules.append('feature_relationship_type')
+        return KerMLTransTemplate.feature_relationship_type(self, tree)
+
+    @v_args(tree=True)
     def feature_declaration(self, tree: Tree):
         if 'feature_declaration' not in self._rules_set:
             self._rules_set.add('feature_declaration')
             self.rules.append('feature_declaration')
         return KerMLTransTemplate.feature_declaration(self, tree)
-
-    @v_args(tree=True)
-    def feature_identification(self, tree: Tree):
-        if 'feature_identification' not in self._rules_set:
-            self._rules_set.add('feature_identification')
-            self.rules.append('feature_identification')
-        return KerMLTransTemplate.feature_identification(self, tree)
-
-    @v_args(tree=True)
-    def feature_relationship_part(self, tree: Tree):
-        if 'feature_relationship_part' not in self._rules_set:
-            self._rules_set.add('feature_relationship_part')
-            self.rules.append('feature_relationship_part')
-        return KerMLTransTemplate.feature_relationship_part(self, tree)
 
     @v_args(tree=True)
     def chaining_part(self, tree: Tree):

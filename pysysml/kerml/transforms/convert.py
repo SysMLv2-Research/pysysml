@@ -8,7 +8,9 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     MetadataAccessExpression, NamedArgument, InvocationExpression, Visibility, FeatureChain, PrefixMetadataAnnotation, \
     Identification, Dependency, Comment, Documentation, TextualRepresentation, Namespace, NonFeatureMember, \
     DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, MultiplicityBounds, ConjugationPart, \
-    SuperclassingPart, Class, Import, SpecializationPart, Type
+    SuperclassingPart, Class, Import, SpecializationPart, Type, ChainingPart, InvertingPart, TypeFeaturingPart, \
+    TypingsPart, SubsettingsPart, RedefinitionsPart, ReferencesPart, FeatureDirection, FeatureRelationshipType, \
+    FeatureValueType, Feature
 
 
 # noinspection PyPep8Naming
@@ -383,6 +385,218 @@ class KerMLTransformer(KerMLTransTemplate):
             specialization=specialization,
             relationships=type_relationship_parts,
             body=tree.children[2],
+        )
+
+    @v_args(tree=True)
+    def feature_identification_plain(self, tree: Tree):
+        assert len(tree.children) == 1
+        return Identification(
+            short_name=None,
+            name=name_unescape(tree.children[0].value) if tree.children[0] is not None else None,
+        )
+
+    @v_args(tree=True)
+    def feature_identification_with_short(self, tree: Tree):
+        assert len(tree.children) == 2
+        return Identification(
+            short_name=name_unescape(tree.children[0].value),
+            name=name_unescape(tree.children[1].value) if tree.children[1] is not None else None,
+        )
+
+    @v_args(tree=True)
+    def chaining_part(self, tree: Tree):
+        assert len(tree.children) == 1
+        return ChainingPart(item=tree.children[0])
+
+    @v_args(tree=True)
+    def inverting_part(self, tree: Tree):
+        assert len(tree.children) == 1
+        return InvertingPart(item=tree.children[0])
+
+    @v_args(tree=True)
+    def type_featuring_part(self, tree: Tree):
+        return TypeFeaturingPart(items=tree.children)
+
+    @v_args(tree=True)
+    def feature_declaration_idx(self, tree: Tree):
+        assert len(tree.children) == 2
+        if isinstance(tree.children[1], ConjugationPart):
+            return tree.children[0], None, tree.children[1]
+        else:
+            return tree.children[0], tree.children[1], None
+
+    @v_args(tree=True)
+    def feature_declaration_spc(self, tree: Tree):
+        assert len(tree.children) == 1
+        return None, tree.children[0], None
+
+    @v_args(tree=True)
+    def feature_declaration_coj(self, tree: Tree):
+        assert len(tree.children) == 1
+        return None, None, tree.children[0]
+
+    @v_args(tree=True)
+    def typed_by(self, tree: Tree):
+        assert len(tree.children) == 2
+        return tree.children[1]
+
+    @v_args(tree=True)
+    def typings(self, tree: Tree):
+        return TypingsPart(items=tree.children)
+
+    @v_args(tree=True)
+    def subsets(self, tree: Tree):
+        assert len(tree.children) == 2
+        return tree.children[1]
+
+    @v_args(tree=True)
+    def subsettings(self, tree: Tree):
+        return SubsettingsPart(items=tree.children)
+
+    @v_args(tree=True)
+    def references(self, tree: Tree):
+        assert len(tree.children) == 2
+        return ReferencesPart(item=tree.children[1])
+
+    @v_args(tree=True)
+    def redefines(self, tree: Tree):
+        assert len(tree.children) == 2
+        return tree.children[1]
+
+    @v_args(tree=True)
+    def redefinitions(self, tree: Tree):
+        return RedefinitionsPart(items=tree.children)
+
+    @v_args(tree=True)
+    def multiplicity_part(self, tree: Tree):
+        multiplicity = None
+        is_ordered, is_nonunique = False, False
+        for item in tree.children:
+            if isinstance(item, MultiplicityBounds):
+                multiplicity = item
+            elif item == 'ordered':
+                is_ordered = True
+            elif item == 'nonunique':
+                is_nonunique = True
+            else:
+                assert False, 'Should not reach this line.'  # pragma: no cover
+
+        return multiplicity, is_ordered, is_nonunique
+
+    @v_args(tree=True)
+    def feature_specialization_part(self, tree: Tree):
+        items = []
+        multiplicity, is_ordered, is_nonunique = None, False, False
+        for item in tree.children:
+            if isinstance(item, tuple):
+                multiplicity, is_ordered, is_nonunique = item
+            else:
+                items.append(item)
+
+        return items, multiplicity, is_ordered, is_nonunique
+
+    @v_args(tree=True)
+    def feature_declaration(self, tree: Tree):
+        assert len(tree.children) >= 2
+        is_all = bool(tree.children[0])
+        identification, spc, conj = tree.children[1]
+        specs, multiplicity, is_ordered, is_nonunique = ([], None, False, False) if spc is None else spc
+        relationships = tree.children[2:]
+        return is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships
+
+    @v_args(tree=True)
+    def feature_direction(self, tree: Tree):
+        assert len(tree.children) == 1
+        return FeatureDirection.load(tree.children[0].type)
+
+    @v_args(tree=True)
+    def feature_relationship_type(self, tree: Tree):
+        assert len(tree.children) == 1
+        return FeatureRelationshipType.load(tree.children[0].type)
+
+    @v_args(tree=True)
+    def feature_prefix(self, tree: Tree):
+        direction = None
+        is_abstract = False
+        relationship_type = None
+        is_readonly, is_derived, is_end = False, False, False
+        annotations = []
+        for item in tree.children:
+            if isinstance(item, FeatureDirection):
+                direction = item
+            elif item == 'abstract':
+                is_abstract = True
+            elif isinstance(item, FeatureRelationshipType):
+                relationship_type = item
+            elif item == "readonly":
+                is_readonly = True
+            elif item == "derived":
+                is_derived = True
+            elif item == "end":
+                is_end = True
+            elif isinstance(item, PrefixMetadataAnnotation):
+                annotations.append(item)
+            else:
+                assert False, 'Should not reach this line'  # pragma: no cover
+
+        return direction, is_abstract, relationship_type, is_readonly, is_derived, is_end, annotations
+
+    @v_args(tree=True)
+    def fv_bind(self, tree: Tree):
+        return False, FeatureValueType.BIND
+
+    @v_args(tree=True)
+    def fv_initial(self, tree: Tree):
+        return False, FeatureValueType.INITIAL
+
+    @v_args(tree=True)
+    def fv_default_bind(self, tree: Tree):
+        return True, FeatureValueType.BIND
+
+    @v_args(tree=True)
+    def fv_default_initial(self, tree: Tree):
+        return True, FeatureValueType.INITIAL
+
+    @v_args(tree=True)
+    def feature_value(self, tree: Tree):
+        assert len(tree.children) == 2
+        is_default, value_type = tree.children[0]
+        return is_default, value_type, tree.children[1]
+
+    @v_args(tree=True)
+    def feature(self, tree: Tree):
+        assert len(tree.children) == 4
+        prefix, declaration, value, body = tree.children
+        direction, is_abstract, relationship_type, is_readonly, is_derived, is_end, annotations = prefix
+        is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = declaration
+        if value is not None:
+            is_default, value_type, v = value
+        else:
+            is_default, value_type, v = False, None, None
+
+        return Feature(
+            direction=direction,
+            is_abstract=is_abstract,
+            relationship_type=relationship_type,
+            is_readonly=is_readonly,
+            is_derived=is_derived,
+            is_end=is_end,
+            annotations=annotations,
+
+            is_all=is_all,
+            identification=identification,
+            specializations=specs,
+            multiplicity=multiplicity,
+            is_ordered=is_ordered,
+            is_nonunique=is_nonunique,
+            conjugation=conj,
+            relationships=relationships,
+
+            is_default=is_default,
+            value_type=value_type,
+            value=v,
+
+            body=body,
         )
 
 

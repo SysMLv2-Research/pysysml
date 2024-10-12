@@ -1,6 +1,9 @@
 from .base_expression import NullValue, MetadataAccessExpression, InvocationExpression, NamedArgument
 from .core import UnioningPart, DifferencingPart, IntersectingPart, DisjoiningPart, SuperclassingPart, \
-    ConjugationPart, Class, SpecializationPart, Type
+    ConjugationPart, Class, SpecializationPart, Type, InvertingPart, ChainingPart, TypeFeaturingPart, \
+    TypingsPart, RedefinitionsPart, SubsettingsPart, ReferencesPart, FeatureDirection, \
+    FeatureRelationshipType, FeatureValueType, TypeRelationshipPart, FeatureRelationshipPart, \
+    FeatureSpecializationPart, Feature
 from .feature import FeatureChain
 from .kernel import MultiplicityBounds
 from .literal_expression import InfValue, BoolValue, RealValue, StringValue, IntValue, LiteralValue

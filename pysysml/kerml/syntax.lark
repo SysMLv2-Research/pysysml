@@ -180,7 +180,7 @@ disjoining: ("disjoining" identification)? "disjoint" (qualified_name | feature_
 # 8.2.4.1.6 Feature Membership
 ?feature_member: type_feature_member | owned_feature_member
 type_feature_member: member_prefix "member" feature_element
-?owned_feature_member: member_prefix feature_element
+owned_feature_member: member_prefix feature_element
 
 # 8.2.4.2 Classifiers Concrete Syntax
 # 8.2.4.2.1 Classifiers
@@ -195,22 +195,34 @@ subclassification: ("specialization" identification)? "subclassifier" qualified_
 
 # 8.2.4.3 Features Concrete Syntax
 # 8.2.4.3.1 Features
-feature: feature_prefix ("feature"? feature_declaration | "feature" | prefix_metadata_member) value_part? type_body
-feature_prefix: feature_direction? "abstract"? ("composite" | "portion")? "readonly"? "derived"? "end"? prefix_metadata_member*
-feature_direction: "in" | "out" | "inout"
-feature_declaration: ("all")? (feature_identification (feature_specialization_part | conjugation_part)? | feature_specialization_part | conjugation_part) feature_relationship_part*
-feature_identification: "<" NAME ">" NAME? | NAME
-feature_relationship_part: (type_relationship_part
-                         | chaining_part
-                         | inverting_part
-                         | type_featuring_part)
+// comment 20240928: i really dont know what the fxxk is the 2nd & 3rd or segment, it doesnt look like feature statements
+// so i simply removed them
+// feature: feature_prefix ("feature"? feature_declaration | "feature" | prefix_metadata_member) value_part? type_body
+feature: feature_prefix "feature"? feature_declaration [value_part] type_body
+
+!feature_prefix: feature_direction? "abstract"? feature_relationship_type? "readonly"? "derived"? "end"? prefix_metadata_member*
+!feature_direction: "in" | "out" | "inout"
+!feature_relationship_type: "composite" | "portion"
+feature_declaration: [ALL] feature_declaration_main feature_relationship_part*
+
+?feature_declaration_main: feature_identification [feature_specialization_part | conjugation_part] -> feature_declaration_idx
+                         | feature_specialization_part                                             -> feature_declaration_spc
+                         | conjugation_part                                                        -> feature_declaration_coj
+
+
+?feature_identification: "<" NAME ">" [NAME] -> feature_identification_with_short
+                       | NAME                -> feature_identification_plain
+?feature_relationship_part: type_relationship_part
+                          | chaining_part
+                          | inverting_part
+                          | type_featuring_part
 chaining_part: "chains" (owned_feature_chaining | feature_chain)
 inverting_part: "inverse" "of" owned_feature_inverting
 type_featuring_part: "featured" "by" owned_type_featuring ("," owned_type_featuring)*
-feature_specialization_part: (feature_specialization+ multiplicity_part? feature_specialization*
-                           | multiplicity_part feature_specialization*)
-multiplicity_part: (owned_multiplicity
-                 | owned_multiplicity? ("ordered" "nonunique"? | "nonunique" "ordered"?))
+feature_specialization_part: feature_specialization+ multiplicity_part? feature_specialization*
+                           | multiplicity_part feature_specialization*
+!multiplicity_part: (owned_multiplicity
+                  | owned_multiplicity? ("ordered" "nonunique"? | "nonunique" "ordered"?))
 ?feature_specialization: typings | subsettings | references | redefinitions
 typings: typed_by ("," owned_feature_typing)*
 typed_by: TYPED_BY owned_feature_typing
@@ -491,7 +503,11 @@ item_flow_end: (owned_reference_subsetting ".")? item_flow_feature_member
 
 # 8.2.5.10 Feature Values Concrete Syntax
 ?value_part: feature_value
-feature_value: ("=" | ":=" | "default" ("=" | ":=")?) owned_expression
+feature_value: feature_value_signs owned_expression
+?feature_value_signs: "="            -> fv_bind
+                    | ":="           -> fv_initial
+                    | "default" "="? -> fv_default_bind
+                    | "default" ":=" -> fv_default_initial
 
 # 8.2.5.11 Multiplicities Concrete Syntax
 ?multiplicity: multiplicity_subset | multiplicity_range
