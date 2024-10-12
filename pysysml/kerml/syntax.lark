@@ -191,7 +191,7 @@ classifier: type_prefix "classifier" classifier_declaration type_body
 superclassing_part: SPECIALIZES owned_subclassification ("," owned_subclassification)*
 
 # 8.2.4.2.2 Subclassification
-subclassification: ("specialization" identification)? "subclassifier" qualified_name SPECIALIZES qualified_name relationship_body
+subclassification: ["specialization" identification] "subclassifier" qualified_name SPECIALIZES qualified_name relationship_body
 ?owned_subclassification: qualified_name
 
 # 8.2.4.3 Features Concrete Syntax

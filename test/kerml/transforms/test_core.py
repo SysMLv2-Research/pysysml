@@ -5,7 +5,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     NonFeatureMember, Documentation, Comment, Type, SpecializationPart, Visibility, Feature, SubsettingsPart, \
     RedefinitionsPart, TypingsPart, ReferencesPart, ChainingPart, InvertingPart, TypeFeaturingPart, FeatureDirection, \
     FeatureRelationshipType, OwnedFeatureMember, InfValue, FeatureChain, RealValue, FeatureValueType, Namespace, \
-    TypeFeatureMember, Specialization, Conjugation, Disjoining
+    TypeFeatureMember, Specialization, Conjugation, Disjoining, Classifier, Subclassification
 from .base import _parser_for_rule
 
 
@@ -703,3 +703,87 @@ class TestKerMLTransformsCore:
             v, rules = parser(text)
             assert v == expected
             assert 'disjoining' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('classifier Person { // Default superclassifier is Base::Anything.\n'
+         '    feature age : ScalarValues::Integer;\n'
+         '}',
+         Classifier(is_abstract=False, annotations=[], is_all=False,
+                    identification=Identification(short_name=None, name='Person'), multiplicity_bounds=None,
+                    conjugation=None, superclassing=None, relationships=[],
+                    body=[OwnedFeatureMember(
+                        visibility=None,
+                        element=Feature(direction=None, is_abstract=False, relationship_type=None, is_readonly=False,
+                                        is_derived=False, is_end=False, annotations=[], is_all=False,
+                                        identification=Identification(short_name=None, name='age'),
+                                        specializations=[
+                                            TypingsPart(items=[QualifiedName(names=['ScalarValues', 'Integer'])])],
+                                        multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None,
+                                        relationships=[], is_default=False, value_type=None, value=None, body=[]))])),
+        ('classifier Child specializes Person;',
+         Classifier(is_abstract=False, annotations=[], is_all=False,
+                    identification=Identification(short_name=None, name='Child'), multiplicity_bounds=None,
+                    conjugation=None, superclassing=SuperclassingPart(items=[QualifiedName(names=['Person'])]),
+                    relationships=[], body=[])),
+        ('classifier FuelInPort {\n    in feature fuelFlow : Fuel;\n}',
+         Classifier(is_abstract=False, annotations=[], is_all=False,
+                    identification=Identification(short_name=None, name='FuelInPort'), multiplicity_bounds=None,
+                    conjugation=None, superclassing=None, relationships=[],
+                    body=[OwnedFeatureMember(visibility=None, element=Feature(
+                        direction=FeatureDirection.IN, is_abstract=False, relationship_type=None,
+                        is_readonly=False, is_derived=False, is_end=False, annotations=[], is_all=False,
+                        identification=Identification(short_name=None, name='fuelFlow'),
+                        specializations=[TypingsPart(items=[QualifiedName(names=['Fuel'])])],
+                        multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None,
+                        relationships=[], is_default=False, value_type=None, value=None, body=[]))])),
+        ('classifier FuelOutPort conjugates FuelInPort;',
+         Classifier(is_abstract=False, annotations=[], is_all=False,
+                    identification=Identification(short_name=None, name='FuelOutPort'), multiplicity_bounds=None,
+                    conjugation=ConjugationPart(item=QualifiedName(names=['FuelInPort'])), superclassing=None,
+                    relationships=[], body=[])),
+        ('classifier FuelOutPort ~ FuelInPort;',
+         Classifier(is_abstract=False, annotations=[], is_all=False,
+                    identification=Identification(short_name=None, name='FuelOutPort'), multiplicity_bounds=None,
+                    conjugation=ConjugationPart(item=QualifiedName(names=['FuelInPort'])), superclassing=None,
+                    relationships=[], body=[])),
+        ('classifier C specializes A, B;',
+         Classifier(is_abstract=False, annotations=[], is_all=False,
+                    identification=Identification(short_name=None, name='C'), multiplicity_bounds=None,
+                    conjugation=None,
+                    superclassing=SuperclassingPart(items=[QualifiedName(names=['A']), QualifiedName(names=['B'])]),
+                    relationships=[], body=[])),
+    ])
+    def test_classifier(self, text, expected):
+        parser = _parser_for_rule('classifier')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'classifier' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ("specialization <'+'> Super subclassifier A specializes B;",
+         Subclassification(identification=Identification(short_name='+', name='Super'),
+                           sub_type=QualifiedName(names=['A']), parent_type=QualifiedName(names=['B']), body=[])),
+        ('specialization subclassifier B :> A {\n'
+         '    /* This subclassification is unnamed. */\n'
+         '}',
+         Subclassification(identification=Identification(short_name=None, name=None),
+                           sub_type=QualifiedName(names=['B']), parent_type=QualifiedName(names=['A']), body=[
+                 Comment(identification=None, about_list=None, locale=None,
+                         comment='/* This subclassification is unnamed. */')])),
+        ('subclassifier C specializes A;',
+         Subclassification(identification=None, sub_type=QualifiedName(names=['C']),
+                           parent_type=QualifiedName(names=['A']), body=[])),
+    ])
+    def test_subclassification(self, text, expected):
+        parser = _parser_for_rule('subclassification')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'subclassification' in rules

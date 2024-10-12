@@ -7,7 +7,7 @@ from pysysml.utils import list_rules_from_grammar
 def _get_all_starts():
     from pysysml.kerml import __grammar_file__
     grammar_code = pathlib.Path(__grammar_file__).read_text()
-    return list_rules_from_grammar(grammar_code=grammar_code)
+    return list_rules_from_grammar(grammar_code=grammar_code, show_alias=True)
 
 
 def main():

@@ -209,3 +209,24 @@ class Disjoining:
     disjoint_type: Union[QualifiedName, FeatureChain]
     separated_type: Union[QualifiedName, FeatureChain]
     body: List[Any]
+
+
+@dataclass
+class Classifier:
+    is_abstract: bool
+    annotations: List[PrefixMetadataAnnotation]
+    is_all: bool
+    identification: Identification
+    multiplicity_bounds: Optional[MultiplicityBounds]
+    conjugation: Optional[ConjugationPart]
+    superclassing: Optional[SuperclassingPart]
+    relationships: List[Union[DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart]]
+    body: List[Any]
+
+
+@dataclass
+class Subclassification:
+    identification: Optional[Identification]
+    sub_type: Union[QualifiedName, FeatureChain]
+    parent_type: Union[QualifiedName, FeatureChain]
+    body: List[Any]

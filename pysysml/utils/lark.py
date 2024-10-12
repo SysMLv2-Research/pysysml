@@ -1,5 +1,5 @@
 import os.path
-from typing import List
+from typing import List, Dict
 
 import lark
 from lark import Visitor, Tree
@@ -8,25 +8,27 @@ from lark import Visitor, Tree
 class LarkRuleVisitor(Visitor):
     def __init__(self):
         self._rule_set = set()
-        self.rule_names = []
+        self.rule_dicts: Dict[str, List[str]] = {}
 
-    def _add_rule_name(self, name):
+    def _add_rule_name(self, name, rule_type: str):
         name = str(name)
         if name not in self._rule_set:
             self._rule_set.add(name)
-            self.rule_names.append(name)
+            if rule_type not in self.rule_dicts:
+                self.rule_dicts[rule_type] = []
+            self.rule_dicts[rule_type].append(name)
 
     def alias(self, tree: Tree):
         assert len(tree.children) == 2
         if tree.children[-1] is not None:
-            self._add_rule_name(tree.children[-1])
+            self._add_rule_name(tree.children[-1], rule_type='alias')
 
     def rule(self, tree: Tree):
-        self._add_rule_name(tree.children[0])
+        self._add_rule_name(tree.children[0], rule_type='rule')
 
 
 def list_rules_from_grammar(grammar_code: str, show_inner: bool = False, show_conditional: bool = False,
-                            show_pinned: bool = True) -> List[str]:
+                            show_alias: bool = True, show_pinned: bool = True) -> List[str]:
     lark_grammar_file = os.path.normpath(os.path.join(lark.__file__, '..', 'grammars', 'lark.lark'))
     parser = lark.Lark.open(lark_grammar_file, rel_to=__file__, parser="lalr")
     ast = parser.parse(grammar_code)
@@ -34,7 +36,10 @@ def list_rules_from_grammar(grammar_code: str, show_inner: bool = False, show_co
     visitor = LarkRuleVisitor()
     visitor.visit(ast)
     result = []
-    for rule_name in visitor.rule_names:
+    rule_names = visitor.rule_dicts.get('rule') or []
+    if show_alias and 'alias' in visitor.rule_dicts:
+        rule_names.extend(visitor.rule_dicts['alias'])
+    for rule_name in rule_names:
         if rule_name.startswith('!'):
             is_pinned = True
             rule_name = rule_name[1:]

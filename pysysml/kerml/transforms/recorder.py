@@ -10,125 +10,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
         self.rules = []
 
     @v_args(tree=True)
-    def explicit_identification_with_short(self, tree: Tree):
-        if 'explicit_identification_with_short' not in self._rules_set:
-            self._rules_set.add('explicit_identification_with_short')
-            self.rules.append('explicit_identification_with_short')
-        return KerMLTransTemplate.explicit_identification_with_short(self, tree)
-
-    @v_args(tree=True)
-    def explicit_identification_plain(self, tree: Tree):
-        if 'explicit_identification_plain' not in self._rules_set:
-            self._rules_set.add('explicit_identification_plain')
-            self.rules.append('explicit_identification_plain')
-        return KerMLTransTemplate.explicit_identification_plain(self, tree)
-
-    @v_args(tree=True)
-    def non_recursive_membership_import(self, tree: Tree):
-        if 'non_recursive_membership_import' not in self._rules_set:
-            self._rules_set.add('non_recursive_membership_import')
-            self.rules.append('non_recursive_membership_import')
-        return KerMLTransTemplate.non_recursive_membership_import(self, tree)
-
-    @v_args(tree=True)
-    def recursive_membership_import(self, tree: Tree):
-        if 'recursive_membership_import' not in self._rules_set:
-            self._rules_set.add('recursive_membership_import')
-            self.rules.append('recursive_membership_import')
-        return KerMLTransTemplate.recursive_membership_import(self, tree)
-
-    @v_args(tree=True)
-    def non_recursive_namespace_import(self, tree: Tree):
-        if 'non_recursive_namespace_import' not in self._rules_set:
-            self._rules_set.add('non_recursive_namespace_import')
-            self.rules.append('non_recursive_namespace_import')
-        return KerMLTransTemplate.non_recursive_namespace_import(self, tree)
-
-    @v_args(tree=True)
-    def recursive_namespace_import(self, tree: Tree):
-        if 'recursive_namespace_import' not in self._rules_set:
-            self._rules_set.add('recursive_namespace_import')
-            self.rules.append('recursive_namespace_import')
-        return KerMLTransTemplate.recursive_namespace_import(self, tree)
-
-    @v_args(tree=True)
-    def abstract_type_prefix(self, tree: Tree):
-        if 'abstract_type_prefix' not in self._rules_set:
-            self._rules_set.add('abstract_type_prefix')
-            self.rules.append('abstract_type_prefix')
-        return KerMLTransTemplate.abstract_type_prefix(self, tree)
-
-    @v_args(tree=True)
-    def non_abstract_type_prefix(self, tree: Tree):
-        if 'non_abstract_type_prefix' not in self._rules_set:
-            self._rules_set.add('non_abstract_type_prefix')
-            self.rules.append('non_abstract_type_prefix')
-        return KerMLTransTemplate.non_abstract_type_prefix(self, tree)
-
-    @v_args(tree=True)
-    def all_classifier_declaration(self, tree: Tree):
-        if 'all_classifier_declaration' not in self._rules_set:
-            self._rules_set.add('all_classifier_declaration')
-            self.rules.append('all_classifier_declaration')
-        return KerMLTransTemplate.all_classifier_declaration(self, tree)
-
-    @v_args(tree=True)
-    def non_all_classifier_declaration(self, tree: Tree):
-        if 'non_all_classifier_declaration' not in self._rules_set:
-            self._rules_set.add('non_all_classifier_declaration')
-            self.rules.append('non_all_classifier_declaration')
-        return KerMLTransTemplate.non_all_classifier_declaration(self, tree)
-
-    @v_args(tree=True)
-    def feature_declaration_idx(self, tree: Tree):
-        if 'feature_declaration_idx' not in self._rules_set:
-            self._rules_set.add('feature_declaration_idx')
-            self.rules.append('feature_declaration_idx')
-        return KerMLTransTemplate.feature_declaration_idx(self, tree)
-
-    @v_args(tree=True)
-    def feature_declaration_spc(self, tree: Tree):
-        if 'feature_declaration_spc' not in self._rules_set:
-            self._rules_set.add('feature_declaration_spc')
-            self.rules.append('feature_declaration_spc')
-        return KerMLTransTemplate.feature_declaration_spc(self, tree)
-
-    @v_args(tree=True)
-    def feature_declaration_coj(self, tree: Tree):
-        if 'feature_declaration_coj' not in self._rules_set:
-            self._rules_set.add('feature_declaration_coj')
-            self.rules.append('feature_declaration_coj')
-        return KerMLTransTemplate.feature_declaration_coj(self, tree)
-
-    @v_args(tree=True)
-    def fv_bind(self, tree: Tree):
-        if 'fv_bind' not in self._rules_set:
-            self._rules_set.add('fv_bind')
-            self.rules.append('fv_bind')
-        return KerMLTransTemplate.fv_bind(self, tree)
-
-    @v_args(tree=True)
-    def fv_initial(self, tree: Tree):
-        if 'fv_initial' not in self._rules_set:
-            self._rules_set.add('fv_initial')
-            self.rules.append('fv_initial')
-        return KerMLTransTemplate.fv_initial(self, tree)
-
-    @v_args(tree=True)
-    def fv_default_bind(self, tree: Tree):
-        if 'fv_default_bind' not in self._rules_set:
-            self._rules_set.add('fv_default_bind')
-            self.rules.append('fv_default_bind')
-        return KerMLTransTemplate.fv_default_bind(self, tree)
-
-    @v_args(tree=True)
-    def fv_default_initial(self, tree: Tree):
-        if 'fv_default_initial' not in self._rules_set:
-            self._rules_set.add('fv_default_initial')
-            self.rules.append('fv_default_initial')
-        return KerMLTransTemplate.fv_default_initial(self, tree)
-
-    @v_args(tree=True)
     def start(self, tree: Tree):
         if 'start' not in self._rules_set:
             self._rules_set.add('start')
@@ -1177,4 +1058,123 @@ class KerMLTransRecorder(KerMLTransTemplate):
             self._rules_set.add('element_filter_member')
             self.rules.append('element_filter_member')
         return KerMLTransTemplate.element_filter_member(self, tree)
+
+    @v_args(tree=True)
+    def explicit_identification_with_short(self, tree: Tree):
+        if 'explicit_identification_with_short' not in self._rules_set:
+            self._rules_set.add('explicit_identification_with_short')
+            self.rules.append('explicit_identification_with_short')
+        return KerMLTransTemplate.explicit_identification_with_short(self, tree)
+
+    @v_args(tree=True)
+    def explicit_identification_plain(self, tree: Tree):
+        if 'explicit_identification_plain' not in self._rules_set:
+            self._rules_set.add('explicit_identification_plain')
+            self.rules.append('explicit_identification_plain')
+        return KerMLTransTemplate.explicit_identification_plain(self, tree)
+
+    @v_args(tree=True)
+    def non_recursive_membership_import(self, tree: Tree):
+        if 'non_recursive_membership_import' not in self._rules_set:
+            self._rules_set.add('non_recursive_membership_import')
+            self.rules.append('non_recursive_membership_import')
+        return KerMLTransTemplate.non_recursive_membership_import(self, tree)
+
+    @v_args(tree=True)
+    def recursive_membership_import(self, tree: Tree):
+        if 'recursive_membership_import' not in self._rules_set:
+            self._rules_set.add('recursive_membership_import')
+            self.rules.append('recursive_membership_import')
+        return KerMLTransTemplate.recursive_membership_import(self, tree)
+
+    @v_args(tree=True)
+    def non_recursive_namespace_import(self, tree: Tree):
+        if 'non_recursive_namespace_import' not in self._rules_set:
+            self._rules_set.add('non_recursive_namespace_import')
+            self.rules.append('non_recursive_namespace_import')
+        return KerMLTransTemplate.non_recursive_namespace_import(self, tree)
+
+    @v_args(tree=True)
+    def recursive_namespace_import(self, tree: Tree):
+        if 'recursive_namespace_import' not in self._rules_set:
+            self._rules_set.add('recursive_namespace_import')
+            self.rules.append('recursive_namespace_import')
+        return KerMLTransTemplate.recursive_namespace_import(self, tree)
+
+    @v_args(tree=True)
+    def abstract_type_prefix(self, tree: Tree):
+        if 'abstract_type_prefix' not in self._rules_set:
+            self._rules_set.add('abstract_type_prefix')
+            self.rules.append('abstract_type_prefix')
+        return KerMLTransTemplate.abstract_type_prefix(self, tree)
+
+    @v_args(tree=True)
+    def non_abstract_type_prefix(self, tree: Tree):
+        if 'non_abstract_type_prefix' not in self._rules_set:
+            self._rules_set.add('non_abstract_type_prefix')
+            self.rules.append('non_abstract_type_prefix')
+        return KerMLTransTemplate.non_abstract_type_prefix(self, tree)
+
+    @v_args(tree=True)
+    def all_classifier_declaration(self, tree: Tree):
+        if 'all_classifier_declaration' not in self._rules_set:
+            self._rules_set.add('all_classifier_declaration')
+            self.rules.append('all_classifier_declaration')
+        return KerMLTransTemplate.all_classifier_declaration(self, tree)
+
+    @v_args(tree=True)
+    def non_all_classifier_declaration(self, tree: Tree):
+        if 'non_all_classifier_declaration' not in self._rules_set:
+            self._rules_set.add('non_all_classifier_declaration')
+            self.rules.append('non_all_classifier_declaration')
+        return KerMLTransTemplate.non_all_classifier_declaration(self, tree)
+
+    @v_args(tree=True)
+    def feature_declaration_idx(self, tree: Tree):
+        if 'feature_declaration_idx' not in self._rules_set:
+            self._rules_set.add('feature_declaration_idx')
+            self.rules.append('feature_declaration_idx')
+        return KerMLTransTemplate.feature_declaration_idx(self, tree)
+
+    @v_args(tree=True)
+    def feature_declaration_spc(self, tree: Tree):
+        if 'feature_declaration_spc' not in self._rules_set:
+            self._rules_set.add('feature_declaration_spc')
+            self.rules.append('feature_declaration_spc')
+        return KerMLTransTemplate.feature_declaration_spc(self, tree)
+
+    @v_args(tree=True)
+    def feature_declaration_coj(self, tree: Tree):
+        if 'feature_declaration_coj' not in self._rules_set:
+            self._rules_set.add('feature_declaration_coj')
+            self.rules.append('feature_declaration_coj')
+        return KerMLTransTemplate.feature_declaration_coj(self, tree)
+
+    @v_args(tree=True)
+    def fv_bind(self, tree: Tree):
+        if 'fv_bind' not in self._rules_set:
+            self._rules_set.add('fv_bind')
+            self.rules.append('fv_bind')
+        return KerMLTransTemplate.fv_bind(self, tree)
+
+    @v_args(tree=True)
+    def fv_initial(self, tree: Tree):
+        if 'fv_initial' not in self._rules_set:
+            self._rules_set.add('fv_initial')
+            self.rules.append('fv_initial')
+        return KerMLTransTemplate.fv_initial(self, tree)
+
+    @v_args(tree=True)
+    def fv_default_bind(self, tree: Tree):
+        if 'fv_default_bind' not in self._rules_set:
+            self._rules_set.add('fv_default_bind')
+            self.rules.append('fv_default_bind')
+        return KerMLTransTemplate.fv_default_bind(self, tree)
+
+    @v_args(tree=True)
+    def fv_default_initial(self, tree: Tree):
+        if 'fv_default_initial' not in self._rules_set:
+            self._rules_set.add('fv_default_initial')
+            self.rules.append('fv_default_initial')
+        return KerMLTransTemplate.fv_default_initial(self, tree)
 

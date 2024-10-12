@@ -1,5 +1,4 @@
-import os.path
-
 from .base import list_reserved_words, is_reserved_word
+from .lark import _grammar_file, open_kerml_lark_parser
 
-__grammar_file__ = os.path.normpath(os.path.join(__file__, '..', 'syntax.lark'))
+__grammar_file__ = _grammar_file

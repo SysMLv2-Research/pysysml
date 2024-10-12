@@ -78,3 +78,48 @@ class TestUtilsLark:
                    'expansions', 'alias', 'expansion', 'expr', 'atom', 'value',
                    'item',
                }
+
+    def test_list_rules_from_grammar_lark_no_alias(self, lark_lark_code):
+        assert set(list_rules_from_grammar(grammar_code=lark_lark_code, show_alias=False)) == \
+               {
+                   'start', 'rule', 'token', 'rule_params', 'token_params',
+                   'priority', 'statement', 'import_path', 'name_list', 'name',
+               }
+
+    def test_list_rules_from_grammar_lark_inner_no_alias(self, lark_lark_code):
+        assert set(list_rules_from_grammar(
+            grammar_code=lark_lark_code,
+            show_inner=True,
+            show_alias=False
+        )) == {
+                   'start', 'rule', 'token', 'rule_params', 'token_params',
+                   'priority', 'statement', 'import_path', 'name_list', 'name',
+
+                   'item',
+               }
+
+    def test_list_rules_from_grammar_lark_conditional_no_alias(self, lark_lark_code):
+        assert set(list_rules_from_grammar(
+            grammar_code=lark_lark_code,
+            show_conditional=True,
+            show_alias=False,
+        )) == {
+                   'start', 'rule', 'token', 'rule_params', 'token_params',
+                   'priority', 'statement', 'import_path', 'name_list', 'name',
+
+                   'expansions', 'alias', 'expansion', 'expr', 'atom', 'value',
+               }
+
+    def test_list_rules_from_grammar_lark_conditional_inner_no_alias(self, lark_lark_code):
+        assert set(list_rules_from_grammar(
+            grammar_code=lark_lark_code,
+            show_conditional=True,
+            show_inner=True,
+            show_alias=False,
+        )) == {
+                   'start', 'rule', 'token', 'rule_params', 'token_params',
+                   'priority', 'statement', 'import_path', 'name_list', 'name',
+
+                   'expansions', 'alias', 'expansion', 'expr', 'atom', 'value',
+                   'item',
+               }

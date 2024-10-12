@@ -11,7 +11,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     SuperclassingPart, Class, Import, SpecializationPart, Type, ChainingPart, InvertingPart, TypeFeaturingPart, \
     TypingsPart, SubsettingsPart, RedefinitionsPart, ReferencesPart, FeatureDirection, FeatureRelationshipType, \
     FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember, Alias, NamespaceFeatureMember, Specialization, \
-    Conjugation, Disjoining
+    Conjugation, Disjoining, Classifier, Subclassification
 
 
 # noinspection PyPep8Naming
@@ -662,6 +662,42 @@ class KerMLTransformer(KerMLTransTemplate):
             disjoint_type=tree.children[1],
             separated_type=tree.children[2],
             body=tree.children[3],
+        )
+
+    @v_args(tree=True)
+    def classifier(self, tree: Tree):
+        assert len(tree.children) == 3
+        is_abstract, annotations = tree.children[0]
+        is_all, identification, multiplicity_bounds, spx, type_relationship_parts = tree.children[1]
+        if spx is None:
+            conjugation, superclassing = None, None
+        elif isinstance(spx, SuperclassingPart):
+            conjugation, superclassing = None, spx
+        elif isinstance(spx, ConjugationPart):
+            conjugation, superclassing = spx, None
+        else:
+            assert False, "Should not reach this line"  # pragma: no cover
+
+        return Classifier(
+            is_abstract=is_abstract,
+            annotations=annotations,
+            is_all=is_all,
+            identification=identification,
+            multiplicity_bounds=multiplicity_bounds,
+            conjugation=conjugation,
+            superclassing=superclassing,
+            relationships=type_relationship_parts,
+            body=tree.children[2],
+        )
+
+    @v_args(tree=True)
+    def subclassification(self, tree: Tree):
+        assert len(tree.children) == 5
+        return Subclassification(
+            identification=tree.children[0],
+            sub_type=tree.children[1],
+            parent_type=tree.children[3],
+            body=tree.children[4],
         )
 
 

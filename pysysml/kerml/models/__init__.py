@@ -3,7 +3,7 @@ from .core import UnioningPart, DifferencingPart, IntersectingPart, DisjoiningPa
     ConjugationPart, Class, SpecializationPart, Type, InvertingPart, ChainingPart, TypeFeaturingPart, \
     TypingsPart, RedefinitionsPart, SubsettingsPart, ReferencesPart, FeatureDirection, \
     FeatureRelationshipType, FeatureValueType, TypeRelationshipPart, FeatureRelationshipPart, \
-    FeatureSpecializationPart, Feature, Specialization, Conjugation, Disjoining
+    FeatureSpecializationPart, Feature, Specialization, Conjugation, Disjoining, Classifier, Subclassification
 from .feature import FeatureChain
 from .kernel import MultiplicityBounds
 from .literal_expression import InfValue, BoolValue, RealValue, StringValue, IntValue, LiteralValue
