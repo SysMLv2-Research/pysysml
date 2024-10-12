@@ -75,6 +75,8 @@ ALL: "all"
 # 8.2.3 Root Concrete Syntax
 # 8.2.3.1 Elements and Relationships Concrete Syntax
 identification: ["<" NAME ">"] [NAME]
+?explicit_identification: "<" NAME ">" [NAME] -> explicit_identification_with_short
+                        | NAME                -> explicit_identification_plain
 relationship_body: ";" | "{" relationship_owned_element* "}"
 ?relationship_owned_element: owned_related_element | owned_annotation
 ?owned_related_element: non_feature_element | feature_element
@@ -117,7 +119,7 @@ member_prefix: visibility_indicator?
 ?namespace_member: non_feature_member | namespace_feature_member
 non_feature_member: member_prefix member_element
 namespace_feature_member: member_prefix feature_element
-alias_member: member_prefix "alias" ("<" NAME ">")? NAME? "for" qualified_name relationship_body
+alias_member: member_prefix "alias" explicit_identification "for" qualified_name relationship_body
 qualified_name: (NAME "::")* NAME
 
 # 8.2.3.4.2 Imports
@@ -210,8 +212,7 @@ feature_declaration: [ALL] feature_declaration_main feature_relationship_part*
                          | conjugation_part                                                        -> feature_declaration_coj
 
 
-?feature_identification: "<" NAME ">" [NAME] -> feature_identification_with_short
-                       | NAME                -> feature_identification_plain
+?feature_identification: explicit_identification
 ?feature_relationship_part: type_relationship_part
                           | chaining_part
                           | inverting_part

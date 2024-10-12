@@ -10,7 +10,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, MultiplicityBounds, ConjugationPart, \
     SuperclassingPart, Class, Import, SpecializationPart, Type, ChainingPart, InvertingPart, TypeFeaturingPart, \
     TypingsPart, SubsettingsPart, RedefinitionsPart, ReferencesPart, FeatureDirection, FeatureRelationshipType, \
-    FeatureValueType, Feature, OwnedFeatureMember
+    FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember
 
 
 # noinspection PyPep8Naming
@@ -388,7 +388,7 @@ class KerMLTransformer(KerMLTransTemplate):
         )
 
     @v_args(tree=True)
-    def feature_identification_plain(self, tree: Tree):
+    def explicit_identification_plain(self, tree: Tree):
         assert len(tree.children) == 1
         return Identification(
             short_name=None,
@@ -396,7 +396,7 @@ class KerMLTransformer(KerMLTransTemplate):
         )
 
     @v_args(tree=True)
-    def feature_identification_with_short(self, tree: Tree):
+    def explicit_identification_with_short(self, tree: Tree):
         assert len(tree.children) == 2
         return Identification(
             short_name=name_unescape(tree.children[0].value),
@@ -603,6 +603,14 @@ class KerMLTransformer(KerMLTransTemplate):
     def owned_feature_member(self, tree: Tree):
         assert len(tree.children) == 2
         return OwnedFeatureMember(
+            visibility=tree.children[0],
+            element=tree.children[1],
+        )
+
+    @v_args(tree=True)
+    def type_feature_member(self, tree: Tree):
+        assert len(tree.children) == 2
+        return TypeFeatureMember(
             visibility=tree.children[0],
             element=tree.children[1],
         )

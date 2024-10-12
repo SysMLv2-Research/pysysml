@@ -3,6 +3,14 @@ from lark import Transformer, v_args, Tree
 
 class KerMLTransTemplate(Transformer):
     @v_args(tree=True)
+    def explicit_identification_with_short(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def explicit_identification_plain(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def non_recursive_membership_import(self, tree: Tree):
         return tree
 
@@ -44,14 +52,6 @@ class KerMLTransTemplate(Transformer):
 
     @v_args(tree=True)
     def feature_declaration_coj(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def feature_identification_with_short(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def feature_identification_plain(self, tree: Tree):
         return tree
 
     @v_args(tree=True)

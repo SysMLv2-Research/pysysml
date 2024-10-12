@@ -10,6 +10,20 @@ class KerMLTransRecorder(KerMLTransTemplate):
         self.rules = []
 
     @v_args(tree=True)
+    def explicit_identification_with_short(self, tree: Tree):
+        if 'explicit_identification_with_short' not in self._rules_set:
+            self._rules_set.add('explicit_identification_with_short')
+            self.rules.append('explicit_identification_with_short')
+        return KerMLTransTemplate.explicit_identification_with_short(self, tree)
+
+    @v_args(tree=True)
+    def explicit_identification_plain(self, tree: Tree):
+        if 'explicit_identification_plain' not in self._rules_set:
+            self._rules_set.add('explicit_identification_plain')
+            self.rules.append('explicit_identification_plain')
+        return KerMLTransTemplate.explicit_identification_plain(self, tree)
+
+    @v_args(tree=True)
     def non_recursive_membership_import(self, tree: Tree):
         if 'non_recursive_membership_import' not in self._rules_set:
             self._rules_set.add('non_recursive_membership_import')
@@ -85,20 +99,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
             self._rules_set.add('feature_declaration_coj')
             self.rules.append('feature_declaration_coj')
         return KerMLTransTemplate.feature_declaration_coj(self, tree)
-
-    @v_args(tree=True)
-    def feature_identification_with_short(self, tree: Tree):
-        if 'feature_identification_with_short' not in self._rules_set:
-            self._rules_set.add('feature_identification_with_short')
-            self.rules.append('feature_identification_with_short')
-        return KerMLTransTemplate.feature_identification_with_short(self, tree)
-
-    @v_args(tree=True)
-    def feature_identification_plain(self, tree: Tree):
-        if 'feature_identification_plain' not in self._rules_set:
-            self._rules_set.add('feature_identification_plain')
-            self.rules.append('feature_identification_plain')
-        return KerMLTransTemplate.feature_identification_plain(self, tree)
 
     @v_args(tree=True)
     def fv_bind(self, tree: Tree):
