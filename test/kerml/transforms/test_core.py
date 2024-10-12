@@ -4,7 +4,8 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     MultiplicityBounds, IntValue, ConjugationPart, DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, \
     NonFeatureMember, Documentation, Comment, Type, SpecializationPart, Visibility, Feature, SubsettingsPart, \
     RedefinitionsPart, TypingsPart, ReferencesPart, ChainingPart, InvertingPart, TypeFeaturingPart, FeatureDirection, \
-    FeatureRelationshipType, OwnedFeatureMember, InfValue, FeatureChain, RealValue, FeatureValueType
+    FeatureRelationshipType, OwnedFeatureMember, InfValue, FeatureChain, RealValue, FeatureValueType, Namespace, \
+    TypeFeatureMember
 from .base import _parser_for_rule
 
 
@@ -127,6 +128,57 @@ class TestKerMLTransformsCore:
               body=[NonFeatureMember(visibility=Visibility.PRIVATE,
                                      element=Comment(identification=None, about_list=None, locale=None,
                                                      comment='/* 123 */'))])),
+        ('type Super specializes Base::Anything {\n'
+         '    private namespace N {\n'
+         '        type Sub specializes Super;\n'
+         '    }\n'
+         '    protected feature f : N::Sub;\n'
+         '    member feature f1 : Super featured by N::Sub;\n'
+         '}',
+         Type(is_abstract=False, annotations=[], is_all=False,
+              identification=Identification(short_name=None, name='Super'), multiplicity_bounds=None, conjugation=None,
+              specialization=SpecializationPart(items=[QualifiedName(names=['Base', 'Anything'])]), relationships=[],
+              body=[NonFeatureMember(visibility=Visibility.PRIVATE,
+                                     element=Namespace(annotations=[],
+                                                       identification=Identification(
+                                                           short_name=None, name='N'),
+                                                       body=[NonFeatureMember(
+                                                           visibility=None, element=Type(
+                                                               is_abstract=False,
+                                                               annotations=[],
+                                                               is_all=False,
+                                                               identification=Identification(
+                                                                   short_name=None,
+                                                                   name='Sub'),
+                                                               multiplicity_bounds=None,
+                                                               conjugation=None,
+                                                               specialization=SpecializationPart(
+                                                                   items=[QualifiedName(
+                                                                       names=[
+                                                                           'Super'])]),
+                                                               relationships=[],
+                                                               body=[]))])),
+                    OwnedFeatureMember(visibility=Visibility.PROTECTED,
+                                       element=Feature(direction=None, is_abstract=False, relationship_type=None,
+                                                       is_readonly=False, is_derived=False, is_end=False,
+                                                       annotations=[], is_all=False,
+                                                       identification=Identification(short_name=None, name='f'),
+                                                       specializations=[
+                                                           TypingsPart(items=[QualifiedName(names=['N', 'Sub'])])],
+                                                       multiplicity=None, is_ordered=False, is_nonunique=False,
+                                                       conjugation=None, relationships=[], is_default=False,
+                                                       value_type=None, value=None, body=[])),
+                    TypeFeatureMember(visibility=None,
+                                      element=Feature(direction=None, is_abstract=False, relationship_type=None,
+                                                      is_readonly=False, is_derived=False, is_end=False, annotations=[],
+                                                      is_all=False,
+                                                      identification=Identification(short_name=None, name='f1'),
+                                                      specializations=[
+                                                          TypingsPart(items=[QualifiedName(names=['Super'])])],
+                                                      multiplicity=None, is_ordered=False, is_nonunique=False,
+                                                      conjugation=None, relationships=[
+                                              TypeFeaturingPart(items=[QualifiedName(names=['N', 'Sub'])])],
+                                                      is_default=False, value_type=None, value=None, body=[]))])),
     ])
     def test_type(self, text, expected):
         parser = _parser_for_rule('type')
