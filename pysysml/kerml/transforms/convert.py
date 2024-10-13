@@ -1272,13 +1272,15 @@ class KerMLTransformer(KerMLTransTemplate):
         )
 
     @v_args(inline=True)
-    def invariant_bool(self, token: Token):
-        return json.loads(token.value)
-
-    @v_args(inline=True)
     def invariant(self, prefix, invariant_bool, declaration, value_part, body):
         direction, is_abstract, relationship_type, is_readonly, is_derived, is_end, annotations = prefix
-        is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = declaration
+        if invariant_bool is None:
+            invariant_bool = True
+        if declaration:
+            is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = declaration
+        else:
+            is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = \
+                (False, None, [], (None, False, False), None, [])
         if value_part is not None:
             is_default, value_type, v = value_part
         else:
@@ -1314,6 +1316,10 @@ class KerMLTransformer(KerMLTransTemplate):
             # body part
             body=body,
         )
+
+    @v_args(inline=True)
+    def invariant_bool(self, token: Token):
+        return json.loads(token.value)
 
 
 def tree_to_cst(tree: Tree):

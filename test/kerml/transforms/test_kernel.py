@@ -5,7 +5,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     NonFeatureMember, Documentation, Comment, OwnedFeatureMember, Feature, TypingsPart, DataType, Struct, \
     FeatureRelationshipType, InfValue, Association, AssociationStruct, Connector, ConnectorType, ConnectorEnd, \
     FeatureChain, FeatureValueType, BindingConnector, Succession, Behavior, Step, Function, FeatureDirection, Return, \
-    Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate, BooleanExpression
+    Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate, BooleanExpression, Invariant, BoolValue
 from .base import _parser_for_rule
 
 
@@ -1714,6 +1714,12 @@ class TestKerMLTransformsKernel:
                                                                                       QualifiedName(
                                                                                           names=['time'])]),
                                                                               body=[]))])),
+        ('expr isFull = false;',
+         Expression(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                    is_end=False, annotations=[], is_all=False,
+                    identification=Identification(short_name=None, name='isFull'), specializations=[],
+                    multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                    is_default=False, value_type=FeatureValueType.BIND, value=BoolValue(raw='false'), body=[])),
     ])
     @pytest.mark.focus
     def test_expression(self, text, expected):
@@ -1867,6 +1873,12 @@ class TestKerMLTransformsKernel:
                                                                                                         y=QualifiedName(
                                                                                                             names=[
                                                                                                                 'maxFuelLevel'])))])),
+        ('bool isFull = false;',
+         BooleanExpression(direction=None, is_abstract=False, relationship_type=None, is_readonly=False,
+                           is_derived=False, is_end=False, annotations=[], is_all=False,
+                           identification=Identification(short_name=None, name='isFull'), specializations=[],
+                           multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                           is_default=False, value_type=FeatureValueType.BIND, value=BoolValue(raw='false'), body=[])),
     ])
     @pytest.mark.focus
     def test_boolean_expression(self, text, expected):
@@ -1878,3 +1890,62 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'boolean_expression' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('inv { fuelLevel >= 0 & fuelLevel <= maxFuelLevel }',
+         Invariant(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=False, identification=None, specializations=[],
+                   multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                   is_default=False, value_type=None, value=None, body=[Result(visibility=None, expression=BinOp(op='&',
+                                                                                                                 x=BinOp(
+                                                                                                                     op='>=',
+                                                                                                                     x=QualifiedName(
+                                                                                                                         names=[
+                                                                                                                             'fuelLevel']),
+                                                                                                                     y=IntValue(
+                                                                                                                         raw='0')),
+                                                                                                                 y=BinOp(
+                                                                                                                     op='<=',
+                                                                                                                     x=QualifiedName(
+                                                                                                                         names=[
+                                                                                                                             'fuelLevel']),
+                                                                                                                     y=QualifiedName(
+                                                                                                                         names=[
+                                                                                                                             'maxFuelLevel']))))],
+                   asserted=True)),
+        ('inv false { fuelLevel > maxFuelLevel }',
+         Invariant(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=False, identification=None, specializations=[],
+                   multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                   is_default=False, value_type=None, value=None, body=[Result(visibility=None, expression=BinOp(op='>',
+                                                                                                                 x=QualifiedName(
+                                                                                                                     names=[
+                                                                                                                         'fuelLevel']),
+                                                                                                                 y=QualifiedName(
+                                                                                                                     names=[
+                                                                                                                         'maxFuelLevel'])))],
+                   asserted=False)),
+        ("inv true <'+'> { 2 > 1 }",
+         Invariant(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=False, identification=Identification(short_name='+', name=None),
+                   specializations=[], multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None,
+                   relationships=[], is_default=False, value_type=None, value=None,
+                   body=[Result(visibility=None, expression=BinOp(op='>', x=IntValue(raw='2'), y=IntValue(raw='1')))],
+                   asserted=True)),
+        ('inv x = 1;',
+         Invariant(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=False, identification=Identification(short_name=None, name='x'),
+                   specializations=[], multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None,
+                   relationships=[], is_default=False, value_type=FeatureValueType.BIND, value=IntValue(raw='1'),
+                   body=[], asserted=True)),
+    ])
+    @pytest.mark.focus
+    def test_invariant(self, text, expected):
+        parser = _parser_for_rule('invariant')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'invariant' in rules
