@@ -632,6 +632,17 @@ class TestKerMLTransformsKernel:
                     then=ConnectorEnd(name=None, reference=QualifiedName(names=['shoot']),
                                       multiplicity=MultiplicityBounds(lower_bound=IntValue(raw='0'),
                                                                       upper_bound=IntValue(raw='1'))), body=[])),
+        ('succession x;',
+         Succession(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                    is_end=False, annotations=[], is_all=False,
+                    identification=Identification(short_name=None, name='x'), specializations=[], multiplicity=None,
+                    is_ordered=False, is_nonunique=False, conjugation=None, relationships=[], is_all_succession=False,
+                    first=None, then=None, body=[])),
+        ('succession all;',
+         Succession(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                    is_end=False, annotations=[], is_all=False, identification=None, specializations=[],
+                    multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                    is_all_succession=True, first=None, then=None, body=[])),
     ])
     def test_succession(self, text, expected):
         parser = _parser_for_rule('succession')
