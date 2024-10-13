@@ -15,7 +15,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition, FeatureInverting, \
     TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp, \
     DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector, \
-    Succession, Behavior, Step
+    Succession, Behavior, Step, Return, Result, Function
 
 
 # noinspection PyPep8Naming
@@ -1151,6 +1151,32 @@ class KerMLTransformer(KerMLTransTemplate):
             # body part
             body=type_body,
         )
+
+    @v_args(inline=True)
+    def return_feature_member(self, visibility: typing.Optional[Visibility], feature: Feature):
+        return Return(
+            visibility=visibility,
+            feature=feature,
+        )
+
+    @v_args(inline=True)
+    def result_expression_member(self, visibility: typing.Optional[Visibility], expression):
+        return Result(
+            visibility=visibility,
+            expression=expression,
+        )
+
+    @v_args(tree=True)
+    def function_body_part(self, tree: Tree):
+        return tree.children
+
+    @v_args(inline=True)
+    def function_body(self, body_items):
+        return body_items
+
+    @v_args(tree=True)
+    def function(self, tree: Tree):
+        return self._classifier_like(tree=tree, type_cls=Function)
 
 
 def tree_to_cst(tree: Tree):

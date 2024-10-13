@@ -313,13 +313,9 @@ step: feature_prefix "step" feature_declaration [value_part] type_body
 
 # 8.2.5.7 Functions Concrete Syntax
 function: type_prefix "function" classifier_declaration function_body
-
 function_body: ";" | "{" function_body_part "}"
-
 function_body_part: (return_feature_member | type_body_element)* result_expression_member?
-
 return_feature_member: member_prefix "return" feature_element
-
 result_expression_member: member_prefix owned_expression
 
 # 8.2.5.7.2 Expressions

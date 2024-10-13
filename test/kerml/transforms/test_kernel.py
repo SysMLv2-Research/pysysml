@@ -4,7 +4,8 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     MultiplicityBounds, IntValue, ConjugationPart, DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, \
     NonFeatureMember, Documentation, Comment, OwnedFeatureMember, Feature, TypingsPart, DataType, Struct, \
     FeatureRelationshipType, InfValue, Association, AssociationStruct, Connector, ConnectorType, ConnectorEnd, \
-    FeatureChain, FeatureValueType, BindingConnector, Succession, Behavior, Step
+    FeatureChain, FeatureValueType, BindingConnector, Succession, Behavior, Step, Function, FeatureDirection, Return, \
+    Result, BinOp, InvocationExpression
 from .base import _parser_for_rule
 
 
@@ -1029,3 +1030,463 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'step' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('function Velocity {\n'
+         '    in v_i : VelocityValue;\n'
+         '    in a : AccelerationValue;\n'
+         '    in dt : TimeValue;\n'
+         '    return v_f : VelocityValue;\n'
+         '}',
+         Function(is_abstract=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='Velocity'), multiplicity_bounds=None,
+                  conjugation=None, superclassing=None, relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                                                                   element=Feature(
+                                                                                                       direction=FeatureDirection.IN,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='v_i'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'VelocityValue'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[])),
+                                                                                OwnedFeatureMember(visibility=None,
+                                                                                                   element=Feature(
+                                                                                                       direction=FeatureDirection.IN,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='a'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'AccelerationValue'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[])),
+                                                                                OwnedFeatureMember(visibility=None,
+                                                                                                   element=Feature(
+                                                                                                       direction=FeatureDirection.IN,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='dt'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'TimeValue'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[])),
+                                                                                Return(visibility=None,
+                                                                                       feature=Feature(direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='v_f'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'VelocityValue'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[]))])),
+        ('function {\n    in a : Integer;\n    return b: Integer; \n    x + 2\n}',
+         Function(is_abstract=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name=None), multiplicity_bounds=None, conjugation=None,
+                  superclassing=None, relationships=[], body=[OwnedFeatureMember(visibility=None, element=Feature(
+                 direction=FeatureDirection.IN, is_abstract=False, relationship_type=None, is_readonly=False,
+                 is_derived=False, is_end=False, annotations=[], is_all=False,
+                 identification=Identification(short_name=None, name='a'),
+                 specializations=[TypingsPart(items=[QualifiedName(names=['Integer'])])], multiplicity=None,
+                 is_ordered=False, is_nonunique=False, conjugation=None, relationships=[], is_default=False,
+                 value_type=None, value=None, body=[])), Return(visibility=None,
+                                                                feature=Feature(direction=None, is_abstract=False,
+                                                                                relationship_type=None,
+                                                                                is_readonly=False, is_derived=False,
+                                                                                is_end=False, annotations=[],
+                                                                                is_all=False,
+                                                                                identification=Identification(
+                                                                                    short_name=None, name='b'),
+                                                                                specializations=[TypingsPart(items=[
+                                                                                    QualifiedName(names=['Integer'])])],
+                                                                                multiplicity=None, is_ordered=False,
+                                                                                is_nonunique=False, conjugation=None,
+                                                                                relationships=[], is_default=False,
+                                                                                value_type=None, value=None, body=[])),
+                                                              Result(visibility=None, expression=BinOp(op='+',
+                                                                                                       x=QualifiedName(
+                                                                                                           names=['x']),
+                                                                                                       y=IntValue(
+                                                                                                           raw='2')))])),
+        ('abstract function Dynamics {\n'
+         '    in initialState : DynamicState;\n'
+         '    in time : TimeValue;\n'
+         '    return : DynamicState;\n'
+         '}',
+         Function(is_abstract=True, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='Dynamics'), multiplicity_bounds=None,
+                  conjugation=None, superclassing=None, relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                                                                   element=Feature(
+                                                                                                       direction=FeatureDirection.IN,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='initialState'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'DynamicState'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[])),
+                                                                                OwnedFeatureMember(visibility=None,
+                                                                                                   element=Feature(
+                                                                                                       direction=FeatureDirection.IN,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='time'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'TimeValue'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[])),
+                                                                                Return(visibility=None,
+                                                                                       feature=Feature(direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=None,
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'DynamicState'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[]))])),
+        ('function VehicleDynamics specializes Dynamics {\n'
+         '    // Each parameter redefines the corresponding superclassifier parameter\n'
+         '    in initialState : VehicleState;\n'
+         '    in time : TimeValue;\n'
+         '    return : VehicleState;\n'
+         '}',
+         Function(is_abstract=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='VehicleDynamics'), multiplicity_bounds=None,
+                  conjugation=None, superclassing=SuperclassingPart(items=[QualifiedName(names=['Dynamics'])]),
+                  relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                             element=Feature(direction=FeatureDirection.IN,
+                                                                             is_abstract=False, relationship_type=None,
+                                                                             is_readonly=False, is_derived=False,
+                                                                             is_end=False, annotations=[], is_all=False,
+                                                                             identification=Identification(
+                                                                                 short_name=None, name='initialState'),
+                                                                             specializations=[TypingsPart(items=[
+                                                                                 QualifiedName(
+                                                                                     names=['VehicleState'])])],
+                                                                             multiplicity=None, is_ordered=False,
+                                                                             is_nonunique=False, conjugation=None,
+                                                                             relationships=[], is_default=False,
+                                                                             value_type=None, value=None, body=[])),
+                                          OwnedFeatureMember(visibility=None,
+                                                             element=Feature(direction=FeatureDirection.IN,
+                                                                             is_abstract=False, relationship_type=None,
+                                                                             is_readonly=False, is_derived=False,
+                                                                             is_end=False, annotations=[], is_all=False,
+                                                                             identification=Identification(
+                                                                                 short_name=None, name='time'),
+                                                                             specializations=[TypingsPart(items=[
+                                                                                 QualifiedName(names=['TimeValue'])])],
+                                                                             multiplicity=None, is_ordered=False,
+                                                                             is_nonunique=False, conjugation=None,
+                                                                             relationships=[], is_default=False,
+                                                                             value_type=None, value=None, body=[])),
+                                          Return(visibility=None, feature=Feature(direction=None, is_abstract=False,
+                                                                                  relationship_type=None,
+                                                                                  is_readonly=False, is_derived=False,
+                                                                                  is_end=False, annotations=[],
+                                                                                  is_all=False, identification=None,
+                                                                                  specializations=[TypingsPart(items=[
+                                                                                      QualifiedName(
+                                                                                          names=['VehicleState'])])],
+                                                                                  multiplicity=None, is_ordered=False,
+                                                                                  is_nonunique=False, conjugation=None,
+                                                                                  relationships=[], is_default=False,
+                                                                                  value_type=None, value=None,
+                                                                                  body=[]))])),
+        ('function Average {\n'
+         '    in scores[1..*] : Rational;\n'
+         '    return : Rational;\n'
+         '    sum(scores) / size(scores)\n'
+         '}',
+         Function(is_abstract=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='Average'), multiplicity_bounds=None,
+                  conjugation=None, superclassing=None, relationships=[],
+                  body=[OwnedFeatureMember(
+                      visibility=None,
+                      element=Feature(
+                          direction=FeatureDirection.IN,
+                          is_abstract=False,
+                          relationship_type=None,
+                          is_readonly=False,
+                          is_derived=False,
+                          is_end=False,
+                          annotations=[],
+                          is_all=False,
+                          identification=Identification(
+                              short_name=None,
+                              name='scores'),
+                          specializations=[
+                              TypingsPart(
+                                  items=[
+                                      QualifiedName(
+                                          names=[
+                                              'Rational'])])],
+                          multiplicity=MultiplicityBounds(
+                              lower_bound=IntValue(
+                                  raw='1'),
+                              upper_bound=InfValue()),
+                          is_ordered=False,
+                          is_nonunique=False,
+                          conjugation=None,
+                          relationships=[],
+                          is_default=False,
+                          value_type=None,
+                          value=None,
+                          body=[])),
+                      Return(visibility=None,
+                             feature=Feature(direction=None,
+                                             is_abstract=False,
+                                             relationship_type=None,
+                                             is_readonly=False,
+                                             is_derived=False,
+                                             is_end=False,
+                                             annotations=[],
+                                             is_all=False,
+                                             identification=None,
+                                             specializations=[
+                                                 TypingsPart(
+                                                     items=[
+                                                         QualifiedName(
+                                                             names=[
+                                                                 'Rational'])])],
+                                             multiplicity=None,
+                                             is_ordered=False,
+                                             is_nonunique=False,
+                                             conjugation=None,
+                                             relationships=[],
+                                             is_default=False,
+                                             value_type=None,
+                                             value=None,
+                                             body=[])),
+                      Result(visibility=None,
+                             expression=BinOp(op='/',
+                                              x=InvocationExpression(
+                                                  name=QualifiedName(
+                                                      names=[
+                                                          'sum']),
+                                                  arguments=[
+                                                      QualifiedName(
+                                                          names=[
+                                                              'scores'])]),
+                                              y=InvocationExpression(
+                                                  name=QualifiedName(
+                                                      names=[
+                                                          'size']),
+                                                  arguments=[
+                                                      QualifiedName(
+                                                          names=[
+                                                              'scores'])])))])),
+        ('function Average {\n'
+         '    in scores[1..*] : Rational;\n'
+         '    return : Rational = sum(scores) / size(scores);\n'
+         '}',
+         Function(is_abstract=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='Average'), multiplicity_bounds=None,
+                  conjugation=None, superclassing=None, relationships=[],
+                  body=[OwnedFeatureMember(visibility=None,
+                                           element=Feature(
+                                               direction=FeatureDirection.IN,
+                                               is_abstract=False,
+                                               relationship_type=None,
+                                               is_readonly=False,
+                                               is_derived=False,
+                                               is_end=False,
+                                               annotations=[],
+                                               is_all=False,
+                                               identification=Identification(
+                                                   short_name=None,
+                                                   name='scores'),
+                                               specializations=[
+                                                   TypingsPart(
+                                                       items=[
+                                                           QualifiedName(
+                                                               names=[
+                                                                   'Rational'])])],
+                                               multiplicity=MultiplicityBounds(
+                                                   lower_bound=IntValue(
+                                                       raw='1'),
+                                                   upper_bound=InfValue()),
+                                               is_ordered=False,
+                                               is_nonunique=False,
+                                               conjugation=None,
+                                               relationships=[],
+                                               is_default=False,
+                                               value_type=None,
+                                               value=None,
+                                               body=[])),
+                        Return(visibility=None,
+                               feature=Feature(direction=None,
+                                               is_abstract=False,
+                                               relationship_type=None,
+                                               is_readonly=False,
+                                               is_derived=False,
+                                               is_end=False,
+                                               annotations=[],
+                                               is_all=False,
+                                               identification=None,
+                                               specializations=[
+                                                   TypingsPart(
+                                                       items=[
+                                                           QualifiedName(
+                                                               names=[
+                                                                   'Rational'])])],
+                                               multiplicity=None,
+                                               is_ordered=False,
+                                               is_nonunique=False,
+                                               conjugation=None,
+                                               relationships=[],
+                                               is_default=False,
+                                               value_type=FeatureValueType.BIND,
+                                               value=BinOp(
+                                                   op='/',
+                                                   x=InvocationExpression(
+                                                       name=QualifiedName(
+                                                           names=[
+                                                               'sum']),
+                                                       arguments=[
+                                                           QualifiedName(
+                                                               names=[
+                                                                   'scores'])]),
+                                                   y=InvocationExpression(
+                                                       name=QualifiedName(
+                                                           names=[
+                                                               'size']),
+                                                       arguments=[
+                                                           QualifiedName(
+                                                               names=[
+                                                                   'scores'])])),
+                                               body=[]))])),
+    ])
+    @pytest.mark.focus
+    def test_function(self, text, expected):
+        parser = _parser_for_rule('function')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'function' in rules

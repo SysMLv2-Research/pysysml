@@ -3,8 +3,8 @@ from enum import unique, Enum
 from typing import Optional, Union, List, Any
 
 from .core import Classifier, FeatureDirection, FeatureRelationshipType, FeatureSpecializationPart, ConjugationPart, \
-    FeatureRelationshipPart, FeatureValueType
-from .glob import MultiplicityBounds
+    FeatureRelationshipPart, FeatureValueType, Feature
+from .glob import MultiplicityBounds, Visibility
 from .metadata import PrefixMetadataAnnotation
 from .name import QualifiedName, FeatureChain, Identification
 
@@ -171,3 +171,20 @@ class Step:
     value: Optional[Any]
 
     body: List[Any]
+
+
+@dataclass
+class Return:
+    visibility: Optional[Visibility]
+    feature: Feature
+
+
+@dataclass
+class Result:
+    visibility: Optional[Visibility]
+    expression: Any
+
+
+@dataclass
+class Function(Behavior):
+    pass
