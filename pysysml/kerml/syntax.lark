@@ -372,8 +372,11 @@ conditional_binary_l13_operator_expression: op_l12 conditional_binary_l13_operat
 !conditional_binary_l13_operator: "implies"
 
 // L12(binary): | or
-?op_l12: binary_l12_operator_expression
-       | conditional_binary_l12_operator_expression
+// note: actually in this production, "|" has higher priority than "or"
+//       but the official documentation said they should have equal priority
+//       its weird, we can change it back if necessary
+?op_l12: conditional_binary_l12_operator_expression
+       | binary_l12_operator_expression
        | op_l11
 conditional_binary_l12_operator_expression: op_l11 conditional_binary_l12_operator op_l11
 !conditional_binary_l12_operator: "or"
@@ -387,7 +390,7 @@ binary_l11_operator_expression: op_l10 binary_l11_operator op_l10
 !binary_l11_operator: "xor"
 
 // L10(binary): & and
-// note: actually in this production, "|" has higher priority than "and"
+// note: actually in this production, "&" has higher priority than "and"
 //       but the official documentation said they should have equal priority
 //       its weird, we can change it back if necessary
 ?op_l10: conditional_binary_l10_operator_expression
