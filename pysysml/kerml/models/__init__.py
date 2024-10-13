@@ -7,7 +7,7 @@ from .core import UnioningPart, DifferencingPart, IntersectingPart, DisjoiningPa
     FeatureTyping, Subsetting, Redefinition, TypeFeaturing, FeatureInverting
 from .glob import MultiplicityBounds, Visibility
 from .kernel import Class, DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, \
-    BindingConnector, Succession
+    BindingConnector, Succession, Behavior, Step
 from .literal_expression import InfValue, BoolValue, RealValue, StringValue, IntValue, LiteralValue
 from .metadata import PrefixMetadataAnnotation
 from .name import name_escape, name_unescape, name_safe_repr, QualifiedName, Identification, FeatureChain

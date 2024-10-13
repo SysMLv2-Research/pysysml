@@ -309,8 +309,7 @@ declare_succession_declaration: feature_declaration ("first" connector_end_membe
 
 # 8.2.5.6 Behaviors Concrete Syntax
 behavior: type_prefix "behavior" classifier_declaration type_body
-
-step: feature_prefix "step" feature_declaration value_part? type_body
+step: feature_prefix "step" feature_declaration [value_part] type_body
 
 # 8.2.5.7 Functions Concrete Syntax
 function: type_prefix "function" classifier_declaration function_body

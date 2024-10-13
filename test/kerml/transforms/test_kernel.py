@@ -4,7 +4,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     MultiplicityBounds, IntValue, ConjugationPart, DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, \
     NonFeatureMember, Documentation, Comment, OwnedFeatureMember, Feature, TypingsPart, DataType, Struct, \
     FeatureRelationshipType, InfValue, Association, AssociationStruct, Connector, ConnectorType, ConnectorEnd, \
-    FeatureChain, FeatureValueType, BindingConnector, Succession
+    FeatureChain, FeatureValueType, BindingConnector, Succession, Behavior, Step
 from .base import _parser_for_rule
 
 
@@ -653,3 +653,379 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'succession' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('behavior TakePicture {\n'
+         '    composite step focus : Focus;\n'
+         '    composite step shoot : Shoot;\n'
+         '    succession controlFlow first focus then shoot;\n'
+         '}',
+         Behavior(is_abstract=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='TakePicture'), multiplicity_bounds=None,
+                  conjugation=None, superclassing=None, relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                                                                   element=Step(
+                                                                                                       direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=FeatureRelationshipType.COMPOSITE,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='focus'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'Focus'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[])),
+                                                                                OwnedFeatureMember(visibility=None,
+                                                                                                   element=Step(
+                                                                                                       direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=FeatureRelationshipType.COMPOSITE,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='shoot'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'Shoot'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[])),
+                                                                                OwnedFeatureMember(visibility=None,
+                                                                                                   element=Succession(
+                                                                                                       direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='controlFlow'),
+                                                                                                       specializations=[],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_all_succession=False,
+                                                                                                       first=ConnectorEnd(
+                                                                                                           name=None,
+                                                                                                           reference=QualifiedName(
+                                                                                                               names=[
+                                                                                                                   'focus']),
+                                                                                                           multiplicity=None),
+                                                                                                       then=ConnectorEnd(
+                                                                                                           name=None,
+                                                                                                           reference=QualifiedName(
+                                                                                                               names=[
+                                                                                                                   'shoot']),
+                                                                                                           multiplicity=None),
+                                                                                                       body=[]))])),
+        ('behavior TakePicture {\n'
+         '    composite step focus : Focus;\n'
+         '    composite step shoot : Shoot;\n'
+         '    succession focus then shoot;\n'
+         '}',
+         Behavior(is_abstract=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='TakePicture'), multiplicity_bounds=None,
+                  conjugation=None, superclassing=None, relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                                                                   element=Step(
+                                                                                                       direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=FeatureRelationshipType.COMPOSITE,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='focus'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'Focus'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[])),
+                                                                                OwnedFeatureMember(visibility=None,
+                                                                                                   element=Step(
+                                                                                                       direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=FeatureRelationshipType.COMPOSITE,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='shoot'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'Shoot'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[])),
+                                                                                OwnedFeatureMember(visibility=None,
+                                                                                                   element=Succession(
+                                                                                                       direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=None,
+                                                                                                       specializations=[],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_all_succession=False,
+                                                                                                       first=ConnectorEnd(
+                                                                                                           name=None,
+                                                                                                           reference=QualifiedName(
+                                                                                                               names=[
+                                                                                                                   'focus']),
+                                                                                                           multiplicity=None),
+                                                                                                       then=ConnectorEnd(
+                                                                                                           name=None,
+                                                                                                           reference=QualifiedName(
+                                                                                                               names=[
+                                                                                                                   'shoot']),
+                                                                                                           multiplicity=None),
+                                                                                                       body=[]))])),
+        ('behavior TakePicture {\n'
+         '    composite step focus[*] : Focus;\n'
+         '    composite step shoot[1] : Shoot;\n'
+         '    // A focus may be preceded by a previous focus.\n'
+         '    succession focus[0..1] then focus[0..1];\n'
+         '    // A shoot must follow a focus.\n'
+         '    succession focus[1] then shoot[0..1];\n'
+         '}',
+         Behavior(is_abstract=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='TakePicture'), multiplicity_bounds=None,
+                  conjugation=None, superclassing=None, relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                                                                   element=Step(
+                                                                                                       direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=FeatureRelationshipType.COMPOSITE,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='focus'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'Focus'])])],
+                                                                                                       multiplicity=MultiplicityBounds(
+                                                                                                           lower_bound=None,
+                                                                                                           upper_bound=InfValue()),
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[])),
+                                                                                OwnedFeatureMember(visibility=None,
+                                                                                                   element=Step(
+                                                                                                       direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=FeatureRelationshipType.COMPOSITE,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='shoot'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'Shoot'])])],
+                                                                                                       multiplicity=MultiplicityBounds(
+                                                                                                           lower_bound=None,
+                                                                                                           upper_bound=IntValue(
+                                                                                                               raw='1')),
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[])),
+                                                                                OwnedFeatureMember(visibility=None,
+                                                                                                   element=Succession(
+                                                                                                       direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=None,
+                                                                                                       specializations=[],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_all_succession=False,
+                                                                                                       first=ConnectorEnd(
+                                                                                                           name=None,
+                                                                                                           reference=QualifiedName(
+                                                                                                               names=[
+                                                                                                                   'focus']),
+                                                                                                           multiplicity=MultiplicityBounds(
+                                                                                                               lower_bound=IntValue(
+                                                                                                                   raw='0'),
+                                                                                                               upper_bound=IntValue(
+                                                                                                                   raw='1'))),
+                                                                                                       then=ConnectorEnd(
+                                                                                                           name=None,
+                                                                                                           reference=QualifiedName(
+                                                                                                               names=[
+                                                                                                                   'focus']),
+                                                                                                           multiplicity=MultiplicityBounds(
+                                                                                                               lower_bound=IntValue(
+                                                                                                                   raw='0'),
+                                                                                                               upper_bound=IntValue(
+                                                                                                                   raw='1'))),
+                                                                                                       body=[])),
+                                                                                OwnedFeatureMember(visibility=None,
+                                                                                                   element=Succession(
+                                                                                                       direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=None,
+                                                                                                       specializations=[],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_all_succession=False,
+                                                                                                       first=ConnectorEnd(
+                                                                                                           name=None,
+                                                                                                           reference=QualifiedName(
+                                                                                                               names=[
+                                                                                                                   'focus']),
+                                                                                                           multiplicity=MultiplicityBounds(
+                                                                                                               lower_bound=None,
+                                                                                                               upper_bound=IntValue(
+                                                                                                                   raw='1'))),
+                                                                                                       then=ConnectorEnd(
+                                                                                                           name=None,
+                                                                                                           reference=QualifiedName(
+                                                                                                               names=[
+                                                                                                                   'shoot']),
+                                                                                                           multiplicity=MultiplicityBounds(
+                                                                                                               lower_bound=IntValue(
+                                                                                                                   raw='0'),
+                                                                                                               upper_bound=IntValue(
+                                                                                                                   raw='1'))),
+                                                                                                       body=[]))])),
+    ])
+    @pytest.mark.focus
+    def test_behavior(self, text, expected):
+        parser = _parser_for_rule('behavior')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'behavior' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('composite step shoot : Shoot;',
+         Step(direction=None, is_abstract=False, relationship_type=FeatureRelationshipType.COMPOSITE, is_readonly=False,
+              is_derived=False, is_end=False, annotations=[], is_all=False,
+              identification=Identification(short_name=None, name='shoot'),
+              specializations=[TypingsPart(items=[QualifiedName(names=['Shoot'])])], multiplicity=None,
+              is_ordered=False, is_nonunique=False, conjugation=None, relationships=[], is_default=False,
+              value_type=None, value=None, body=[])),
+        ('step x = 1;',
+         Step(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+              is_end=False, annotations=[], is_all=False, identification=Identification(short_name=None, name='x'),
+              specializations=[], multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None,
+              relationships=[], is_default=False, value_type=FeatureValueType.BIND, value=IntValue(raw='1'), body=[])),
+    ])
+    @pytest.mark.focus
+    def test_step(self, text, expected):
+        parser = _parser_for_rule('step')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'step' in rules

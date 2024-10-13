@@ -15,7 +15,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition, FeatureInverting, \
     TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp, \
     DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector, \
-    Succession
+    Succession, Behavior, Step
 
 
 # noinspection PyPep8Naming
@@ -1104,6 +1104,49 @@ class KerMLTransformer(KerMLTransTemplate):
             is_all_succession=is_all_succession,
             first=first,
             then=then,
+
+            # body part
+            body=type_body,
+        )
+
+    @v_args(tree=True)
+    def behavior(self, tree: Tree):
+        return self._classifier_like(tree, type_cls=Behavior)
+
+    @v_args(inline=True)
+    def step(self, prefix, declaration, value_part, type_body):
+        direction, is_abstract, relationship_type, is_readonly, is_derived, is_end, annotations = prefix
+        is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = declaration
+
+        if value_part is not None:
+            is_default, value_type, v = value_part
+        else:
+            is_default, value_type, v = False, None, None
+
+        return Step(
+            # for prefix
+            direction=direction,
+            is_abstract=is_abstract,
+            relationship_type=relationship_type,
+            is_readonly=is_readonly,
+            is_derived=is_derived,
+            is_end=is_end,
+            annotations=annotations,
+
+            # for declaration
+            is_all=is_all,
+            identification=identification,
+            specializations=specs,
+            multiplicity=multiplicity,
+            is_ordered=is_ordered,
+            is_nonunique=is_nonunique,
+            conjugation=conj,
+            relationships=relationships,
+
+            # for type - value
+            is_default=is_default,
+            value_type=value_type,
+            value=v,
 
             # body part
             body=type_body,
