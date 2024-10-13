@@ -710,11 +710,18 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.succession(self, tree)
 
     @v_args(tree=True)
-    def succession_declaration(self, tree: Tree):
-        if 'succession_declaration' not in self._rules_set:
-            self._rules_set.add('succession_declaration')
-            self.rules.append('succession_declaration')
-        return KerMLTransTemplate.succession_declaration(self, tree)
+    def non_declare_succession_declaration(self, tree: Tree):
+        if 'non_declare_succession_declaration' not in self._rules_set:
+            self._rules_set.add('non_declare_succession_declaration')
+            self.rules.append('non_declare_succession_declaration')
+        return KerMLTransTemplate.non_declare_succession_declaration(self, tree)
+
+    @v_args(tree=True)
+    def declare_succession_declaration(self, tree: Tree):
+        if 'declare_succession_declaration' not in self._rules_set:
+            self._rules_set.add('declare_succession_declaration')
+            self.rules.append('declare_succession_declaration')
+        return KerMLTransTemplate.declare_succession_declaration(self, tree)
 
     @v_args(tree=True)
     def behavior(self, tree: Tree):

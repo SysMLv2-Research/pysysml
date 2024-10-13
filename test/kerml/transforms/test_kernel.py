@@ -4,7 +4,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     MultiplicityBounds, IntValue, ConjugationPart, DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, \
     NonFeatureMember, Documentation, Comment, OwnedFeatureMember, Feature, TypingsPart, DataType, Struct, \
     FeatureRelationshipType, InfValue, Association, AssociationStruct, Connector, ConnectorType, ConnectorEnd, \
-    FeatureChain, FeatureValueType, BindingConnector
+    FeatureChain, FeatureValueType, BindingConnector, Succession
 from .base import _parser_for_rule
 
 
@@ -81,7 +81,6 @@ class TestKerMLTransformsKernel:
                                                                                                        value=None,
                                                                                                        body=[]))])),
     ])
-    @pytest.mark.focus
     def test_data_type(self, text, expected):
         parser = _parser_for_rule('data_type')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -163,7 +162,6 @@ class TestKerMLTransformsKernel:
                                   element=Documentation(identification=Identification(short_name=None, name='X'),
                                                         locale=None, comment='/* 456 */'))])),
     ])
-    @pytest.mark.focus
     def test_class_statement(self, text, expected):
         parser = _parser_for_rule('class_statement')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -262,7 +260,6 @@ class TestKerMLTransformsKernel:
                                                                            is_default=False, value_type=None,
                                                                            value=None, body=[]))])),
     ])
-    @pytest.mark.focus
     def test_structure(self, text, expected):
         parser = _parser_for_rule('structure')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -394,7 +391,6 @@ class TestKerMLTransformsKernel:
                                                                                 is_default=False, value_type=None,
                                                                                 value=None, body=[]))])),
     ])
-    @pytest.mark.focus
     def test_association(self, text, expected):
         parser = _parser_for_rule('association')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -437,7 +433,6 @@ class TestKerMLTransformsKernel:
                                                                                       is_default=False, value_type=None,
                                                                                       value=None, body=[]))])),
     ])
-    @pytest.mark.focus
     def test_association_structure(self, text, expected):
         parser = _parser_for_rule('association_structure')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -538,7 +533,6 @@ class TestKerMLTransformsKernel:
                    is_default=False, value_type=FeatureValueType.INITIAL,
                    value=QualifiedName(names=['another_mounting']), is_all_connect=False, ends=None, body=[])),
     ])
-    @pytest.mark.focus
     def test_connector(self, text, expected):
         parser = _parser_for_rule('connector')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -588,7 +582,6 @@ class TestKerMLTransformsKernel:
                           specializations=[], multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None,
                           relationships=[], is_all_binding=True, bind_entity=None, bind_to=None, body=[])),
     ])
-    @pytest.mark.focus
     def test_binding_connector(self, text, expected):
         parser = _parser_for_rule('binding_connector')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -598,3 +591,54 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'binding_connector' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('succession controlFlow first focus then shoot;',
+         Succession(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                    is_end=False, annotations=[], is_all=False,
+                    identification=Identification(short_name=None, name='controlFlow'), specializations=[],
+                    multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                    is_all_succession=False,
+                    first=ConnectorEnd(name=None, reference=QualifiedName(names=['focus']), multiplicity=None),
+                    then=ConnectorEnd(name=None, reference=QualifiedName(names=['shoot']), multiplicity=None),
+                    body=[])),
+        ('succession focus then shoot;',
+         Succession(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                    is_end=False, annotations=[], is_all=False, identification=None, specializations=[],
+                    multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                    is_all_succession=False,
+                    first=ConnectorEnd(name=None, reference=QualifiedName(names=['focus']), multiplicity=None),
+                    then=ConnectorEnd(name=None, reference=QualifiedName(names=['shoot']), multiplicity=None),
+                    body=[])),
+        ('succession focus[0..1] then focus[0..1];',
+         Succession(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                    is_end=False, annotations=[], is_all=False, identification=None, specializations=[],
+                    multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                    is_all_succession=False, first=ConnectorEnd(name=None, reference=QualifiedName(names=['focus']),
+                                                                multiplicity=MultiplicityBounds(
+                                                                    lower_bound=IntValue(raw='0'),
+                                                                    upper_bound=IntValue(raw='1'))),
+                    then=ConnectorEnd(name=None, reference=QualifiedName(names=['focus']),
+                                      multiplicity=MultiplicityBounds(lower_bound=IntValue(raw='0'),
+                                                                      upper_bound=IntValue(raw='1'))), body=[])),
+        ('succession focus[1] then shoot[0..1];',
+         Succession(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                    is_end=False, annotations=[], is_all=False, identification=None, specializations=[],
+                    multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                    is_all_succession=False, first=ConnectorEnd(name=None, reference=QualifiedName(names=['focus']),
+                                                                multiplicity=MultiplicityBounds(lower_bound=None,
+                                                                                                upper_bound=IntValue(
+                                                                                                    raw='1'))),
+                    then=ConnectorEnd(name=None, reference=QualifiedName(names=['shoot']),
+                                      multiplicity=MultiplicityBounds(lower_bound=IntValue(raw='0'),
+                                                                      upper_bound=IntValue(raw='1'))), body=[])),
+    ])
+    def test_succession(self, text, expected):
+        parser = _parser_for_rule('succession')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'succession' in rules

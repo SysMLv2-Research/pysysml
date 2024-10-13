@@ -14,7 +14,8 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember, Alias, NamespaceFeatureMember, Specialization, \
     Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition, FeatureInverting, \
     TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp, \
-    DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector
+    DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector, \
+    Succession
 
 
 # noinspection PyPep8Naming
@@ -1048,6 +1049,61 @@ class KerMLTransformer(KerMLTransTemplate):
             is_all_binding=is_all_binding,
             bind_entity=bind_entity,
             bind_to=bind_to,
+
+            # body part
+            body=type_body,
+        )
+
+    @v_args(inline=True)
+    def non_declare_succession_declaration(self, all_token: Token, *members):
+        is_all_succession = bool(all_token)
+        if members:
+            first, then = members
+        else:
+            first, then = None, None
+        return is_all_succession, None, first, then
+
+    @v_args(inline=True)
+    def declare_succession_declaration(self, declaration, *members):
+        if members:
+            first, then = members
+        else:
+            first, then = None, None
+        return False, declaration, first, then
+
+    @v_args(inline=True)
+    def succession(self, prefix, succession_declaration, type_body):
+        direction, is_abstract, relationship_type, is_readonly, is_derived, is_end, annotations = prefix
+        is_all_succession, declaration, first, then = succession_declaration
+        if declaration:
+            is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = declaration
+        else:
+            is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = \
+                (False, None, [], (None, False, False), None, [])
+
+        return Succession(
+            # for prefix
+            direction=direction,
+            is_abstract=is_abstract,
+            relationship_type=relationship_type,
+            is_readonly=is_readonly,
+            is_derived=is_derived,
+            is_end=is_end,
+            annotations=annotations,
+
+            # for declaration
+            is_all=is_all,
+            identification=identification,
+            specializations=specs,
+            multiplicity=multiplicity,
+            is_ordered=is_ordered,
+            is_nonunique=is_nonunique,
+            conjugation=conj,
+            relationships=relationships,
+
+            is_all_succession=is_all_succession,
+            first=first,
+            then=then,
 
             # body part
             body=type_body,

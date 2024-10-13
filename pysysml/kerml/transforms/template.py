@@ -403,7 +403,11 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def succession_declaration(self, tree: Tree):
+    def non_declare_succession_declaration(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def declare_succession_declaration(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
