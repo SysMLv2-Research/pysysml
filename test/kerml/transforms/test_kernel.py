@@ -4,7 +4,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     MultiplicityBounds, IntValue, ConjugationPart, DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, \
     NonFeatureMember, Documentation, Comment, OwnedFeatureMember, Feature, TypingsPart, DataType, Struct, \
     FeatureRelationshipType, InfValue, Association, AssociationStruct, Connector, ConnectorType, ConnectorEnd, \
-    FeatureChain, FeatureValueType
+    FeatureChain, FeatureValueType, BindingConnector
 from .base import _parser_for_rule
 
 
@@ -548,3 +548,53 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'connector' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('// Subsets Links::selfLinks by default.\n'
+         'binding fuelFlowBinding of fuelTank.fuelFlowOut = engine.fuelFlowIn;',
+         BindingConnector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False,
+                          is_derived=False, is_end=False, annotations=[], is_all=False,
+                          identification=Identification(short_name=None, name='fuelFlowBinding'), specializations=[],
+                          multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                          is_all_binding=False, bind_entity=ConnectorEnd(name=None, reference=FeatureChain(
+                 items=[QualifiedName(names=['fuelTank']), QualifiedName(names=['fuelFlowOut'])]), multiplicity=None),
+                          bind_to=ConnectorEnd(name=None, reference=FeatureChain(
+                              items=[QualifiedName(names=['engine']), QualifiedName(names=['fuelFlowIn'])]),
+                                               multiplicity=None), body=[])),
+        ('binding fuelTank.fuelFlowOut = engine.fuelFlowIn;',
+         BindingConnector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False,
+                          is_derived=False, is_end=False, annotations=[], is_all=False, identification=None,
+                          specializations=[], multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None,
+                          relationships=[], is_all_binding=False, bind_entity=ConnectorEnd(name=None,
+                                                                                           reference=FeatureChain(
+                                                                                               items=[QualifiedName(
+                                                                                                   names=['fuelTank']),
+                                                                                                   QualifiedName(
+                                                                                                       names=[
+                                                                                                           'fuelFlowOut'])]),
+                                                                                           multiplicity=None),
+                          bind_to=ConnectorEnd(name=None, reference=FeatureChain(
+                              items=[QualifiedName(names=['engine']), QualifiedName(names=['fuelFlowIn'])]),
+                                               multiplicity=None), body=[])),
+        ('binding x;',
+         BindingConnector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False,
+                          is_derived=False, is_end=False, annotations=[], is_all=False,
+                          identification=Identification(short_name=None, name='x'), specializations=[],
+                          multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                          is_all_binding=False, bind_entity=None, bind_to=None, body=[])),
+        ('binding all;',
+         BindingConnector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False,
+                          is_derived=False, is_end=False, annotations=[], is_all=False, identification=None,
+                          specializations=[], multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None,
+                          relationships=[], is_all_binding=True, bind_entity=None, bind_to=None, body=[])),
+    ])
+    @pytest.mark.focus
+    def test_binding_connector(self, text, expected):
+        parser = _parser_for_rule('binding_connector')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'binding_connector' in rules

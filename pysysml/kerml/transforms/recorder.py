@@ -101,18 +101,18 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.feature_declaration_coj(self, tree)
 
     @v_args(tree=True)
-    def non_all_binary_connector_declaration(self, tree: Tree):
-        if 'non_all_binary_connector_declaration' not in self._rules_set:
-            self._rules_set.add('non_all_binary_connector_declaration')
-            self.rules.append('non_all_binary_connector_declaration')
-        return KerMLTransTemplate.non_all_binary_connector_declaration(self, tree)
-
-    @v_args(tree=True)
     def all_binary_connector_declaration(self, tree: Tree):
         if 'all_binary_connector_declaration' not in self._rules_set:
             self._rules_set.add('all_binary_connector_declaration')
             self.rules.append('all_binary_connector_declaration')
         return KerMLTransTemplate.all_binary_connector_declaration(self, tree)
+
+    @v_args(tree=True)
+    def non_all_binary_connector_declaration(self, tree: Tree):
+        if 'non_all_binary_connector_declaration' not in self._rules_set:
+            self._rules_set.add('non_all_binary_connector_declaration')
+            self.rules.append('non_all_binary_connector_declaration')
+        return KerMLTransTemplate.non_all_binary_connector_declaration(self, tree)
 
     @v_args(tree=True)
     def fv_bind(self, tree: Tree):
@@ -689,11 +689,18 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.binding_connector(self, tree)
 
     @v_args(tree=True)
-    def binding_connector_declaration(self, tree: Tree):
-        if 'binding_connector_declaration' not in self._rules_set:
-            self._rules_set.add('binding_connector_declaration')
-            self.rules.append('binding_connector_declaration')
-        return KerMLTransTemplate.binding_connector_declaration(self, tree)
+    def non_declare_binding_connector_declaration(self, tree: Tree):
+        if 'non_declare_binding_connector_declaration' not in self._rules_set:
+            self._rules_set.add('non_declare_binding_connector_declaration')
+            self.rules.append('non_declare_binding_connector_declaration')
+        return KerMLTransTemplate.non_declare_binding_connector_declaration(self, tree)
+
+    @v_args(tree=True)
+    def declare_binding_connector_declaration(self, tree: Tree):
+        if 'declare_binding_connector_declaration' not in self._rules_set:
+            self._rules_set.add('declare_binding_connector_declaration')
+            self.rules.append('declare_binding_connector_declaration')
+        return KerMLTransTemplate.declare_binding_connector_declaration(self, tree)
 
     @v_args(tree=True)
     def succession(self, tree: Tree):

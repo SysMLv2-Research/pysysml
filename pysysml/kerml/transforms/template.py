@@ -55,11 +55,11 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def non_all_binary_connector_declaration(self, tree: Tree):
+    def all_binary_connector_declaration(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
-    def all_binary_connector_declaration(self, tree: Tree):
+    def non_all_binary_connector_declaration(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
@@ -391,7 +391,11 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def binding_connector_declaration(self, tree: Tree):
+    def non_declare_binding_connector_declaration(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def declare_binding_connector_declaration(self, tree: Tree):
         return tree
 
     @v_args(tree=True)

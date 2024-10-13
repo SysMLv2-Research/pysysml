@@ -88,3 +88,29 @@ class Connector:
     ends: Optional[List[ConnectorEnd]]
 
     body: List[Any]
+
+
+@dataclass
+class BindingConnector:
+    direction: Optional[FeatureDirection]
+    is_abstract: bool
+    relationship_type: Optional[FeatureRelationshipType]
+    is_readonly: bool
+    is_derived: bool
+    is_end: bool
+    annotations: List[PrefixMetadataAnnotation]
+
+    is_all: bool
+    identification: Optional[Identification]
+    specializations: List[FeatureSpecializationPart]
+    multiplicity: Optional[MultiplicityBounds]
+    is_ordered: bool
+    is_nonunique: bool
+    conjugation: Optional[ConjugationPart]
+    relationships: List[FeatureRelationshipPart]
+
+    is_all_binding: bool
+    bind_entity: Optional[ConnectorEnd]
+    bind_to: Optional[ConnectorEnd]
+
+    body: List[Any]

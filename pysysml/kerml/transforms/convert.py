@@ -14,7 +14,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember, Alias, NamespaceFeatureMember, Specialization, \
     Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition, FeatureInverting, \
     TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp, \
-    DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType
+    DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector
 
 
 # noinspection PyPep8Naming
@@ -993,6 +993,61 @@ class KerMLTransformer(KerMLTransTemplate):
             # for type - binary &
             is_all_connect=is_all_connect,
             ends=ends,
+
+            # body part
+            body=type_body,
+        )
+
+    @v_args(inline=True)
+    def non_declare_binding_connector_declaration(self, all_token: Token, *members):
+        is_all_binding = bool(all_token)
+        if members:
+            bind_entity, bind_to = members
+        else:
+            bind_entity, bind_to = None, None
+        return is_all_binding, None, bind_entity, bind_to
+
+    @v_args(inline=True)
+    def declare_binding_connector_declaration(self, declaration, *members):
+        if members:
+            bind_entity, bind_to = members
+        else:
+            bind_entity, bind_to = None, None
+        return False, declaration, bind_entity, bind_to
+
+    @v_args(inline=True)
+    def binding_connector(self, prefix, binding_connector_declaration, type_body):
+        direction, is_abstract, relationship_type, is_readonly, is_derived, is_end, annotations = prefix
+        is_all_binding, declaration, bind_entity, bind_to = binding_connector_declaration
+        if declaration:
+            is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = declaration
+        else:
+            is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = \
+                (False, None, [], (None, False, False), None, [])
+
+        return BindingConnector(
+            # for prefix
+            direction=direction,
+            is_abstract=is_abstract,
+            relationship_type=relationship_type,
+            is_readonly=is_readonly,
+            is_derived=is_derived,
+            is_end=is_end,
+            annotations=annotations,
+
+            # for declaration
+            is_all=is_all,
+            identification=identification,
+            specializations=specs,
+            multiplicity=multiplicity,
+            is_ordered=is_ordered,
+            is_nonunique=is_nonunique,
+            conjugation=conj,
+            relationships=relationships,
+
+            is_all_binding=is_all_binding,
+            bind_entity=bind_entity,
+            bind_to=bind_to,
 
             # body part
             body=type_body,

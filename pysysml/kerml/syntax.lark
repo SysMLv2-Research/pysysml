@@ -295,14 +295,16 @@ connector_end_name: NAME
 
 # 8.2.5.5.2 Binding Connectors
 binding_connector: feature_prefix "binding" binding_connector_declaration type_body
-binding_connector_declaration: feature_declaration ("of" connector_end_member "=" connector_end_member)?
-                             | ("all")? ("of"? connector_end_member "=" connector_end_member)?
+?binding_connector_declaration: non_declare_binding_connector_declaration
+                             | declare_binding_connector_declaration
+non_declare_binding_connector_declaration.2: [ALL] ("of"? connector_end_member "=" connector_end_member)?
+declare_binding_connector_declaration: feature_declaration ("of" connector_end_member "=" connector_end_member)?
 
 # 8.2.5.5.3 Successions
 succession: feature_prefix "succession" succession_declaration type_body
 
 succession_declaration: feature_declaration ("first" connector_end_member "then" connector_end_member)?
-                      | ("all")? ("first"? connector_end_member "then" connector_end_member)?
+                      | [ALL] ("first"? connector_end_member "then" connector_end_member)?
 
 # 8.2.5.6 Behaviors Concrete Syntax
 behavior: type_prefix "behavior" classifier_declaration type_body
