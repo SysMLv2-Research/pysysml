@@ -6,7 +6,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     RedefinitionsPart, TypingsPart, ReferencesPart, ChainingPart, InvertingPart, TypeFeaturingPart, FeatureDirection, \
     FeatureRelationshipType, OwnedFeatureMember, InfValue, FeatureChain, RealValue, FeatureValueType, Namespace, \
     TypeFeatureMember, Specialization, Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, \
-    Subsetting, Redefinition, FeatureInverting, TypeFeaturing
+    Subsetting, Redefinition, FeatureInverting, TypeFeaturing, BinOp, InvocationExpression
 from .base import _parser_for_rule
 
 
@@ -610,6 +610,27 @@ class TestKerMLTransformsCore:
                  TypingsPart(items=[QualifiedName(names=['Food']), QualifiedName(names=['InventoryItem'])])],
                  multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
                  is_default=False, value_type=None, value=None, body=[])),
+        ('derived feature averageScore[1] : Rational = sum(scores)/size(scores);',
+         Feature(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=True,
+                 is_end=False, annotations=[], is_all=False,
+                 identification=Identification(short_name=None, name='averageScore'),
+                 specializations=[TypingsPart(items=[QualifiedName(names=['Rational'])])],
+                 multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=IntValue(raw='1')), is_ordered=False,
+                 is_nonunique=False, conjugation=None, relationships=[], is_default=False,
+                 value_type=FeatureValueType.BIND,
+                 value=BinOp(op='/', x=InvocationExpression(name=QualifiedName(names=['sum']),
+                                                            arguments=[QualifiedName(names=['scores'])]),
+                             y=InvocationExpression(name=QualifiedName(names=['size']),
+                                                    arguments=[QualifiedName(names=['scores'])])),
+                 body=[])),
+        ('feature e = 1e-6 + m * c ^2;',
+         Feature(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                 is_end=False, annotations=[], is_all=False, identification=Identification(short_name=None, name='e'),
+                 specializations=[], multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None,
+                 relationships=[], is_default=False, value_type=FeatureValueType.BIND,
+                 value=BinOp(op='+', x=RealValue(raw='1e-6'), y=BinOp(op='*', x=QualifiedName(names=['m']),
+                                                                      y=BinOp(op='^', x=QualifiedName(names=['c']),
+                                                                              y=IntValue(raw='2')))), body=[])),
     ])
     def test_feature(self, text, expected):
         parser = _parser_for_rule('feature')
