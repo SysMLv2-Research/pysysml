@@ -350,7 +350,7 @@ binary_operator: "|" | "&" | "xor" | ".."
                | "%" | "^" | "**"
 
 unary_operator_expression: unary_operator argument_member
-unary_operator: "+" | "-" | "~" | "not"
+!unary_operator: "+" | "-" | "~" | "not"
 
 // all elements starts with "argument_" is based on "owned_expression"
 // which means it can be any kinds of free expression

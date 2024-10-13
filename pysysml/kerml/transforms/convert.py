@@ -12,7 +12,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     TypingsPart, SubsettingsPart, RedefinitionsPart, ReferencesPart, FeatureDirection, FeatureRelationshipType, \
     FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember, Alias, NamespaceFeatureMember, Specialization, \
     Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition, FeatureInverting, \
-    TypeFeaturing
+    TypeFeaturing, ExtentOp, UnaryOp
 
 
 # noinspection PyPep8Naming
@@ -750,6 +750,18 @@ class KerMLTransformer(KerMLTransTemplate):
             feature_provider=tree.children[2],
             body=tree.children[3],
         )
+
+    @v_args(inline=True)
+    def extent_expression(self, element):
+        return ExtentOp(x=element)
+
+    @v_args(inline=True)
+    def unary_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def unary_operator_expression(self, op: str, element):
+        return UnaryOp(op=op, x=element)
 
 
 def tree_to_cst(tree: Tree):
