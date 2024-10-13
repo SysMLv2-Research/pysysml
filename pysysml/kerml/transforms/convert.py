@@ -15,7 +15,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition, FeatureInverting, \
     TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp, \
     DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector, \
-    Succession, Behavior, Step, Return, Result, Function
+    Succession, Behavior, Step, Return, Result, Function, Predicate, Expression
 
 
 # noinspection PyPep8Naming
@@ -642,10 +642,9 @@ class KerMLTransformer(KerMLTransTemplate):
             body=tree.children[3],
         )
 
-    def _classifier_like(self, tree: Tree, type_cls: typing.Type[Classifier]):
-        assert len(tree.children) == 3
-        is_abstract, annotations = tree.children[0]
-        is_all, identification, multiplicity_bounds, spx, type_relationship_parts = tree.children[1]
+    def _classifier_custom(self, prefix, declaration, body, type_cls: typing.Type[Classifier], **extra_values):
+        is_abstract, annotations = prefix
+        is_all, identification, multiplicity_bounds, spx, type_relationship_parts = declaration
         if spx is None:
             conjugation, superclassing = None, None
         elif isinstance(spx, SuperclassingPart):
@@ -665,7 +664,18 @@ class KerMLTransformer(KerMLTransTemplate):
             conjugation=conjugation,
             superclassing=superclassing,
             relationships=type_relationship_parts,
+            body=body,
+            **extra_values,
+        )
+
+    def _classifier_like(self, tree: Tree, type_cls: typing.Type[Classifier], **extra_values):
+        assert len(tree.children) == 3
+        return self._classifier_custom(
+            prefix=tree.children[0],
+            declaration=tree.children[1],
             body=tree.children[2],
+            type_cls=type_cls,
+            **extra_values,
         )
 
     @v_args(tree=True)
@@ -1177,6 +1187,48 @@ class KerMLTransformer(KerMLTransTemplate):
     @v_args(tree=True)
     def function(self, tree: Tree):
         return self._classifier_like(tree=tree, type_cls=Function)
+
+    @v_args(inline=True)
+    def expression(self, prefix, declaration, value_part, body):
+        direction, is_abstract, relationship_type, is_readonly, is_derived, is_end, annotations = prefix
+        is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = declaration
+        if value_part is not None:
+            is_default, value_type, v = value_part
+        else:
+            is_default, value_type, v = False, None, None
+
+        return Expression(
+            # for prefix
+            direction=direction,
+            is_abstract=is_abstract,
+            relationship_type=relationship_type,
+            is_readonly=is_readonly,
+            is_derived=is_derived,
+            is_end=is_end,
+            annotations=annotations,
+
+            # for declaration
+            is_all=is_all,
+            identification=identification,
+            specializations=specs,
+            multiplicity=multiplicity,
+            is_ordered=is_ordered,
+            is_nonunique=is_nonunique,
+            conjugation=conj,
+            relationships=relationships,
+
+            # for type - value
+            is_default=is_default,
+            value_type=value_type,
+            value=v,
+
+            # body part
+            body=body,
+        )
+
+    @v_args(tree=True)
+    def predicate(self, tree: Tree):
+        return self._classifier_like(tree=tree, type_cls=Predicate)
 
 
 def tree_to_cst(tree: Tree):

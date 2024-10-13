@@ -188,3 +188,13 @@ class Result:
 @dataclass
 class Function(Behavior):
     pass
+
+
+@dataclass
+class Expression(Step):
+    pass
+
+
+@dataclass
+class Predicate(Function):
+    pass
