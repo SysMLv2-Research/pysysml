@@ -326,7 +326,9 @@ predicate: type_prefix "predicate" classifier_declaration function_body
 
 # 8.2.5.7.4 Boolean Expressions and Invariants
 boolean_expression: feature_prefix "bool" feature_declaration [value_part] function_body
-invariant: feature_prefix "inv" ("true" | "false")? feature_declaration [value_part] function_body
+//invariant: feature_prefix "inv" [invariant_bool] feature_declaration [value_part] function_body
+invariant: feature_prefix "inv" [invariant_bool] feature_declaration [value_part] function_body
+!invariant_bool: "true" | "false"
 
 # 8.2.5.8 Expressions Concrete Syntax
 # 8.2.5.8.1 Operator Expressions

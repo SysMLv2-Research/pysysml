@@ -801,6 +801,13 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.invariant(self, tree)
 
     @v_args(tree=True)
+    def invariant_bool(self, tree: Tree):
+        if 'invariant_bool' not in self._rules_set:
+            self._rules_set.add('invariant_bool')
+            self.rules.append('invariant_bool')
+        return KerMLTransTemplate.invariant_bool(self, tree)
+
+    @v_args(tree=True)
     def conditional_expression(self, tree: Tree):
         if 'conditional_expression' not in self._rules_set:
             self._rules_set.add('conditional_expression')

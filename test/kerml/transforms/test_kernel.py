@@ -5,7 +5,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     NonFeatureMember, Documentation, Comment, OwnedFeatureMember, Feature, TypingsPart, DataType, Struct, \
     FeatureRelationshipType, InfValue, Association, AssociationStruct, Connector, ConnectorType, ConnectorEnd, \
     FeatureChain, FeatureValueType, BindingConnector, Succession, Behavior, Step, Function, FeatureDirection, Return, \
-    Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate
+    Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate, BooleanExpression
 from .base import _parser_for_rule
 
 
@@ -1844,3 +1844,37 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'predicate' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('bool assemblyChecks[*] : isAssembled;',
+         BooleanExpression(direction=None, is_abstract=False, relationship_type=None, is_readonly=False,
+                           is_derived=False, is_end=False, annotations=[], is_all=False,
+                           identification=Identification(short_name=None, name='assemblyChecks'),
+                           specializations=[TypingsPart(items=[QualifiedName(names=['isAssembled'])])],
+                           multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=InfValue()), is_ordered=False,
+                           is_nonunique=False, conjugation=None, relationships=[], is_default=False, value_type=None,
+                           value=None, body=[])),
+        ('bool isFull { fuelLevel == maxFuelLevel }',
+         BooleanExpression(direction=None, is_abstract=False, relationship_type=None, is_readonly=False,
+                           is_derived=False, is_end=False, annotations=[], is_all=False,
+                           identification=Identification(short_name=None, name='isFull'), specializations=[],
+                           multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                           is_default=False, value_type=None, value=None, body=[Result(visibility=None,
+                                                                                       expression=BinOp(op='==',
+                                                                                                        x=QualifiedName(
+                                                                                                            names=[
+                                                                                                                'fuelLevel']),
+                                                                                                        y=QualifiedName(
+                                                                                                            names=[
+                                                                                                                'maxFuelLevel'])))])),
+    ])
+    @pytest.mark.focus
+    def test_boolean_expression(self, text, expected):
+        parser = _parser_for_rule('boolean_expression')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'boolean_expression' in rules

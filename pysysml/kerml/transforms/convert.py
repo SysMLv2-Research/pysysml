@@ -15,7 +15,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition, FeatureInverting, \
     TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp, \
     DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector, \
-    Succession, Behavior, Step, Return, Result, Function, Predicate, Expression
+    Succession, Behavior, Step, Return, Result, Function, Predicate, Expression, BooleanExpression, Invariant
 
 
 # noinspection PyPep8Naming
@@ -1181,8 +1181,11 @@ class KerMLTransformer(KerMLTransTemplate):
         return tree.children
 
     @v_args(inline=True)
-    def function_body(self, body_items):
-        return body_items
+    def function_body(self, *args):
+        if args:
+            return args[0]
+        else:
+            return []
 
     @v_args(tree=True)
     def function(self, tree: Tree):
@@ -1229,6 +1232,88 @@ class KerMLTransformer(KerMLTransTemplate):
     @v_args(tree=True)
     def predicate(self, tree: Tree):
         return self._classifier_like(tree=tree, type_cls=Predicate)
+
+    @v_args(inline=True)
+    def boolean_expression(self, prefix, declaration, value_part, body):
+        direction, is_abstract, relationship_type, is_readonly, is_derived, is_end, annotations = prefix
+        is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = declaration
+        if value_part is not None:
+            is_default, value_type, v = value_part
+        else:
+            is_default, value_type, v = False, None, None
+
+        return BooleanExpression(
+            # for prefix
+            direction=direction,
+            is_abstract=is_abstract,
+            relationship_type=relationship_type,
+            is_readonly=is_readonly,
+            is_derived=is_derived,
+            is_end=is_end,
+            annotations=annotations,
+
+            # for declaration
+            is_all=is_all,
+            identification=identification,
+            specializations=specs,
+            multiplicity=multiplicity,
+            is_ordered=is_ordered,
+            is_nonunique=is_nonunique,
+            conjugation=conj,
+            relationships=relationships,
+
+            # for type - value
+            is_default=is_default,
+            value_type=value_type,
+            value=v,
+
+            # body part
+            body=body,
+        )
+
+    @v_args(inline=True)
+    def invariant_bool(self, token: Token):
+        return json.loads(token.value)
+
+    @v_args(inline=True)
+    def invariant(self, prefix, invariant_bool, declaration, value_part, body):
+        direction, is_abstract, relationship_type, is_readonly, is_derived, is_end, annotations = prefix
+        is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = declaration
+        if value_part is not None:
+            is_default, value_type, v = value_part
+        else:
+            is_default, value_type, v = False, None, None
+
+        return Invariant(
+            # for prefix
+            direction=direction,
+            is_abstract=is_abstract,
+            relationship_type=relationship_type,
+            is_readonly=is_readonly,
+            is_derived=is_derived,
+            is_end=is_end,
+            annotations=annotations,
+
+            asserted=invariant_bool,
+
+            # for declaration
+            is_all=is_all,
+            identification=identification,
+            specializations=specs,
+            multiplicity=multiplicity,
+            is_ordered=is_ordered,
+            is_nonunique=is_nonunique,
+            conjugation=conj,
+            relationships=relationships,
+
+            # for type - value
+            is_default=is_default,
+            value_type=value_type,
+            value=v,
+
+            # body part
+            body=body,
+        )
 
 
 def tree_to_cst(tree: Tree):

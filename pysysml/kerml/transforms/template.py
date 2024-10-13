@@ -455,6 +455,10 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def invariant_bool(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def conditional_expression(self, tree: Tree):
         return tree
 

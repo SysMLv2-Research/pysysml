@@ -148,29 +148,8 @@ class Behavior(Classifier):
 
 
 @dataclass
-class Step:
-    direction: Optional[FeatureDirection]
-    is_abstract: bool
-    relationship_type: Optional[FeatureRelationshipType]
-    is_readonly: bool
-    is_derived: bool
-    is_end: bool
-    annotations: List[PrefixMetadataAnnotation]
-
-    is_all: bool
-    identification: Optional[Identification]
-    specializations: List[FeatureSpecializationPart]
-    multiplicity: Optional[MultiplicityBounds]
-    is_ordered: bool
-    is_nonunique: bool
-    conjugation: Optional[ConjugationPart]
-    relationships: List[FeatureRelationshipPart]
-
-    is_default: bool
-    value_type: Optional[FeatureValueType]
-    value: Optional[Any]
-
-    body: List[Any]
+class Step(Feature):
+    pass
 
 
 @dataclass
@@ -198,3 +177,13 @@ class Expression(Step):
 @dataclass
 class Predicate(Function):
     pass
+
+
+@dataclass
+class BooleanExpression(Expression):
+    pass
+
+
+@dataclass
+class Invariant(BooleanExpression):
+    asserted: Optional[bool]
