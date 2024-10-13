@@ -101,6 +101,20 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.feature_declaration_coj(self, tree)
 
     @v_args(tree=True)
+    def non_all_binary_connector_declaration(self, tree: Tree):
+        if 'non_all_binary_connector_declaration' not in self._rules_set:
+            self._rules_set.add('non_all_binary_connector_declaration')
+            self.rules.append('non_all_binary_connector_declaration')
+        return KerMLTransTemplate.non_all_binary_connector_declaration(self, tree)
+
+    @v_args(tree=True)
+    def all_binary_connector_declaration(self, tree: Tree):
+        if 'all_binary_connector_declaration' not in self._rules_set:
+            self._rules_set.add('all_binary_connector_declaration')
+            self.rules.append('all_binary_connector_declaration')
+        return KerMLTransTemplate.all_binary_connector_declaration(self, tree)
+
+    @v_args(tree=True)
     def fv_bind(self, tree: Tree):
         if 'fv_bind' not in self._rules_set:
             self._rules_set.add('fv_bind')
@@ -633,11 +647,11 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.connector(self, tree)
 
     @v_args(tree=True)
-    def binary_connector_declaration(self, tree: Tree):
-        if 'binary_connector_declaration' not in self._rules_set:
-            self._rules_set.add('binary_connector_declaration')
-            self.rules.append('binary_connector_declaration')
-        return KerMLTransTemplate.binary_connector_declaration(self, tree)
+    def value_connector_declaration(self, tree: Tree):
+        if 'value_connector_declaration' not in self._rules_set:
+            self._rules_set.add('value_connector_declaration')
+            self.rules.append('value_connector_declaration')
+        return KerMLTransTemplate.value_connector_declaration(self, tree)
 
     @v_args(tree=True)
     def nary_connector_declaration(self, tree: Tree):
@@ -652,6 +666,20 @@ class KerMLTransRecorder(KerMLTransTemplate):
             self._rules_set.add('connector_end')
             self.rules.append('connector_end')
         return KerMLTransTemplate.connector_end(self, tree)
+
+    @v_args(tree=True)
+    def connector_end_to(self, tree: Tree):
+        if 'connector_end_to' not in self._rules_set:
+            self._rules_set.add('connector_end_to')
+            self.rules.append('connector_end_to')
+        return KerMLTransTemplate.connector_end_to(self, tree)
+
+    @v_args(tree=True)
+    def connector_end_name(self, tree: Tree):
+        if 'connector_end_name' not in self._rules_set:
+            self._rules_set.add('connector_end_name')
+            self.rules.append('connector_end_name')
+        return KerMLTransTemplate.connector_end_name(self, tree)
 
     @v_args(tree=True)
     def binding_connector(self, tree: Tree):
@@ -878,6 +906,48 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.binary_l9_operator(self, tree)
 
     @v_args(tree=True)
+    def classification_expression(self, tree: Tree):
+        if 'classification_expression' not in self._rules_set:
+            self._rules_set.add('classification_expression')
+            self.rules.append('classification_expression')
+        return KerMLTransTemplate.classification_expression(self, tree)
+
+    @v_args(tree=True)
+    def classification_test_operator(self, tree: Tree):
+        if 'classification_test_operator' not in self._rules_set:
+            self._rules_set.add('classification_test_operator')
+            self.rules.append('classification_test_operator')
+        return KerMLTransTemplate.classification_test_operator(self, tree)
+
+    @v_args(tree=True)
+    def cast_operator(self, tree: Tree):
+        if 'cast_operator' not in self._rules_set:
+            self._rules_set.add('cast_operator')
+            self.rules.append('cast_operator')
+        return KerMLTransTemplate.cast_operator(self, tree)
+
+    @v_args(tree=True)
+    def metaclassification_expression(self, tree: Tree):
+        if 'metaclassification_expression' not in self._rules_set:
+            self._rules_set.add('metaclassification_expression')
+            self.rules.append('metaclassification_expression')
+        return KerMLTransTemplate.metaclassification_expression(self, tree)
+
+    @v_args(tree=True)
+    def meta_classification_test_operator(self, tree: Tree):
+        if 'meta_classification_test_operator' not in self._rules_set:
+            self._rules_set.add('meta_classification_test_operator')
+            self.rules.append('meta_classification_test_operator')
+        return KerMLTransTemplate.meta_classification_test_operator(self, tree)
+
+    @v_args(tree=True)
+    def meta_cast_operator(self, tree: Tree):
+        if 'meta_cast_operator' not in self._rules_set:
+            self._rules_set.add('meta_cast_operator')
+            self.rules.append('meta_cast_operator')
+        return KerMLTransTemplate.meta_cast_operator(self, tree)
+
+    @v_args(tree=True)
     def binary_l7_operator_expression(self, tree: Tree):
         if 'binary_l7_operator_expression' not in self._rules_set:
             self._rules_set.add('binary_l7_operator_expression')
@@ -953,48 +1023,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
             self._rules_set.add('unary_operator')
             self.rules.append('unary_operator')
         return KerMLTransTemplate.unary_operator(self, tree)
-
-    @v_args(tree=True)
-    def classification_expression(self, tree: Tree):
-        if 'classification_expression' not in self._rules_set:
-            self._rules_set.add('classification_expression')
-            self.rules.append('classification_expression')
-        return KerMLTransTemplate.classification_expression(self, tree)
-
-    @v_args(tree=True)
-    def classification_test_operator(self, tree: Tree):
-        if 'classification_test_operator' not in self._rules_set:
-            self._rules_set.add('classification_test_operator')
-            self.rules.append('classification_test_operator')
-        return KerMLTransTemplate.classification_test_operator(self, tree)
-
-    @v_args(tree=True)
-    def cast_operator(self, tree: Tree):
-        if 'cast_operator' not in self._rules_set:
-            self._rules_set.add('cast_operator')
-            self.rules.append('cast_operator')
-        return KerMLTransTemplate.cast_operator(self, tree)
-
-    @v_args(tree=True)
-    def metaclassification_expression(self, tree: Tree):
-        if 'metaclassification_expression' not in self._rules_set:
-            self._rules_set.add('metaclassification_expression')
-            self.rules.append('metaclassification_expression')
-        return KerMLTransTemplate.metaclassification_expression(self, tree)
-
-    @v_args(tree=True)
-    def meta_classification_test_operator(self, tree: Tree):
-        if 'meta_classification_test_operator' not in self._rules_set:
-            self._rules_set.add('meta_classification_test_operator')
-            self.rules.append('meta_classification_test_operator')
-        return KerMLTransTemplate.meta_classification_test_operator(self, tree)
-
-    @v_args(tree=True)
-    def meta_cast_operator(self, tree: Tree):
-        if 'meta_cast_operator' not in self._rules_set:
-            self._rules_set.add('meta_cast_operator')
-            self.rules.append('meta_cast_operator')
-        return KerMLTransTemplate.meta_cast_operator(self, tree)
 
     @v_args(tree=True)
     def extent_expression(self, tree: Tree):

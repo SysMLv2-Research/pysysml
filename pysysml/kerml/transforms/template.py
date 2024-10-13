@@ -55,6 +55,14 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def non_all_binary_connector_declaration(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def all_binary_connector_declaration(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def fv_bind(self, tree: Tree):
         return tree
 
@@ -359,7 +367,7 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def binary_connector_declaration(self, tree: Tree):
+    def value_connector_declaration(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
@@ -368,6 +376,14 @@ class KerMLTransTemplate(Transformer):
 
     @v_args(tree=True)
     def connector_end(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def connector_end_to(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def connector_end_name(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
@@ -499,6 +515,30 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def classification_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def classification_test_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def cast_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def metaclassification_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def meta_classification_test_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def meta_cast_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def binary_l7_operator_expression(self, tree: Tree):
         return tree
 
@@ -540,30 +580,6 @@ class KerMLTransTemplate(Transformer):
 
     @v_args(tree=True)
     def unary_operator(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def classification_expression(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def classification_test_operator(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def cast_operator(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def metaclassification_expression(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def meta_classification_test_operator(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def meta_cast_operator(self, tree: Tree):
         return tree
 
     @v_args(tree=True)

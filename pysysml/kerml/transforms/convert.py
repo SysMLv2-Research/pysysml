@@ -14,7 +14,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember, Alias, NamespaceFeatureMember, Specialization, \
     Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition, FeatureInverting, \
     TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp, \
-    DataType, Struct, Association, AssociationStruct
+    DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType
 
 
 # noinspection PyPep8Naming
@@ -900,6 +900,103 @@ class KerMLTransformer(KerMLTransTemplate):
     @v_args(tree=True)
     def association_structure(self, tree: Tree):
         return self._classifier_like(tree, type_cls=AssociationStruct)
+
+    @v_args(inline=True)
+    def connector_end_name(self, token: Token):
+        return token.value
+
+    @v_args(inline=True)
+    def connector_end_to(self, name: str, _: Token):
+        return name
+
+    @v_args(inline=True)
+    def connector_end(self, name: typing.Optional[str], reference: typing.Union[QualifiedName, FeatureChain],
+                      multiplicity: typing.Optional[MultiplicityBounds]):
+        return ConnectorEnd(
+            name=name,
+            reference=reference,
+            multiplicity=multiplicity,
+        )
+
+    @v_args(inline=True)
+    def nary_connector_declaration(self, declaration, *ends: ConnectorEnd):
+        return 'nary', declaration, ends
+
+    @v_args(inline=True)
+    def non_all_binary_connector_declaration(self, declaration, end1: ConnectorEnd, end2: ConnectorEnd):
+        return 'binary', False, declaration, (end1, end2)
+
+    @v_args(inline=True)
+    def all_binary_connector_declaration(self, end1: ConnectorEnd, end2: ConnectorEnd):
+        return 'binary', True, None, (end1, end2)
+
+    @v_args(inline=True)
+    def value_connector_declaration(self, declaration, value_part):
+        return 'value', declaration, value_part
+
+    @v_args(inline=True)
+    def connector(self, prefix, connector_declaration, type_body):
+        connector_type = connector_declaration[0]
+        is_all_connect = False
+        declaration, value_part, end1, end2, ends = None, None, None, None, None
+        if connector_type == 'value':
+            _, declaration, value_part = connector_declaration
+        elif connector_type == 'binary':
+            _, is_all_connect, declaration, (end1, end2) = connector_declaration
+            ends = [end1, end2]
+        elif connector_type == 'nary':
+            _, declaration, ends = connector_declaration
+            ends = list(ends)
+        else:
+            assert False, 'Should not reach this line'  # pragma: no cover
+
+        direction, is_abstract, relationship_type, is_readonly, is_derived, is_end, annotations = prefix
+        if declaration:
+            is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = declaration
+        else:
+            is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = \
+                (False, None, [], (None, False, False), None, [])
+
+        if value_part is not None:
+            is_default, value_type, v = value_part
+        else:
+            is_default, value_type, v = False, None, None
+
+        return Connector(
+            # for prefix
+            direction=direction,
+            is_abstract=is_abstract,
+            relationship_type=relationship_type,
+            is_readonly=is_readonly,
+            is_derived=is_derived,
+            is_end=is_end,
+            annotations=annotations,
+
+            # for declaration
+            is_all=is_all,
+            identification=identification,
+            specializations=specs,
+            multiplicity=multiplicity,
+            is_ordered=is_ordered,
+            is_nonunique=is_nonunique,
+            conjugation=conj,
+            relationships=relationships,
+
+            # for type
+            type=ConnectorType.load(connector_type),
+
+            # for type - value
+            is_default=is_default,
+            value_type=value_type,
+            value=v,
+
+            # for type - binary &
+            is_all_connect=is_all_connect,
+            ends=ends,
+
+            # body part
+            body=type_body,
+        )
 
 
 def tree_to_cst(tree: Tree):

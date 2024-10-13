@@ -3,7 +3,8 @@ import pytest
 from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation, QualifiedName, SuperclassingPart, \
     MultiplicityBounds, IntValue, ConjugationPart, DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, \
     NonFeatureMember, Documentation, Comment, OwnedFeatureMember, Feature, TypingsPart, DataType, Struct, \
-    FeatureRelationshipType, InfValue, Association, AssociationStruct
+    FeatureRelationshipType, InfValue, Association, AssociationStruct, Connector, ConnectorType, ConnectorEnd, \
+    FeatureChain, FeatureValueType
 from .base import _parser_for_rule
 
 
@@ -446,3 +447,104 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'association_structure' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('connector mount : Mounting from axle to wheels;',
+         Connector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=False,
+                   identification=Identification(short_name=None, name='mount'),
+                   specializations=[TypingsPart(items=[QualifiedName(names=['Mounting'])])], multiplicity=None,
+                   is_ordered=False, is_nonunique=False, conjugation=None, relationships=[], type=ConnectorType.BINARY,
+                   is_default=False, value_type=None, value=None, is_all_connect=False,
+                   ends=[ConnectorEnd(name=None, reference=QualifiedName(names=['axle']), multiplicity=None),
+                         ConnectorEnd(name=None, reference=QualifiedName(names=['wheels']), multiplicity=None)],
+                   body=[])),
+        ('connector mount[2] : Mounting (axle, wheels);',
+         Connector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=False,
+                   identification=Identification(short_name=None, name='mount'),
+                   specializations=[TypingsPart(items=[QualifiedName(names=['Mounting'])])],
+                   multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=IntValue(raw='2')), is_ordered=False,
+                   is_nonunique=False, conjugation=None, relationships=[], type=ConnectorType.NARY, is_default=False,
+                   value_type=None, value=None, is_all_connect=False,
+                   ends=[ConnectorEnd(name=None, reference=QualifiedName(names=['axle']), multiplicity=None),
+                         ConnectorEnd(name=None, reference=QualifiedName(names=['wheels']), multiplicity=None)],
+                   body=[])),
+        ('connector mount[2] : Mounting (\n'
+         '    mountingAxle ::> axle,\n'
+         '    mountedWheel ::> wheels\n'
+         ');',
+         Connector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=False,
+                   identification=Identification(short_name=None, name='mount'),
+                   specializations=[TypingsPart(items=[QualifiedName(names=['Mounting'])])],
+                   multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=IntValue(raw='2')), is_ordered=False,
+                   is_nonunique=False, conjugation=None, relationships=[], type=ConnectorType.NARY, is_default=False,
+                   value_type=None, value=None, is_all_connect=False,
+                   ends=[ConnectorEnd(name='mountingAxle', reference=QualifiedName(names=['axle']), multiplicity=None),
+                         ConnectorEnd(name='mountedWheel', reference=QualifiedName(names=['wheels']),
+                                      multiplicity=None)], body=[])),
+        ('connector mount : Mounting from halfAxles[1] to wheels[1];',
+         Connector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=False,
+                   identification=Identification(short_name=None, name='mount'),
+                   specializations=[TypingsPart(items=[QualifiedName(names=['Mounting'])])], multiplicity=None,
+                   is_ordered=False, is_nonunique=False, conjugation=None, relationships=[], type=ConnectorType.BINARY,
+                   is_default=False, value_type=None, value=None, is_all_connect=False, ends=[
+                 ConnectorEnd(name=None, reference=QualifiedName(names=['halfAxles']),
+                              multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=IntValue(raw='1'))),
+                 ConnectorEnd(name=None, reference=QualifiedName(names=['wheels']),
+                              multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=IntValue(raw='1')))],
+                   body=[])),
+        ('connector mount[2] : Mounting from mountingAxle ::> axle to mountedWheel ::> '
+         'wheels;',
+         Connector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=False,
+                   identification=Identification(short_name=None, name='mount'),
+                   specializations=[TypingsPart(items=[QualifiedName(names=['Mounting'])])],
+                   multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=IntValue(raw='2')), is_ordered=False,
+                   is_nonunique=False, conjugation=None, relationships=[], type=ConnectorType.BINARY, is_default=False,
+                   value_type=None, value=None, is_all_connect=False,
+                   ends=[ConnectorEnd(name='mountingAxle', reference=QualifiedName(names=['axle']), multiplicity=None),
+                         ConnectorEnd(name='mountedWheel', reference=QualifiedName(names=['wheels']),
+                                      multiplicity=None)], body=[])),
+        ('connector mount : Mounting from axle.halfAxles to wheels.hub;',
+         Connector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=False,
+                   identification=Identification(short_name=None, name='mount'),
+                   specializations=[TypingsPart(items=[QualifiedName(names=['Mounting'])])], multiplicity=None,
+                   is_ordered=False, is_nonunique=False, conjugation=None, relationships=[], type=ConnectorType.BINARY,
+                   is_default=False, value_type=None, value=None, is_all_connect=False,
+                   ends=[ConnectorEnd(name=None, reference=FeatureChain(
+                       items=[QualifiedName(names=['axle']), QualifiedName(names=['halfAxles'])]), multiplicity=None),
+                         ConnectorEnd(name=None, reference=FeatureChain(
+                             items=[QualifiedName(names=['wheels']), QualifiedName(names=['hub'])]),
+                                      multiplicity=None)],
+                   body=[])),
+        ('abstract connector all from axle to wheels;',
+         Connector(direction=None, is_abstract=True, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=False, identification=None, specializations=[],
+                   multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                   type=ConnectorType.BINARY, is_default=False, value_type=None, value=None, is_all_connect=True,
+                   ends=[ConnectorEnd(name=None, reference=QualifiedName(names=['axle']), multiplicity=None),
+                         ConnectorEnd(name=None, reference=QualifiedName(names=['wheels']), multiplicity=None)],
+                   body=[])),
+        ('derived connector mounting : Mounting := another_mounting;',
+         Connector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=True,
+                   is_end=False, annotations=[], is_all=False,
+                   identification=Identification(short_name=None, name='mounting'),
+                   specializations=[TypingsPart(items=[QualifiedName(names=['Mounting'])])], multiplicity=None,
+                   is_ordered=False, is_nonunique=False, conjugation=None, relationships=[], type=ConnectorType.VALUE,
+                   is_default=False, value_type=FeatureValueType.INITIAL,
+                   value=QualifiedName(names=['another_mounting']), is_all_connect=False, ends=None, body=[])),
+    ])
+    @pytest.mark.focus
+    def test_connector(self, text, expected):
+        parser = _parser_for_rule('connector')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'connector' in rules
