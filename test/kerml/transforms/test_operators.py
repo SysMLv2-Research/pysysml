@@ -1,12 +1,15 @@
 import pytest
 
-from pysysml.kerml.models import ExtentOp, QualifiedName, IntValue, RealValue, UnaryOp, StringValue, InfValue
+from pysysml.kerml.models import ExtentOp, QualifiedName, IntValue, RealValue, UnaryOp, StringValue, InfValue, \
+    CondBinOp, BinOp
 from .base import _parser_for_rule
 
 
 @pytest.mark.unittest
 class TestKerMLTransformsOperator:
     @pytest.mark.parametrize(['text', 'expected'], [
+        ('x', QualifiedName(names=['x'])),
+        ('x::y', QualifiedName(names=['x', 'y'])),
         ('all x', ExtentOp(x=QualifiedName(names=['x']))),
         ('+2', UnaryOp(op='+', x=IntValue(raw='2'))),
         ('-1.4', UnaryOp(op='-', x=RealValue(raw='1.4'))),
@@ -19,6 +22,21 @@ class TestKerMLTransformsOperator:
         ('"123 456"', StringValue(raw='"123 456"')),
         ('*', InfValue()),
         ('-*', UnaryOp(op='-', x=InfValue())),
+        ('1+2', BinOp(op='+', x=IntValue(raw='1'), y=IntValue(raw='2'))),
+        ('1-2+3',
+         BinOp(op='+', x=BinOp(op='-', x=IntValue(raw='1'), y=IntValue(raw='2')), y=IntValue(raw='3'))),
+        ('1+2*3',
+         BinOp(op='+', x=IntValue(raw='1'), y=BinOp(op='*', x=IntValue(raw='2'), y=IntValue(raw='3')))),
+        ('1+2..3',
+         BinOp(op='..', x=BinOp(op='+', x=IntValue(raw='1'), y=IntValue(raw='2')), y=IntValue(raw='3'))),
+        ('1*2**2',
+         BinOp(op='*', x=IntValue(raw='1'), y=BinOp(op='^', x=IntValue(raw='2'), y=IntValue(raw='2')))),
+        ('2**3**4',
+         BinOp(op='^', x=BinOp(op='^', x=IntValue(raw='2'), y=IntValue(raw='3')), y=IntValue(raw='4'))),
+        ('1+2 /4 or  5.0 -2 * 3',
+         CondBinOp(op='or',
+                   x=BinOp(op='+', x=IntValue(raw='1'), y=BinOp(op='/', x=IntValue(raw='2'), y=IntValue(raw='4'))),
+                   y=BinOp(op='-', x=RealValue(raw='5.0'), y=BinOp(op='*', x=IntValue(raw='2'), y=IntValue(raw='3'))))),
     ])
     @pytest.mark.focus
     def test_owned_expression(self, text, expected):

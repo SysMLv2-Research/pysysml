@@ -12,7 +12,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     TypingsPart, SubsettingsPart, RedefinitionsPart, ReferencesPart, FeatureDirection, FeatureRelationshipType, \
     FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember, Alias, NamespaceFeatureMember, Specialization, \
     Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition, FeatureInverting, \
-    TypeFeaturing, ExtentOp, UnaryOp
+    TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp
 
 
 # noinspection PyPep8Naming
@@ -762,6 +762,114 @@ class KerMLTransformer(KerMLTransTemplate):
     @v_args(inline=True)
     def unary_operator_expression(self, op: str, element):
         return UnaryOp(op=op, x=element)
+
+    @v_args(inline=True)
+    def conditional_expression(self, condition_element, true_element, false_element):
+        return IfTestOp(
+            condition=condition_element,
+            if_true=true_element,
+            if_false=false_element,
+        )
+
+    @v_args(inline=True)
+    def conditional_binary_l14_operator_expression(self, x, op: str, y):
+        return CondBinOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def conditional_binary_l14_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def conditional_binary_l13_operator_expression(self, x, op: str, y):
+        return CondBinOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def conditional_binary_l13_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def conditional_binary_l12_operator_expression(self, x, op: str, y):
+        return CondBinOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def conditional_binary_l12_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def binary_l12_operator_expression(self, x, op: str, y):
+        return BinOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def binary_l12_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def binary_l11_operator_expression(self, x, op: str, y):
+        return BinOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def binary_l11_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def conditional_binary_l10_operator_expression(self, x, op: str, y):
+        return CondBinOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def conditional_binary_l10_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def binary_l10_operator_expression(self, x, op: str, y):
+        return BinOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def binary_l10_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def binary_l9_operator_expression(self, x, op: str, y):
+        return BinOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def binary_l9_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def binary_l7_operator_expression(self, x, op: str, y):
+        return BinOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def binary_l7_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def binary_l6_operator_expression(self, x, op: str, y):
+        return BinOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def binary_l6_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def binary_l5_operator_expression(self, x, op: str, y):
+        return BinOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def binary_l5_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def binary_l4_operator_expression(self, x, op: str, y):
+        return BinOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def binary_l4_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def exp_operator_expression(self, x, y):
+        return BinOp(op='^', x=x, y=y)
 
 
 def tree_to_cst(tree: Tree):

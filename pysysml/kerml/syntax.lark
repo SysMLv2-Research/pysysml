@@ -329,27 +329,118 @@ invariant: feature_prefix "inv" ("true" | "false")? feature_declaration value_pa
 ?owned_expression_reference_member:  owned_expression_reference
 ?owned_expression_reference: owned_expression_member
 ?owned_expression_member: owned_expression
-?owned_expression: conditional_expression
-                | conditional_binary_operator_expression
-                | binary_operator_expression
-                | unary_operator_expression
-                | classification_expression
-                | metaclassification_expression
-                | extent_expression
-                | primary_expression
+// ?owned_expression: conditional_expression
+//                 | conditional_binary_operator_expression
+//                 | binary_operator_expression
+//                 | unary_operator_expression
+//                 | classification_expression
+//                 | metaclassification_expression
+//                 | extent_expression
+//                 | primary_expression
+?owned_expression: op_top
+                 | primary_expression
 
-conditional_expression: "if" argument_member "?" argument_expression_member "else" argument_expression_member
-conditional_binary_operator_expression: argument_member conditional_binary_operator argument_expression_member
-conditional_binary_operator: "??" | "or" | "and" | "implies"
 
-binary_operator_expression: argument_member binary_operator argument_member
-binary_operator: "|" | "&" | "xor" | ".."
-               | "==" | "!=" | "===" | "!=="
-               | "<" | ">" | "<=" | ">="
-               | "+" | "-" | "*" | "/"
-               | "%" | "^" | "**"
+//conditional_expression: "if" argument_member "?" argument_expression_member "else" argument_expression_member
+// conditional_binary_operator_expression: argument_member conditional_binary_operator argument_expression_member
+// conditional_binary_operator: "??" | "or" | "and" | "implies"
 
-unary_operator_expression: unary_operator argument_member
+// binary_operator_expression: argument_member binary_operator argument_member
+// binary_operator: "|" | "&" | "xor" | ".."
+//                | "==" | "!=" | "===" | "!=="
+//                | "<" | ">" | "<=" | ">="
+//                | "+" | "-" | "*" | "/"
+//                | "%" | "^" | "**"
+
+?op_top: op_l15
+
+// L15(ternary): if
+?op_l15: conditional_expression
+       | op_l14
+conditional_expression: "if" op_l14 "?" op_l14 "else" op_l14
+
+// L14(binary): ??
+?op_l14: conditional_binary_l14_operator_expression
+       | op_l13
+conditional_binary_l14_operator_expression: op_l13 conditional_binary_l14_operator op_l13
+!conditional_binary_l14_operator: "implies"
+
+// L13(binary): implies
+?op_l13: conditional_binary_l13_operator_expression
+       | op_l12
+conditional_binary_l13_operator_expression: op_l12 conditional_binary_l13_operator op_l12
+!conditional_binary_l13_operator: "implies"
+
+// L12(binary): | or
+?op_l12: binary_l12_operator_expression
+       | conditional_binary_l12_operator_expression
+       | op_l11
+conditional_binary_l12_operator_expression: op_l11 conditional_binary_l12_operator op_l11
+!conditional_binary_l12_operator: "or"
+binary_l12_operator_expression: op_l11 binary_l12_operator op_l11
+!binary_l12_operator: "|"
+
+// L11(binary): xor
+?op_l11: binary_l11_operator_expression
+       | op_l10
+binary_l11_operator_expression: op_l10 binary_l11_operator op_l10
+!binary_l11_operator: "xor"
+
+// L10(binary): & and
+?op_l10: binary_l10_operator_expression
+       | conditional_binary_l10_operator_expression
+       | op_l9
+conditional_binary_l10_operator_expression: op_l9 conditional_binary_l10_operator op_l9
+!conditional_binary_l10_operator: "and"
+binary_l10_operator_expression: op_l9 binary_l10_operator op_l9
+!binary_l10_operator: "&"
+
+
+// L9(binary):
+?op_l9: binary_l9_operator_expression
+      | op_l8
+binary_l9_operator_expression: op_l8 binary_l9_operator op_l8
+!binary_l9_operator: "==" | "!=" | "===" | "!=="
+
+// L8(binary): istype hastype @ @@ as meta
+?op_l8: classification_expression
+      | metaclassification_expression
+      | op_l7
+
+// L7(binary): < > <= >=
+?op_l7: binary_l7_operator_expression
+      | op_l6
+binary_l7_operator_expression: op_l6 binary_l7_operator op_l6
+!binary_l7_operator: "<" | ">" | "<=" | ">="
+
+// L6(binary): ..
+?op_l6: binary_l6_operator_expression
+      | op_l5
+binary_l6_operator_expression: op_l5 binary_l6_operator op_l5
+!binary_l6_operator: ".."
+
+// L5(binary): + -
+?op_l5: binary_l5_operator_expression
+      | op_l4
+binary_l5_operator_expression: op_l4 binary_l5_operator op_l4
+!binary_l5_operator: "+" | "-"
+
+// L4(binary): * / %
+?op_l4: binary_l4_operator_expression
+      | op_l3
+binary_l4_operator_expression: op_l3 binary_l4_operator op_l3
+!binary_l4_operator: "*" | "/" | "%"
+
+// L3(binary): ^ **
+?op_l3: exp_operator_expression
+      | op_l2
+exp_operator_expression: op_l2 ("^" | "**") op_l2
+
+// L2(unary): + - ~ not
+?op_l2: unary_operator_expression
+      | op_l1
+// unary_operator_expression: unary_operator argument_member
+unary_operator_expression: unary_operator op_l1
 !unary_operator: "+" | "-" | "~" | "not"
 
 // all elements starts with "argument_" is based on "owned_expression"
@@ -363,14 +454,16 @@ unary_operator_expression: unary_operator argument_member
 ?argument_expression_value: owned_expression_reference
 
 
-classification_expression: argument_member? (classification_test_operator type_reference_member
+// classification_expression: argument_member? (classification_test_operator type_reference_member
+//                                             | cast_operator type_result_member)
+classification_expression: [op_l7] (classification_test_operator type_reference_member
                                             | cast_operator type_result_member)
-classification_test_operator: "istype" | "hastype" | "@"
-cast_operator: "as"
+!classification_test_operator: "istype" | "hastype" | "@"
+!cast_operator: "as"
 metaclassification_expression: metadata_argument_member (meta_classification_test_operator type_reference_member
                                                        | meta_cast_operator type_result_member)
-meta_classification_test_operator: "@@"
-meta_cast_operator: "meta"
+!meta_classification_test_operator: "@@"
+!meta_cast_operator: "meta"
 
 // all elements starts with "metadata_" or "type_reference_" is based on "qualified_name"
 // which means it is actually not a free expression, only qualified name can be used
@@ -380,6 +473,9 @@ meta_cast_operator: "meta"
 ?metadata_reference: qualified_name
 
 
+// L1(unary): "all"
+?op_l1: extent_expression
+      | owned_expression
 extent_expression: "all" type_reference_member
 ?type_reference_member: type_reference
 ?type_result_member: type_reference

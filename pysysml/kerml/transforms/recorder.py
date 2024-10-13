@@ -766,32 +766,179 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.conditional_expression(self, tree)
 
     @v_args(tree=True)
-    def conditional_binary_operator_expression(self, tree: Tree):
-        if 'conditional_binary_operator_expression' not in self._rules_set:
-            self._rules_set.add('conditional_binary_operator_expression')
-            self.rules.append('conditional_binary_operator_expression')
-        return KerMLTransTemplate.conditional_binary_operator_expression(self, tree)
+    def conditional_binary_l14_operator_expression(self, tree: Tree):
+        if 'conditional_binary_l14_operator_expression' not in self._rules_set:
+            self._rules_set.add('conditional_binary_l14_operator_expression')
+            self.rules.append('conditional_binary_l14_operator_expression')
+        return KerMLTransTemplate.conditional_binary_l14_operator_expression(self, tree)
 
     @v_args(tree=True)
-    def conditional_binary_operator(self, tree: Tree):
-        if 'conditional_binary_operator' not in self._rules_set:
-            self._rules_set.add('conditional_binary_operator')
-            self.rules.append('conditional_binary_operator')
-        return KerMLTransTemplate.conditional_binary_operator(self, tree)
+    def conditional_binary_l14_operator(self, tree: Tree):
+        if 'conditional_binary_l14_operator' not in self._rules_set:
+            self._rules_set.add('conditional_binary_l14_operator')
+            self.rules.append('conditional_binary_l14_operator')
+        return KerMLTransTemplate.conditional_binary_l14_operator(self, tree)
 
     @v_args(tree=True)
-    def binary_operator_expression(self, tree: Tree):
-        if 'binary_operator_expression' not in self._rules_set:
-            self._rules_set.add('binary_operator_expression')
-            self.rules.append('binary_operator_expression')
-        return KerMLTransTemplate.binary_operator_expression(self, tree)
+    def conditional_binary_l13_operator_expression(self, tree: Tree):
+        if 'conditional_binary_l13_operator_expression' not in self._rules_set:
+            self._rules_set.add('conditional_binary_l13_operator_expression')
+            self.rules.append('conditional_binary_l13_operator_expression')
+        return KerMLTransTemplate.conditional_binary_l13_operator_expression(self, tree)
 
     @v_args(tree=True)
-    def binary_operator(self, tree: Tree):
-        if 'binary_operator' not in self._rules_set:
-            self._rules_set.add('binary_operator')
-            self.rules.append('binary_operator')
-        return KerMLTransTemplate.binary_operator(self, tree)
+    def conditional_binary_l13_operator(self, tree: Tree):
+        if 'conditional_binary_l13_operator' not in self._rules_set:
+            self._rules_set.add('conditional_binary_l13_operator')
+            self.rules.append('conditional_binary_l13_operator')
+        return KerMLTransTemplate.conditional_binary_l13_operator(self, tree)
+
+    @v_args(tree=True)
+    def conditional_binary_l12_operator_expression(self, tree: Tree):
+        if 'conditional_binary_l12_operator_expression' not in self._rules_set:
+            self._rules_set.add('conditional_binary_l12_operator_expression')
+            self.rules.append('conditional_binary_l12_operator_expression')
+        return KerMLTransTemplate.conditional_binary_l12_operator_expression(self, tree)
+
+    @v_args(tree=True)
+    def conditional_binary_l12_operator(self, tree: Tree):
+        if 'conditional_binary_l12_operator' not in self._rules_set:
+            self._rules_set.add('conditional_binary_l12_operator')
+            self.rules.append('conditional_binary_l12_operator')
+        return KerMLTransTemplate.conditional_binary_l12_operator(self, tree)
+
+    @v_args(tree=True)
+    def binary_l12_operator_expression(self, tree: Tree):
+        if 'binary_l12_operator_expression' not in self._rules_set:
+            self._rules_set.add('binary_l12_operator_expression')
+            self.rules.append('binary_l12_operator_expression')
+        return KerMLTransTemplate.binary_l12_operator_expression(self, tree)
+
+    @v_args(tree=True)
+    def binary_l12_operator(self, tree: Tree):
+        if 'binary_l12_operator' not in self._rules_set:
+            self._rules_set.add('binary_l12_operator')
+            self.rules.append('binary_l12_operator')
+        return KerMLTransTemplate.binary_l12_operator(self, tree)
+
+    @v_args(tree=True)
+    def binary_l11_operator_expression(self, tree: Tree):
+        if 'binary_l11_operator_expression' not in self._rules_set:
+            self._rules_set.add('binary_l11_operator_expression')
+            self.rules.append('binary_l11_operator_expression')
+        return KerMLTransTemplate.binary_l11_operator_expression(self, tree)
+
+    @v_args(tree=True)
+    def binary_l11_operator(self, tree: Tree):
+        if 'binary_l11_operator' not in self._rules_set:
+            self._rules_set.add('binary_l11_operator')
+            self.rules.append('binary_l11_operator')
+        return KerMLTransTemplate.binary_l11_operator(self, tree)
+
+    @v_args(tree=True)
+    def conditional_binary_l10_operator_expression(self, tree: Tree):
+        if 'conditional_binary_l10_operator_expression' not in self._rules_set:
+            self._rules_set.add('conditional_binary_l10_operator_expression')
+            self.rules.append('conditional_binary_l10_operator_expression')
+        return KerMLTransTemplate.conditional_binary_l10_operator_expression(self, tree)
+
+    @v_args(tree=True)
+    def conditional_binary_l10_operator(self, tree: Tree):
+        if 'conditional_binary_l10_operator' not in self._rules_set:
+            self._rules_set.add('conditional_binary_l10_operator')
+            self.rules.append('conditional_binary_l10_operator')
+        return KerMLTransTemplate.conditional_binary_l10_operator(self, tree)
+
+    @v_args(tree=True)
+    def binary_l10_operator_expression(self, tree: Tree):
+        if 'binary_l10_operator_expression' not in self._rules_set:
+            self._rules_set.add('binary_l10_operator_expression')
+            self.rules.append('binary_l10_operator_expression')
+        return KerMLTransTemplate.binary_l10_operator_expression(self, tree)
+
+    @v_args(tree=True)
+    def binary_l10_operator(self, tree: Tree):
+        if 'binary_l10_operator' not in self._rules_set:
+            self._rules_set.add('binary_l10_operator')
+            self.rules.append('binary_l10_operator')
+        return KerMLTransTemplate.binary_l10_operator(self, tree)
+
+    @v_args(tree=True)
+    def binary_l9_operator_expression(self, tree: Tree):
+        if 'binary_l9_operator_expression' not in self._rules_set:
+            self._rules_set.add('binary_l9_operator_expression')
+            self.rules.append('binary_l9_operator_expression')
+        return KerMLTransTemplate.binary_l9_operator_expression(self, tree)
+
+    @v_args(tree=True)
+    def binary_l9_operator(self, tree: Tree):
+        if 'binary_l9_operator' not in self._rules_set:
+            self._rules_set.add('binary_l9_operator')
+            self.rules.append('binary_l9_operator')
+        return KerMLTransTemplate.binary_l9_operator(self, tree)
+
+    @v_args(tree=True)
+    def binary_l7_operator_expression(self, tree: Tree):
+        if 'binary_l7_operator_expression' not in self._rules_set:
+            self._rules_set.add('binary_l7_operator_expression')
+            self.rules.append('binary_l7_operator_expression')
+        return KerMLTransTemplate.binary_l7_operator_expression(self, tree)
+
+    @v_args(tree=True)
+    def binary_l7_operator(self, tree: Tree):
+        if 'binary_l7_operator' not in self._rules_set:
+            self._rules_set.add('binary_l7_operator')
+            self.rules.append('binary_l7_operator')
+        return KerMLTransTemplate.binary_l7_operator(self, tree)
+
+    @v_args(tree=True)
+    def binary_l6_operator_expression(self, tree: Tree):
+        if 'binary_l6_operator_expression' not in self._rules_set:
+            self._rules_set.add('binary_l6_operator_expression')
+            self.rules.append('binary_l6_operator_expression')
+        return KerMLTransTemplate.binary_l6_operator_expression(self, tree)
+
+    @v_args(tree=True)
+    def binary_l6_operator(self, tree: Tree):
+        if 'binary_l6_operator' not in self._rules_set:
+            self._rules_set.add('binary_l6_operator')
+            self.rules.append('binary_l6_operator')
+        return KerMLTransTemplate.binary_l6_operator(self, tree)
+
+    @v_args(tree=True)
+    def binary_l5_operator_expression(self, tree: Tree):
+        if 'binary_l5_operator_expression' not in self._rules_set:
+            self._rules_set.add('binary_l5_operator_expression')
+            self.rules.append('binary_l5_operator_expression')
+        return KerMLTransTemplate.binary_l5_operator_expression(self, tree)
+
+    @v_args(tree=True)
+    def binary_l5_operator(self, tree: Tree):
+        if 'binary_l5_operator' not in self._rules_set:
+            self._rules_set.add('binary_l5_operator')
+            self.rules.append('binary_l5_operator')
+        return KerMLTransTemplate.binary_l5_operator(self, tree)
+
+    @v_args(tree=True)
+    def binary_l4_operator_expression(self, tree: Tree):
+        if 'binary_l4_operator_expression' not in self._rules_set:
+            self._rules_set.add('binary_l4_operator_expression')
+            self.rules.append('binary_l4_operator_expression')
+        return KerMLTransTemplate.binary_l4_operator_expression(self, tree)
+
+    @v_args(tree=True)
+    def binary_l4_operator(self, tree: Tree):
+        if 'binary_l4_operator' not in self._rules_set:
+            self._rules_set.add('binary_l4_operator')
+            self.rules.append('binary_l4_operator')
+        return KerMLTransTemplate.binary_l4_operator(self, tree)
+
+    @v_args(tree=True)
+    def exp_operator_expression(self, tree: Tree):
+        if 'exp_operator_expression' not in self._rules_set:
+            self._rules_set.add('exp_operator_expression')
+            self.rules.append('exp_operator_expression')
+        return KerMLTransTemplate.exp_operator_expression(self, tree)
 
     @v_args(tree=True)
     def unary_operator_expression(self, tree: Tree):

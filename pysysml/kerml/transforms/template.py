@@ -435,19 +435,103 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def conditional_binary_operator_expression(self, tree: Tree):
+    def conditional_binary_l14_operator_expression(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
-    def conditional_binary_operator(self, tree: Tree):
+    def conditional_binary_l14_operator(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
-    def binary_operator_expression(self, tree: Tree):
+    def conditional_binary_l13_operator_expression(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
-    def binary_operator(self, tree: Tree):
+    def conditional_binary_l13_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def conditional_binary_l12_operator_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def conditional_binary_l12_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l12_operator_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l12_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l11_operator_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l11_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def conditional_binary_l10_operator_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def conditional_binary_l10_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l10_operator_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l10_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l9_operator_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l9_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l7_operator_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l7_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l6_operator_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l6_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l5_operator_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l5_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l4_operator_expression(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def binary_l4_operator(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def exp_operator_expression(self, tree: Tree):
         return tree
 
     @v_args(tree=True)
