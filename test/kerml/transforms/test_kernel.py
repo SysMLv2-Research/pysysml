@@ -2,12 +2,95 @@ import pytest
 
 from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation, QualifiedName, SuperclassingPart, \
     MultiplicityBounds, IntValue, ConjugationPart, DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, \
-    NonFeatureMember, Documentation, Comment
+    NonFeatureMember, Documentation, Comment, OwnedFeatureMember, Feature, TypingsPart, DataType, Struct, \
+    FeatureRelationshipType, InfValue, Association, AssociationStruct
 from .base import _parser_for_rule
 
 
 @pytest.mark.unittest
 class TestKerMLTransformsKernel:
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('datatype IdNumber specializes ScalarValues::Integer;',
+         DataType(is_abstract=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='IdNumber'), multiplicity_bounds=None,
+                  conjugation=None,
+                  superclassing=SuperclassingPart(items=[QualifiedName(names=['ScalarValues', 'Integer'])]),
+                  relationships=[], body=[])),
+        ('datatype Reading { // Subtypes Base::DataValue by default\n'
+         '    feature sensorId : IdNumber; // Subsets Base::dataValues by default.\n'
+         '    feature value : ScalarValues::Real;\n'
+         '}',
+         DataType(is_abstract=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='Reading'), multiplicity_bounds=None,
+                  conjugation=None, superclassing=None, relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                                                                   element=Feature(
+                                                                                                       direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='sensorId'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'IdNumber'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[])),
+                                                                                OwnedFeatureMember(visibility=None,
+                                                                                                   element=Feature(
+                                                                                                       direction=None,
+                                                                                                       is_abstract=False,
+                                                                                                       relationship_type=None,
+                                                                                                       is_readonly=False,
+                                                                                                       is_derived=False,
+                                                                                                       is_end=False,
+                                                                                                       annotations=[],
+                                                                                                       is_all=False,
+                                                                                                       identification=Identification(
+                                                                                                           short_name=None,
+                                                                                                           name='value'),
+                                                                                                       specializations=[
+                                                                                                           TypingsPart(
+                                                                                                               items=[
+                                                                                                                   QualifiedName(
+                                                                                                                       names=[
+                                                                                                                           'ScalarValues',
+                                                                                                                           'Real'])])],
+                                                                                                       multiplicity=None,
+                                                                                                       is_ordered=False,
+                                                                                                       is_nonunique=False,
+                                                                                                       conjugation=None,
+                                                                                                       relationships=[],
+                                                                                                       is_default=False,
+                                                                                                       value_type=None,
+                                                                                                       value=None,
+                                                                                                       body=[]))])),
+    ])
+    @pytest.mark.focus
+    def test_data_type(self, text, expected):
+        parser = _parser_for_rule('data_type')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'data_type' in rules
+
     @pytest.mark.parametrize(['text', 'expected'], [
         ('class X;',
          Class(is_abstract=False, annotations=[], is_all=False,
@@ -89,3 +172,277 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'class_statement' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('struct Sensor { // Specializes Objects::Object by default.\n'
+         '    feature id : IdNumber;\n'
+         '    feature currentReading : ScalarValues::Real;\n'
+         '}',
+         Struct(is_abstract=False, annotations=[], is_all=False,
+                identification=Identification(short_name=None, name='Sensor'), multiplicity_bounds=None,
+                conjugation=None, superclassing=None, relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                                                                 element=Feature(
+                                                                                                     direction=None,
+                                                                                                     is_abstract=False,
+                                                                                                     relationship_type=None,
+                                                                                                     is_readonly=False,
+                                                                                                     is_derived=False,
+                                                                                                     is_end=False,
+                                                                                                     annotations=[],
+                                                                                                     is_all=False,
+                                                                                                     identification=Identification(
+                                                                                                         short_name=None,
+                                                                                                         name='id'),
+                                                                                                     specializations=[
+                                                                                                         TypingsPart(
+                                                                                                             items=[
+                                                                                                                 QualifiedName(
+                                                                                                                     names=[
+                                                                                                                         'IdNumber'])])],
+                                                                                                     multiplicity=None,
+                                                                                                     is_ordered=False,
+                                                                                                     is_nonunique=False,
+                                                                                                     conjugation=None,
+                                                                                                     relationships=[],
+                                                                                                     is_default=False,
+                                                                                                     value_type=None,
+                                                                                                     value=None,
+                                                                                                     body=[])),
+                                                                              OwnedFeatureMember(visibility=None,
+                                                                                                 element=Feature(
+                                                                                                     direction=None,
+                                                                                                     is_abstract=False,
+                                                                                                     relationship_type=None,
+                                                                                                     is_readonly=False,
+                                                                                                     is_derived=False,
+                                                                                                     is_end=False,
+                                                                                                     annotations=[],
+                                                                                                     is_all=False,
+                                                                                                     identification=Identification(
+                                                                                                         short_name=None,
+                                                                                                         name='currentReading'),
+                                                                                                     specializations=[
+                                                                                                         TypingsPart(
+                                                                                                             items=[
+                                                                                                                 QualifiedName(
+                                                                                                                     names=[
+                                                                                                                         'ScalarValues',
+                                                                                                                         'Real'])])],
+                                                                                                     multiplicity=None,
+                                                                                                     is_ordered=False,
+                                                                                                     is_nonunique=False,
+                                                                                                     conjugation=None,
+                                                                                                     relationships=[],
+                                                                                                     is_default=False,
+                                                                                                     value_type=None,
+                                                                                                     value=None,
+                                                                                                     body=[]))])),
+        ('struct SensorAssembly specializes Assembly {\n'
+         '    composite feature sensors[*] : Sensor; // Subsets Objects::objects by '
+         'default.\n'
+         '}',
+         Struct(is_abstract=False, annotations=[], is_all=False,
+                identification=Identification(short_name=None, name='SensorAssembly'), multiplicity_bounds=None,
+                conjugation=None, superclassing=SuperclassingPart(items=[QualifiedName(names=['Assembly'])]),
+                relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                           element=Feature(direction=None, is_abstract=False,
+                                                                           relationship_type=FeatureRelationshipType.COMPOSITE,
+                                                                           is_readonly=False, is_derived=False,
+                                                                           is_end=False, annotations=[], is_all=False,
+                                                                           identification=Identification(
+                                                                               short_name=None, name='sensors'),
+                                                                           specializations=[TypingsPart(items=[
+                                                                               QualifiedName(names=['Sensor'])])],
+                                                                           multiplicity=MultiplicityBounds(
+                                                                               lower_bound=None,
+                                                                               upper_bound=InfValue()),
+                                                                           is_ordered=False, is_nonunique=False,
+                                                                           conjugation=None, relationships=[],
+                                                                           is_default=False, value_type=None,
+                                                                           value=None, body=[]))])),
+    ])
+    @pytest.mark.focus
+    def test_structure(self, text, expected):
+        parser = _parser_for_rule('structure')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'structure' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('assoc Ownership { // Specializes Links::BinaryLink by default.\n'
+         '    feature valuationOnPurchase : MonetaryValue;\n'
+         '    end feature owner[1..*] : LegalEntity; // Redefines BinaryLink::source.\n'
+         '    end feature ownedAsset[*] : Asset; // Redefines BinaryLink::target.\n'
+         '}',
+         Association(is_abstract=False, annotations=[], is_all=False,
+                     identification=Identification(short_name=None, name='Ownership'), multiplicity_bounds=None,
+                     conjugation=None, superclassing=None, relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                                                                      element=Feature(
+                                                                                                          direction=None,
+                                                                                                          is_abstract=False,
+                                                                                                          relationship_type=None,
+                                                                                                          is_readonly=False,
+                                                                                                          is_derived=False,
+                                                                                                          is_end=False,
+                                                                                                          annotations=[],
+                                                                                                          is_all=False,
+                                                                                                          identification=Identification(
+                                                                                                              short_name=None,
+                                                                                                              name='valuationOnPurchase'),
+                                                                                                          specializations=[
+                                                                                                              TypingsPart(
+                                                                                                                  items=[
+                                                                                                                      QualifiedName(
+                                                                                                                          names=[
+                                                                                                                              'MonetaryValue'])])],
+                                                                                                          multiplicity=None,
+                                                                                                          is_ordered=False,
+                                                                                                          is_nonunique=False,
+                                                                                                          conjugation=None,
+                                                                                                          relationships=[],
+                                                                                                          is_default=False,
+                                                                                                          value_type=None,
+                                                                                                          value=None,
+                                                                                                          body=[])),
+                                                                                   OwnedFeatureMember(visibility=None,
+                                                                                                      element=Feature(
+                                                                                                          direction=None,
+                                                                                                          is_abstract=False,
+                                                                                                          relationship_type=None,
+                                                                                                          is_readonly=False,
+                                                                                                          is_derived=False,
+                                                                                                          is_end=True,
+                                                                                                          annotations=[],
+                                                                                                          is_all=False,
+                                                                                                          identification=Identification(
+                                                                                                              short_name=None,
+                                                                                                              name='owner'),
+                                                                                                          specializations=[
+                                                                                                              TypingsPart(
+                                                                                                                  items=[
+                                                                                                                      QualifiedName(
+                                                                                                                          names=[
+                                                                                                                              'LegalEntity'])])],
+                                                                                                          multiplicity=MultiplicityBounds(
+                                                                                                              lower_bound=IntValue(
+                                                                                                                  raw='1'),
+                                                                                                              upper_bound=InfValue()),
+                                                                                                          is_ordered=False,
+                                                                                                          is_nonunique=False,
+                                                                                                          conjugation=None,
+                                                                                                          relationships=[],
+                                                                                                          is_default=False,
+                                                                                                          value_type=None,
+                                                                                                          value=None,
+                                                                                                          body=[])),
+                                                                                   OwnedFeatureMember(visibility=None,
+                                                                                                      element=Feature(
+                                                                                                          direction=None,
+                                                                                                          is_abstract=False,
+                                                                                                          relationship_type=None,
+                                                                                                          is_readonly=False,
+                                                                                                          is_derived=False,
+                                                                                                          is_end=True,
+                                                                                                          annotations=[],
+                                                                                                          is_all=False,
+                                                                                                          identification=Identification(
+                                                                                                              short_name=None,
+                                                                                                              name='ownedAsset'),
+                                                                                                          specializations=[
+                                                                                                              TypingsPart(
+                                                                                                                  items=[
+                                                                                                                      QualifiedName(
+                                                                                                                          names=[
+                                                                                                                              'Asset'])])],
+                                                                                                          multiplicity=MultiplicityBounds(
+                                                                                                              lower_bound=None,
+                                                                                                              upper_bound=InfValue()),
+                                                                                                          is_ordered=False,
+                                                                                                          is_nonunique=False,
+                                                                                                          conjugation=None,
+                                                                                                          relationships=[],
+                                                                                                          is_default=False,
+                                                                                                          value_type=None,
+                                                                                                          value=None,
+                                                                                                          body=[]))])),
+        ('assoc SoleOwnership specializes Ownership {\n'
+         '    end feature owner[1]; // Redefines Ownership::owner.\n'
+         '    // ownedAsset is inherited.\n'
+         '}',
+         Association(is_abstract=False, annotations=[], is_all=False,
+                     identification=Identification(short_name=None, name='SoleOwnership'), multiplicity_bounds=None,
+                     conjugation=None, superclassing=SuperclassingPart(items=[QualifiedName(names=['Ownership'])]),
+                     relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                                element=Feature(direction=None, is_abstract=False,
+                                                                                relationship_type=None,
+                                                                                is_readonly=False, is_derived=False,
+                                                                                is_end=True, annotations=[],
+                                                                                is_all=False,
+                                                                                identification=Identification(
+                                                                                    short_name=None, name='owner'),
+                                                                                specializations=[],
+                                                                                multiplicity=MultiplicityBounds(
+                                                                                    lower_bound=None,
+                                                                                    upper_bound=IntValue(raw='1')),
+                                                                                is_ordered=False, is_nonunique=False,
+                                                                                conjugation=None, relationships=[],
+                                                                                is_default=False, value_type=None,
+                                                                                value=None, body=[]))])),
+    ])
+    @pytest.mark.focus
+    def test_association(self, text, expected):
+        parser = _parser_for_rule('association')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'association' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('assoc struct ExtendedOwnership specializes Ownership {\n'
+         '    // End features are inherited from Ownership.\n'
+         '    // The values of the feature "revaluations" may change over time.\n'
+         '    feature revaluations[*] ordered : MonetaryValue;\n'
+         '}',
+         AssociationStruct(is_abstract=False, annotations=[], is_all=False,
+                           identification=Identification(short_name=None, name='ExtendedOwnership'),
+                           multiplicity_bounds=None, conjugation=None,
+                           superclassing=SuperclassingPart(items=[QualifiedName(names=['Ownership'])]),
+                           relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                                      element=Feature(direction=None, is_abstract=False,
+                                                                                      relationship_type=None,
+                                                                                      is_readonly=False,
+                                                                                      is_derived=False, is_end=False,
+                                                                                      annotations=[], is_all=False,
+                                                                                      identification=Identification(
+                                                                                          short_name=None,
+                                                                                          name='revaluations'),
+                                                                                      specializations=[TypingsPart(
+                                                                                          items=[QualifiedName(names=[
+                                                                                              'MonetaryValue'])])],
+                                                                                      multiplicity=MultiplicityBounds(
+                                                                                          lower_bound=None,
+                                                                                          upper_bound=InfValue()),
+                                                                                      is_ordered=True,
+                                                                                      is_nonunique=False,
+                                                                                      conjugation=None,
+                                                                                      relationships=[],
+                                                                                      is_default=False, value_type=None,
+                                                                                      value=None, body=[]))])),
+    ])
+    @pytest.mark.focus
+    def test_association_structure(self, text, expected):
+        parser = _parser_for_rule('association_structure')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'association_structure' in rules

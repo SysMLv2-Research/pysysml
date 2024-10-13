@@ -1,4 +1,5 @@
 import json
+import typing
 
 from lark import v_args, Tree, Token, GrammarError
 
@@ -12,7 +13,8 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     TypingsPart, SubsettingsPart, RedefinitionsPart, ReferencesPart, FeatureDirection, FeatureRelationshipType, \
     FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember, Alias, NamespaceFeatureMember, Specialization, \
     Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition, FeatureInverting, \
-    TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp
+    TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp, \
+    DataType, Struct, Association, AssociationStruct
 
 
 # noinspection PyPep8Naming
@@ -278,32 +280,6 @@ class KerMLTransformer(KerMLTransTemplate):
         assert len(tree.children) > 1
         assert tree.children[0].type == 'SPECIALIZES'
         return SpecializationPart(items=tree.children[1:])
-
-    @v_args(tree=True)
-    def class_statement(self, tree: Tree):
-        assert len(tree.children) == 3
-        is_abstract, annotations = tree.children[0]
-        is_all, identification, multiplicity_bounds, spx, type_relationship_parts = tree.children[1]
-        if spx is None:
-            conjugation, superclassing = None, None
-        elif isinstance(spx, SuperclassingPart):
-            conjugation, superclassing = None, spx
-        elif isinstance(spx, ConjugationPart):
-            conjugation, superclassing = spx, None
-        else:
-            assert False, "Should not reach this line"  # pragma: no cover
-
-        return Class(
-            is_abstract=is_abstract,
-            annotations=annotations,
-            is_all=is_all,
-            identification=identification,
-            multiplicity_bounds=multiplicity_bounds,
-            conjugation=conjugation,
-            superclassing=superclassing,
-            relationships=type_relationship_parts,
-            body=tree.children[2],
-        )
 
     @v_args(tree=True)
     def type_body(self, tree: Tree):
@@ -665,8 +641,7 @@ class KerMLTransformer(KerMLTransTemplate):
             body=tree.children[3],
         )
 
-    @v_args(tree=True)
-    def classifier(self, tree: Tree):
+    def _classifier_like(self, tree: Tree, type_cls: typing.Type[Classifier]):
         assert len(tree.children) == 3
         is_abstract, annotations = tree.children[0]
         is_all, identification, multiplicity_bounds, spx, type_relationship_parts = tree.children[1]
@@ -679,7 +654,8 @@ class KerMLTransformer(KerMLTransTemplate):
         else:
             assert False, "Should not reach this line"  # pragma: no cover
 
-        return Classifier(
+        # noinspection PyArgumentList
+        return type_cls(
             is_abstract=is_abstract,
             annotations=annotations,
             is_all=is_all,
@@ -690,6 +666,10 @@ class KerMLTransformer(KerMLTransTemplate):
             relationships=type_relationship_parts,
             body=tree.children[2],
         )
+
+    @v_args(tree=True)
+    def classifier(self, tree: Tree):
+        return self._classifier_like(tree, type_cls=Classifier)
 
     @v_args(tree=True)
     def subclassification(self, tree: Tree):
@@ -900,6 +880,26 @@ class KerMLTransformer(KerMLTransTemplate):
             return MetaClsCastOp(x=x, y=y)
         else:
             return MetaClsTestOp(op=op, x=x, y=y)
+
+    @v_args(tree=True)
+    def data_type(self, tree: Tree):
+        return self._classifier_like(tree, type_cls=DataType)
+
+    @v_args(tree=True)
+    def class_statement(self, tree: Tree):
+        return self._classifier_like(tree, type_cls=Class)
+
+    @v_args(tree=True)
+    def structure(self, tree: Tree):
+        return self._classifier_like(tree, type_cls=Struct)
+
+    @v_args(tree=True)
+    def association(self, tree: Tree):
+        return self._classifier_like(tree, type_cls=Association)
+
+    @v_args(tree=True)
+    def association_structure(self, tree: Tree):
+        return self._classifier_like(tree, type_cls=AssociationStruct)
 
 
 def tree_to_cst(tree: Tree):
