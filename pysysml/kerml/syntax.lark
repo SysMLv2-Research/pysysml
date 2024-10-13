@@ -387,8 +387,11 @@ binary_l11_operator_expression: op_l10 binary_l11_operator op_l10
 !binary_l11_operator: "xor"
 
 // L10(binary): & and
-?op_l10: binary_l10_operator_expression
-       | conditional_binary_l10_operator_expression
+// note: actually in this production, "|" has higher priority than "and"
+//       but the official documentation said they should have equal priority
+//       its weird, we can change it back if necessary
+?op_l10: conditional_binary_l10_operator_expression
+       | binary_l10_operator_expression
        | op_l9
 conditional_binary_l10_operator_expression: op_l9 conditional_binary_l10_operator op_l9
 !conditional_binary_l10_operator: "and"
