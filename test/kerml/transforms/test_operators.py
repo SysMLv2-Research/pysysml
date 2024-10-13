@@ -1948,7 +1948,6 @@ class TestKerMLTransformsOperator:
                   if_true=BinOp(op='|', x=IntValue(raw='4'), y=IntValue(raw='5')),
                   if_false=CondBinOp(op='implies', x=IntValue(raw='6'), y=IntValue(raw='1')))),
     ])
-    @pytest.mark.focus
     def test_owned_expression(self, text, expected):
         parser = _parser_for_rule('owned_expression')
         if isinstance(expected, type) and issubclass(expected, Exception):

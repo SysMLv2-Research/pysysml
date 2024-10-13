@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 from typing import Union
 
-from .feature import FeatureChain
-from .name import QualifiedName
+from .name import QualifiedName, FeatureChain
 
 
 @dataclass

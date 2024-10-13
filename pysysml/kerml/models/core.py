@@ -2,10 +2,9 @@ from dataclasses import dataclass
 from enum import unique, Enum
 from typing import List, Union, Optional, Any
 
-from .feature import FeatureChain
-from .kernel import MultiplicityBounds
+from .glob import MultiplicityBounds
 from .metadata import PrefixMetadataAnnotation
-from .name import QualifiedName, Identification
+from .name import QualifiedName, Identification, FeatureChain
 
 
 @dataclass
@@ -41,19 +40,6 @@ class IntersectingPart:
 @dataclass
 class DifferencingPart:
     items: List[Union[FeatureChain, QualifiedName]]
-
-
-@dataclass
-class Class:
-    is_abstract: bool
-    annotations: List[PrefixMetadataAnnotation]
-    is_all: bool
-    identification: Identification
-    multiplicity_bounds: Optional[MultiplicityBounds]
-    conjugation: Optional[ConjugationPart]
-    superclassing: Optional[SuperclassingPart]
-    relationships: List[Union[DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart]]
-    body: List[Any]
 
 
 @dataclass
