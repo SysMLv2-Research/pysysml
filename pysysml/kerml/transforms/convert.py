@@ -12,7 +12,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     TypingsPart, SubsettingsPart, RedefinitionsPart, ReferencesPart, FeatureDirection, FeatureRelationshipType, \
     FeatureValueType, Feature, OwnedFeatureMember, TypeFeatureMember, Alias, NamespaceFeatureMember, Specialization, \
     Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition, FeatureInverting, \
-    TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp
+    TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp
 
 
 # noinspection PyPep8Naming
@@ -870,6 +870,36 @@ class KerMLTransformer(KerMLTransTemplate):
     @v_args(inline=True)
     def exp_operator_expression(self, x, op: str, y):
         return BinOp(op='^', x=x, y=y)
+
+    @v_args(inline=True)
+    def classification_test_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def cast_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def classification_expression(self, x, op: str, y):
+        if op == 'as':
+            return ClsCastOp(x=x, y=y)
+        else:
+            return ClsTestOp(op=op, x=x, y=y)
+
+    @v_args(inline=True)
+    def meta_classification_test_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def meta_cast_operator(self, op_token: Token):
+        return op_token.value
+
+    @v_args(inline=True)
+    def metaclassification_expression(self, x, op: str, y):
+        if op == 'meta':
+            return MetaClsCastOp(x=x, y=y)
+        else:
+            return MetaClsTestOp(op=op, x=x, y=y)
 
 
 def tree_to_cst(tree: Tree):
