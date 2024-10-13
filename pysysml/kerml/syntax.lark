@@ -363,7 +363,7 @@ conditional_expression: "if" op_l14 "?" op_l14 "else" op_l14
 ?op_l14: conditional_binary_l14_operator_expression
        | op_l13
 conditional_binary_l14_operator_expression: op_l13 conditional_binary_l14_operator op_l13
-!conditional_binary_l14_operator: "implies"
+!conditional_binary_l14_operator: "??"
 
 // L13(binary): implies
 ?op_l13: conditional_binary_l13_operator_expression
