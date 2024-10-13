@@ -407,6 +407,24 @@ binary_l9_operator_expression: op_l8 binary_l9_operator op_l8
       | metaclassification_expression
       | op_l7
 
+// classification_expression: argument_member? (classification_test_operator type_reference_member
+//                                             | cast_operator type_result_member)
+classification_expression: [op_l7] (classification_test_operator type_reference_member
+                                            | cast_operator type_result_member)
+!classification_test_operator: "istype" | "hastype" | "@"
+!cast_operator: "as"
+metaclassification_expression: metadata_argument_member (meta_classification_test_operator type_reference_member
+                                                       | meta_cast_operator type_result_member)
+!meta_classification_test_operator: "@@"
+!meta_cast_operator: "meta"
+
+// all elements starts with "metadata_" or "type_reference_" is based on "qualified_name"
+// which means it is actually not a free expression, only qualified name can be used
+?metadata_argument_member: metadata_argument
+?metadata_argument: metadata_value
+?metadata_value: metadata_reference
+?metadata_reference: qualified_name
+
 // L7(binary): < > <= >=
 ?op_l7: binary_l7_operator_expression
       | op_l6
@@ -434,7 +452,8 @@ binary_l4_operator_expression: op_l3 binary_l4_operator op_l3
 // L3(binary): ^ **
 ?op_l3: exp_operator_expression
       | op_l2
-exp_operator_expression: op_l2 ("^" | "**") op_l2
+exp_operator_expression: op_l2 POWER op_l2
+POWER: "^" | "**"
 
 // L2(unary): + - ~ not
 ?op_l2: unary_operator_expression
@@ -452,26 +471,6 @@ unary_operator_expression: unary_operator op_l1
 ?argument_expression_member: argument_expression
 ?argument_expression: argument_expression_value
 ?argument_expression_value: owned_expression_reference
-
-
-// classification_expression: argument_member? (classification_test_operator type_reference_member
-//                                             | cast_operator type_result_member)
-classification_expression: [op_l7] (classification_test_operator type_reference_member
-                                            | cast_operator type_result_member)
-!classification_test_operator: "istype" | "hastype" | "@"
-!cast_operator: "as"
-metaclassification_expression: metadata_argument_member (meta_classification_test_operator type_reference_member
-                                                       | meta_cast_operator type_result_member)
-!meta_classification_test_operator: "@@"
-!meta_cast_operator: "meta"
-
-// all elements starts with "metadata_" or "type_reference_" is based on "qualified_name"
-// which means it is actually not a free expression, only qualified name can be used
-?metadata_argument_member: metadata_argument
-?metadata_argument: metadata_value
-?metadata_value: metadata_reference
-?metadata_reference: qualified_name
-
 
 // L1(unary): "all"
 ?op_l1: extent_expression

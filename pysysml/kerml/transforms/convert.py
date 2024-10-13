@@ -868,7 +868,7 @@ class KerMLTransformer(KerMLTransTemplate):
         return op_token.value
 
     @v_args(inline=True)
-    def exp_operator_expression(self, x, y):
+    def exp_operator_expression(self, x, op: str, y):
         return BinOp(op='^', x=x, y=y)
 
 
