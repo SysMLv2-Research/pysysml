@@ -4,9 +4,9 @@ from typing import Optional, Union, List, Any
 
 from .core import Classifier, FeatureDirection, FeatureRelationshipType, FeatureSpecializationPart, ConjugationPart, \
     FeatureRelationshipPart, FeatureValueType, Feature
-from .glob import MultiplicityBounds, Visibility
-from . import PrefixMetadataAnnotation
+from .glob import MultiplicityBounds, PrefixMetadataAnnotation
 from .name import QualifiedName, FeatureChain, Identification
+from .root import VisibleMember
 
 
 @dataclass
@@ -153,14 +153,12 @@ class Step(Feature):
 
 
 @dataclass
-class Return:
-    visibility: Optional[Visibility]
+class Return(VisibleMember):
     feature: Feature
 
 
 @dataclass
-class Result:
-    visibility: Optional[Visibility]
+class Result(VisibleMember):
     expression: Any
 
 
@@ -336,8 +334,7 @@ class MetadataRedefine:
 
 
 @dataclass
-class ElementFilter:
-    visibility: Optional[Visibility]
+class ElementFilter(VisibleMember):
     expression: Any
 
 

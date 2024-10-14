@@ -1,4 +1,5 @@
 import os
+from functools import lru_cache
 
 import pytest
 from hbutils.random import random_sha1_with_timestamp
@@ -7,6 +8,7 @@ from lark import Lark, GrammarError, UnexpectedCharacters, Token, UnexpectedEOF
 from pysysml.kerml.transforms import tree_to_kerml_cst
 
 
+@lru_cache()
 def _parser_for_token(token_name):
     start_name = f'start_{random_sha1_with_timestamp()}'
     grammar_code = f"""

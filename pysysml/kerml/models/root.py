@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import List, Optional, Any
 
-from .glob import Visibility
 from . import PrefixMetadataAnnotation
+from .glob import Visibility
 from .name import Identification, QualifiedName
 
 
@@ -55,32 +55,32 @@ class RootNamespace:
 
 
 @dataclass
-class NonFeatureMember:
+class VisibleMember:
     visibility: Optional[Visibility]
+
+
+@dataclass
+class NonFeatureMember(VisibleMember):
     element: Any
 
 
 @dataclass
-class OwnedFeatureMember:
-    visibility: Optional[Visibility]
+class OwnedFeatureMember(VisibleMember):
     element: Any
 
 
 @dataclass
-class TypeFeatureMember:
-    visibility: Optional[Visibility]
+class TypeFeatureMember(VisibleMember):
     element: Any
 
 
 @dataclass
-class NamespaceFeatureMember:
-    visibility: Optional[Visibility]
+class NamespaceFeatureMember(VisibleMember):
     element: Any
 
 
 @dataclass
-class Import:
-    visibility: Optional[Visibility]
+class Import(VisibleMember):
     is_all: bool
     is_recursive: bool
     is_namespace: bool
@@ -90,8 +90,7 @@ class Import:
 
 
 @dataclass
-class Alias:
-    visibility: Optional[Visibility]
+class Alias(VisibleMember):
     identification: Identification
     name: QualifiedName
     body: List[Any]

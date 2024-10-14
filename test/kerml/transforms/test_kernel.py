@@ -565,7 +565,6 @@ class TestKerMLTransformsKernel:
                  ConnectorEnd(name=None, reference=QualifiedName(names=['guard']),
                               multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=InfValue()))], body=[])),
     ])
-    @pytest.mark.focus
     def test_connector(self, text, expected):
         parser = _parser_for_rule('connector')
         if isinstance(expected, type) and issubclass(expected, Exception):
