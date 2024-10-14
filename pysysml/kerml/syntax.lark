@@ -659,7 +659,8 @@ metadata_body_feature: "feature"? (":>>" | "redefines")? owned_redefinition [fea
 
 # 8.2.5.13 Packages Concrete Syntax
 package: prefix_metadata_member* package_declaration package_body
-library_package: "standard"? "library" prefix_metadata_member* package_declaration package_body
+library_package: [STANDARD] "library" prefix_metadata_member* package_declaration package_body
+STANDARD: "standard"
 package_declaration: "package" identification
 package_body: ";"
             | "{" (namespace_body_element | element_filter_member)* "}"
