@@ -16,7 +16,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp, \
     DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector, \
     Succession, Behavior, Step, Return, Result, Function, Predicate, Expression, BooleanExpression, Invariant, \
-    IndexExpression, SequenceExpression, FeatureChainExpression
+    IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression
 
 
 # noinspection PyPep8Naming
@@ -1346,6 +1346,24 @@ class KerMLTransformer(KerMLTransTemplate):
         return FeatureChainExpression(
             entity=entity,
             member=member,
+        )
+
+    @v_args(inline=True)
+    def expression_body(self, body):
+        return body
+
+    @v_args(inline=True)
+    def collect_expression(self, entity, body):
+        return CollectExpression(
+            entity=entity,
+            body=body,
+        )
+
+    @v_args(inline=True)
+    def select_expression(self, entity, body):
+        return SelectExpression(
+            entity=entity,
+            body=body,
         )
 
 

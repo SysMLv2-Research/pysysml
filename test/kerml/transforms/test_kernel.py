@@ -6,7 +6,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     FeatureRelationshipType, InfValue, Association, AssociationStruct, Connector, ConnectorType, ConnectorEnd, \
     FeatureChain, FeatureValueType, BindingConnector, Succession, Behavior, Step, Function, FeatureDirection, Return, \
     Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate, BooleanExpression, Invariant, \
-    BoolValue, IndexExpression, SequenceExpression, FeatureChainExpression
+    BoolValue, IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression
 from .base import _parser_for_rule
 
 
@@ -2018,3 +2018,93 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'feature_chain_expression' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('sensors.{in s: Sensor; s.reading}',
+         CollectExpression(entity=QualifiedName(names=['sensors']), body=[OwnedFeatureMember(visibility=None,
+                                                                                             element=Feature(
+                                                                                                 direction=FeatureDirection.IN,
+                                                                                                 is_abstract=False,
+                                                                                                 relationship_type=None,
+                                                                                                 is_readonly=False,
+                                                                                                 is_derived=False,
+                                                                                                 is_end=False,
+                                                                                                 annotations=[],
+                                                                                                 is_all=False,
+                                                                                                 identification=Identification(
+                                                                                                     short_name=None,
+                                                                                                     name='s'),
+                                                                                                 specializations=[
+                                                                                                     TypingsPart(items=[
+                                                                                                         QualifiedName(
+                                                                                                             names=[
+                                                                                                                 'Sensor'])])],
+                                                                                                 multiplicity=None,
+                                                                                                 is_ordered=False,
+                                                                                                 is_nonunique=False,
+                                                                                                 conjugation=None,
+                                                                                                 relationships=[],
+                                                                                                 is_default=False,
+                                                                                                 value_type=None,
+                                                                                                 value=None, body=[])),
+                                                                          Result(visibility=None,
+                                                                                 expression=FeatureChainExpression(
+                                                                                     entity=QualifiedName(names=['s']),
+                                                                                     member=QualifiedName(
+                                                                                         names=['reading'])))])),
+    ])
+    @pytest.mark.focus
+    def test_collect_expression(self, text, expected):
+        parser = _parser_for_rule('collect_expression')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'collect_expression' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('sensors.?{in s: Sensor; s.isActive}',
+         SelectExpression(entity=QualifiedName(names=['sensors']), body=[OwnedFeatureMember(visibility=None,
+                                                                                            element=Feature(
+                                                                                                direction=FeatureDirection.IN,
+                                                                                                is_abstract=False,
+                                                                                                relationship_type=None,
+                                                                                                is_readonly=False,
+                                                                                                is_derived=False,
+                                                                                                is_end=False,
+                                                                                                annotations=[],
+                                                                                                is_all=False,
+                                                                                                identification=Identification(
+                                                                                                    short_name=None,
+                                                                                                    name='s'),
+                                                                                                specializations=[
+                                                                                                    TypingsPart(items=[
+                                                                                                        QualifiedName(
+                                                                                                            names=[
+                                                                                                                'Sensor'])])],
+                                                                                                multiplicity=None,
+                                                                                                is_ordered=False,
+                                                                                                is_nonunique=False,
+                                                                                                conjugation=None,
+                                                                                                relationships=[],
+                                                                                                is_default=False,
+                                                                                                value_type=None,
+                                                                                                value=None, body=[])),
+                                                                         Result(visibility=None,
+                                                                                expression=FeatureChainExpression(
+                                                                                    entity=QualifiedName(names=['s']),
+                                                                                    member=QualifiedName(
+                                                                                        names=['isActive'])))])),
+    ])
+    @pytest.mark.focus
+    def test_select_expression(self, text, expected):
+        parser = _parser_for_rule('select_expression')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'select_expression' in rules

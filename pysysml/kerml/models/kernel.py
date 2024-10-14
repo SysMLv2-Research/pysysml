@@ -204,3 +204,15 @@ class SequenceExpression:
 class FeatureChainExpression:
     entity: Any
     member: Union[QualifiedName, FeatureChain]
+
+
+@dataclass
+class CollectExpression:
+    entity: Any
+    body: List[Any]
+
+
+@dataclass
+class SelectExpression:
+    entity: Any
+    body: List[Any]
