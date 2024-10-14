@@ -537,7 +537,33 @@ class TestKerMLTransformsKernel:
                    is_ordered=False, is_nonunique=False, conjugation=None, relationships=[], type=ConnectorType.VALUE,
                    is_default=False, value_type=FeatureValueType.INITIAL,
                    value=QualifiedName(names=['another_mounting']), is_all_connect=False, ends=None, body=[])),
+        ('connector transitionLink[0..1] to trigger[1..*];',
+         Connector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=False, identification=None, specializations=[],
+                   multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                   type=ConnectorType.BINARY, is_default=False, value_type=None, value=None, is_all_connect=False,
+                   ends=[ConnectorEnd(name=None, reference=QualifiedName(names=['transitionLink']),
+                                      multiplicity=MultiplicityBounds(lower_bound=IntValue(raw='0'),
+                                                                      upper_bound=IntValue(raw='1'))),
+                         ConnectorEnd(name=None, reference=QualifiedName(names=['trigger']),
+                                      multiplicity=MultiplicityBounds(lower_bound=IntValue(raw='1'),
+                                                                      upper_bound=InfValue()))], body=[])),
+        ('connector all guardConstraint: TPCGuardConstraint[*]\n'
+         'from transitionLink[0..1] to guard[*];',
+         Connector(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                   is_end=False, annotations=[], is_all=True,
+                   identification=Identification(short_name=None, name='guardConstraint'),
+                   specializations=[TypingsPart(items=[QualifiedName(names=['TPCGuardConstraint'])])],
+                   multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=InfValue()), is_ordered=False,
+                   is_nonunique=False, conjugation=None, relationships=[], type=ConnectorType.BINARY, is_default=False,
+                   value_type=None, value=None, is_all_connect=False, ends=[
+                 ConnectorEnd(name=None, reference=QualifiedName(names=['transitionLink']),
+                              multiplicity=MultiplicityBounds(lower_bound=IntValue(raw='0'),
+                                                              upper_bound=IntValue(raw='1'))),
+                 ConnectorEnd(name=None, reference=QualifiedName(names=['guard']),
+                              multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=InfValue()))], body=[])),
     ])
+    @pytest.mark.focus
     def test_connector(self, text, expected):
         parser = _parser_for_rule('connector')
         if isinstance(expected, type) and issubclass(expected, Exception):

@@ -285,8 +285,8 @@ connector: feature_prefix "connector" connector_declaration type_body
                       | nary_connector_declaration
 value_connector_declaration: [feature_declaration] [value_part]
 // binary_connector_declaration: (feature_declaration? "from" | "all" "from"?)? connector_end_member "to" connector_end_member
-?binary_connector_declaration: "all" "from"? connector_end_member "to" connector_end_member                -> all_binary_connector_declaration
-                             | [feature_declaration] "from" connector_end_member "to" connector_end_member -> non_all_binary_connector_declaration
+?binary_connector_declaration: "all" "from"? connector_end_member "to" connector_end_member                 -> all_binary_connector_declaration
+                             | [feature_declaration] "from"? connector_end_member "to" connector_end_member -> non_all_binary_connector_declaration
 nary_connector_declaration: [feature_declaration] "(" connector_end_member "," connector_end_member ("," connector_end_member)* ")"
 ?connector_end_member: connector_end
 connector_end: [connector_end_to] owned_reference_subsetting [owned_multiplicity]
