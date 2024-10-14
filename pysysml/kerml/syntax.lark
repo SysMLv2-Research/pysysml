@@ -653,15 +653,16 @@ prefix_metadata_annotation: "#" prefix_metadata_feature
 prefix_metadata_member: "#" prefix_metadata_feature
 ?prefix_metadata_feature: owned_feature_typing
 
-metadata_feature: prefix_metadata_member* ("@" | "metadata") metadata_feature_declaration ("about" annotation ("," annotation)*)? metadata_body
-metadata_feature_declaration: (identification (":" | "typed" "by"))? owned_feature_typing
+metadata_feature: prefix_metadata_member* ("@" | "metadata") metadata_feature_declaration [metadata_feature_about] metadata_body
+metadata_feature_about: "about" annotation ("," annotation)*
+metadata_feature_declaration: [identification (":" | "typed" "by")] owned_feature_typing
 metadata_body: ";" | "{" metadata_body_element* "}"
 ?metadata_body_element: non_feature_member
                       | metadata_body_feature_member
                       | alias_member
                       | import_statement
 ?metadata_body_feature_member: metadata_body_feature
-metadata_body_feature: "feature"? (":>>" | "redefines")? owned_redefinition feature_specialization_part? value_part? metadata_body
+metadata_body_feature: "feature"? (":>>" | "redefines")? owned_redefinition [feature_specialization_part] [value_part] metadata_body
 
 # 8.2.5.13 Packages Concrete Syntax
 package: prefix_metadata_member* package_declaration package_body

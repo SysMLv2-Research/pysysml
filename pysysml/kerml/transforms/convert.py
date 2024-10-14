@@ -18,7 +18,8 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     Succession, Behavior, Step, Return, Result, Function, Predicate, Expression, BooleanExpression, Invariant, \
     IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, BodyExpression, \
     FunctionOperationExpression, Interaction, ItemFlowEnd, ItemFlow, ItemFeature, MultiplicitySubset, MultiplicityRange, \
-    Metaclass, SuccessionItemFlow
+    Metaclass, SuccessionItemFlow, Metadata
+from ..models.kernel import MetadataRedefine
 
 
 # noinspection PyPep8Naming
@@ -1554,6 +1555,58 @@ class KerMLTransformer(KerMLTransTemplate):
     @v_args(tree=True)
     def metaclass(self, tree: Tree):
         return self._classifier_like(tree, type_cls=Metaclass)
+
+    @v_args(tree=True)
+    def metadata_body(self, tree: Tree):
+        return tree.children
+
+    @v_args(tree=True)
+    def metadata_feature_about(self, tree: Tree):
+        return tree.children
+
+    @v_args(inline=True)
+    def metadata_feature_declaration(self, identification: typing.Optional[Identification], feature_typing):
+        return identification, feature_typing
+
+    @v_args(tree=True)
+    def metadata_feature(self, tree: Tree):
+        annotations: typing.List[PrefixMetadataAnnotation] = tree.children[:-3]
+        identification, superclass = tree.children[-3]
+        about = tree.children[-2] or []
+        body = tree.children[-1]
+        return Metadata(
+            annotations=annotations,
+            identification=identification,
+            superclass=superclass,
+            about=about,
+            body=body,
+        )
+
+    @v_args(inline=True)
+    def metadata_body_feature(self, owned_redefinition, feature_specialization_part, value_part, metadata_body):
+        if feature_specialization_part:
+            specs, multiplicity, is_ordered, is_nonunique = feature_specialization_part
+        else:
+            specs, multiplicity, is_ordered, is_nonunique = [], None, False, False
+        if value_part is not None:
+            is_default, value_type, v = value_part
+        else:
+            is_default, value_type, v = False, None, None
+
+        return MetadataRedefine(
+            name=owned_redefinition,
+
+            specializations=specs,
+            multiplicity=multiplicity,
+            is_ordered=is_ordered,
+            is_nonunique=is_nonunique,
+
+            is_default=is_default,
+            value_type=value_type,
+            value=v,
+
+            body=metadata_body,
+        )
 
 
 def tree_to_cst(tree: Tree):

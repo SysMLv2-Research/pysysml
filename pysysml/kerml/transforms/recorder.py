@@ -1347,6 +1347,13 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.metadata_feature(self, tree)
 
     @v_args(tree=True)
+    def metadata_feature_about(self, tree: Tree):
+        if 'metadata_feature_about' not in self._rules_set:
+            self._rules_set.add('metadata_feature_about')
+            self.rules.append('metadata_feature_about')
+        return KerMLTransTemplate.metadata_feature_about(self, tree)
+
+    @v_args(tree=True)
     def metadata_feature_declaration(self, tree: Tree):
         if 'metadata_feature_declaration' not in self._rules_set:
             self._rules_set.add('metadata_feature_declaration')

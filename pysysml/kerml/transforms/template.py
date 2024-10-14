@@ -767,6 +767,10 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def metadata_feature_about(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def metadata_feature_declaration(self, tree: Tree):
         return tree
 

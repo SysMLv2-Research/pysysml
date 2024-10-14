@@ -8,7 +8,8 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate, BooleanExpression, Invariant, \
     BoolValue, IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, \
     BodyExpression, IfTestOp, ClsTestOp, ClsCastOp, FunctionOperationExpression, UnaryOp, Interaction, ItemFlowEnd, \
-    ItemFeature, ItemFlow, MultiplicitySubset, MultiplicityRange, Metaclass, SuccessionItemFlow
+    ItemFeature, ItemFlow, MultiplicitySubset, MultiplicityRange, Metaclass, SuccessionItemFlow, StringValue, \
+    MetadataRedefine, Metadata
 from .base import _parser_for_rule
 
 
@@ -2655,3 +2656,71 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'metaclass' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('metadata securityDesignAnnotation : SecurityRelated about SecurityDesign;',
+         Metadata(annotations=[], identification=Identification(short_name=None, name='securityDesignAnnotation'),
+                  superclass=QualifiedName(names=['SecurityRelated']), about=[QualifiedName(names=['SecurityDesign'])],
+                  body=[])),
+        ('metadata ApprovalAnnotation about Design {\n'
+         '    feature redefines approved = true;\n'
+         '    feature redefines approver = "John Smith";\n'
+         '}',
+         Metadata(annotations=[], identification=None, superclass=QualifiedName(names=['ApprovalAnnotation']),
+                  about=[QualifiedName(names=['Design'])], body=[
+                 MetadataRedefine(name=QualifiedName(names=['approved']), specializations=[], multiplicity=None,
+                                  is_ordered=False, is_nonunique=False, is_default=False,
+                                  value_type=FeatureValueType.BIND, value=BoolValue(raw='true'), body=[]),
+                 MetadataRedefine(name=QualifiedName(names=['approver']), specializations=[], multiplicity=None,
+                                  is_ordered=False, is_nonunique=False, is_default=False,
+                                  value_type=FeatureValueType.BIND, value=StringValue(raw='"John Smith"'), body=[])])),
+        ('metadata ApprovalAnnotation about Design {\n'
+         '    approved = true;\n'
+         '    approver = "John Smith";\n'
+         '}',
+         Metadata(annotations=[], identification=None, superclass=QualifiedName(names=['ApprovalAnnotation']),
+                  about=[QualifiedName(names=['Design'])], body=[
+                 MetadataRedefine(name=QualifiedName(names=['approved']), specializations=[], multiplicity=None,
+                                  is_ordered=False, is_nonunique=False, is_default=False,
+                                  value_type=FeatureValueType.BIND, value=BoolValue(raw='true'), body=[]),
+                 MetadataRedefine(name=QualifiedName(names=['approver']), specializations=[], multiplicity=None,
+                                  is_ordered=False, is_nonunique=False, is_default=False,
+                                  value_type=FeatureValueType.BIND, value=StringValue(raw='"John Smith"'), body=[])])),
+        ('metadata ApprovalAnnotation about Design {\n    approved : Type1 = true;\n}',
+         Metadata(annotations=[], identification=None, superclass=QualifiedName(names=['ApprovalAnnotation']),
+                  about=[QualifiedName(names=['Design'])], body=[
+                 MetadataRedefine(name=QualifiedName(names=['approved']),
+                                  specializations=[TypingsPart(items=[QualifiedName(names=['Type1'])])],
+                                  multiplicity=None, is_ordered=False, is_nonunique=False, is_default=False,
+                                  value_type=FeatureValueType.BIND, value=BoolValue(raw='true'), body=[])])),
+        ('@ApprovalAnnotation {\n    approved = true;\n    approver = "John Smith";\n}',
+         Metadata(annotations=[], identification=None, superclass=QualifiedName(names=['ApprovalAnnotation']), about=[],
+                  body=[MetadataRedefine(name=QualifiedName(names=['approved']), specializations=[], multiplicity=None,
+                                         is_ordered=False, is_nonunique=False, is_default=False,
+                                         value_type=FeatureValueType.BIND, value=BoolValue(raw='true'), body=[]),
+                        MetadataRedefine(name=QualifiedName(names=['approver']), specializations=[], multiplicity=None,
+                                         is_ordered=False, is_nonunique=False, is_default=False,
+                                         value_type=FeatureValueType.BIND, value=StringValue(raw='"John Smith"'),
+                                         body=[])])),
+        ('@ApprovalAnnotation {\n'
+         '    approved = true;\n'
+         '    approver;  // not assigned\n'
+         '}',
+         Metadata(annotations=[], identification=None, superclass=QualifiedName(names=['ApprovalAnnotation']), about=[],
+                  body=[MetadataRedefine(name=QualifiedName(names=['approved']), specializations=[], multiplicity=None,
+                                         is_ordered=False, is_nonunique=False, is_default=False,
+                                         value_type=FeatureValueType.BIND, value=BoolValue(raw='true'), body=[]),
+                        MetadataRedefine(name=QualifiedName(names=['approver']), specializations=[], multiplicity=None,
+                                         is_ordered=False, is_nonunique=False, is_default=False, value_type=None,
+                                         value=None, body=[])])),
+    ])
+    @pytest.mark.focus
+    def test_metadata_feature(self, text, expected):
+        parser = _parser_for_rule('metadata_feature')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'metadata_feature' in rules

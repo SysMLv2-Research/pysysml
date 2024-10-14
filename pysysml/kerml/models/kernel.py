@@ -308,3 +308,28 @@ class MultiplicityRange:
 @dataclass
 class Metaclass(Struct):
     pass
+
+
+@dataclass
+class Metadata:
+    annotations: List[PrefixMetadataAnnotation]
+    identification: Optional[Identification]
+    superclass: Optional[Union[QualifiedName, FeatureChain]]
+    about: List[Union[QualifiedName, FeatureChain]]
+    body: List[Any]
+
+
+@dataclass
+class MetadataRedefine:
+    name: Union[QualifiedName, FeatureChain]
+
+    specializations: List[FeatureSpecializationPart]
+    multiplicity: Optional[MultiplicityBounds]
+    is_ordered: bool
+    is_nonunique: bool
+
+    is_default: bool
+    value_type: Optional[FeatureValueType]
+    value: Optional[Any]
+
+    body: List[Any]
