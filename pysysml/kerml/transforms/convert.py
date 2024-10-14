@@ -17,7 +17,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector, \
     Succession, Behavior, Step, Return, Result, Function, Predicate, Expression, BooleanExpression, Invariant, \
     IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, BodyExpression, \
-    FunctionOperationExpression, Interaction, ItemFlowEnd, ItemFlow, ItemFeature
+    FunctionOperationExpression, Interaction, ItemFlowEnd, ItemFlow, ItemFeature, MultiplicitySubset, MultiplicityRange
 
 
 # noinspection PyPep8Naming
@@ -1523,6 +1523,22 @@ class KerMLTransformer(KerMLTransTemplate):
             item_feature=item_feat,
 
             # body part
+            body=type_body,
+        )
+
+    @v_args(inline=True)
+    def multiplicity_subset(self, identification, superset, type_body):
+        return MultiplicitySubset(
+            identification=identification,
+            superset=superset,
+            body=type_body,
+        )
+
+    @v_args(inline=True)
+    def multiplicity_range(self, identification, multiplicity, type_body):
+        return MultiplicityRange(
+            identification=identification,
+            multiplicity=multiplicity,
             body=type_body,
         )
 

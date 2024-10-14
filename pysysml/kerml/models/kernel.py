@@ -284,3 +284,17 @@ class ItemFlow:
     item_feature: Optional[ItemFeature]
 
     body: List[Any]
+
+
+@dataclass
+class MultiplicitySubset:
+    identification: Identification
+    superset: Union[QualifiedName, FeatureChain]
+    body: List[Any]
+
+
+@dataclass
+class MultiplicityRange:
+    identification: Identification
+    multiplicity: MultiplicityBounds
+    body: List[Any]

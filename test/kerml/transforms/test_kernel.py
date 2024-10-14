@@ -8,7 +8,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate, BooleanExpression, Invariant, \
     BoolValue, IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, \
     BodyExpression, IfTestOp, ClsTestOp, ClsCastOp, FunctionOperationExpression, UnaryOp, Interaction, ItemFlowEnd, \
-    ItemFeature, ItemFlow
+    ItemFeature, ItemFlow, MultiplicitySubset, MultiplicityRange
 from .base import _parser_for_rule
 
 
@@ -2552,3 +2552,42 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'item_flow' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('multiplicity m subsets zeroOrMore;',
+         MultiplicitySubset(identification=Identification(short_name=None, name='m'),
+                            superset=QualifiedName(names=['zeroOrMore']), body=[])),
+        ('multiplicity m subsets zeroOrMore {\n    /* 123 */\n}',
+         MultiplicitySubset(identification=Identification(short_name=None, name='m'),
+                            superset=QualifiedName(names=['zeroOrMore']),
+                            body=[NonFeatureMember(visibility=None,
+                                                   element=Comment(identification=None, about_list=None, locale=None,
+                                                                   comment='/* 123 */'))])),
+    ])
+    @pytest.mark.focus
+    def test_multiplicity_subset(self, text, expected):
+        parser = _parser_for_rule('multiplicity_subset')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'multiplicity_subset' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('multiplicity zeroOrMore [0..*];',
+         MultiplicityRange(identification=Identification(short_name=None, name='zeroOrMore'),
+                           multiplicity=MultiplicityBounds(lower_bound=IntValue(raw='0'), upper_bound=InfValue()),
+                           body=[])),
+    ])
+    @pytest.mark.focus
+    def test_multiplicity_range(self, text, expected):
+        parser = _parser_for_rule('multiplicity_range')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'multiplicity_range' in rules
