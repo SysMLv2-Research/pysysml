@@ -101,6 +101,14 @@ jobs:
           tree .
           cloc pysysml
           cloc test
+      - name: Load official source code
+        env:
+          CI: 'true'
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        shell: bash
+        run: |
+          make official
+          tree sysml.library
       - name: Run unittest
         env:
           CI: 'true'

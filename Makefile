@@ -46,7 +46,7 @@ pdocs:
 	$(MAKE) -C "${DOC_DIR}" prod
 
 official:
-	$(PYTHON) -m hfutils download -r sysmlv2research/official_library_source -d src -o
+	$(PYTHON) -m hfutils download -r sysmlv2research/official_library_source -a src.zip -o sysml.library
 
 kerml:
 	$(PYTHON) -m tools.kerml.generate
