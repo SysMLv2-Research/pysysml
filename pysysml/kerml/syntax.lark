@@ -3,7 +3,7 @@ start: root_namespace
 
 # Ignore whitespace and comments
 %import common.WS
-IGNORANCE: WS | SINGLE_LINE_NOTE | MULTILINE_NOTE
+IGNORANCE: SINGLE_LINE_NOTE | MULTILINE_NOTE | WS
 %ignore IGNORANCE
 
 
@@ -18,7 +18,7 @@ SINGLE_LINE_NOTE: "//" LINE_TEXT
 MULTILINE_NOTE: "//*" COMMENT_TEXT "*/"
 REGULAR_COMMENT: "/*" COMMENT_TEXT "*/"
 COMMENT_TEXT: (COMMENT_LINE_TEXT | LINE_TERMINATOR)*
-COMMENT_LINE_TEXT: /[^\r\n]*(?<!\*\/)/  // LINE_TEXT excluding the sequence "*/"
+COMMENT_LINE_TEXT: /[^\r\n]*?(?<!\*\/)/  // LINE_TEXT excluding the sequence "*/"
 
 # 8.2.2.3 Names
 NAME: BASIC_NAME | UNRESTRICTED_NAME
@@ -138,7 +138,8 @@ filter_package_list: filter_package_member*
                     | association | association_structure | interaction | behavior | function | predicate
                     | multiplicity | package | library_package | specialization | conjugation | subclassification
                     | disjoining | feature_inverting | feature_typing | subsetting | redefinition | type_featuring
-?feature_element: feature | step | expression | boolean_expression | invariant | connector | binding_connector | succession | item_flow | succession_item_flow
+?feature_element: feature | step | expression | boolean_expression | invariant | connector | binding_connector
+                | succession | item_flow | succession_item_flow
 
 
 # 8.2.4 Core Concrete Syntax
