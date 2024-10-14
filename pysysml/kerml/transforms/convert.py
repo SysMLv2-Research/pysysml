@@ -18,7 +18,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     Succession, Behavior, Step, Return, Result, Function, Predicate, Expression, BooleanExpression, Invariant, \
     IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, BodyExpression, \
     FunctionOperationExpression, Interaction, ItemFlowEnd, ItemFlow, ItemFeature, MultiplicitySubset, MultiplicityRange, \
-    Metaclass, SuccessionItemFlow, Metadata, MetadataRedefine, ElementFilter, Package, LibraryPackage
+    Metaclass, SuccessionItemFlow, Metadata, MetadataRedefine, ElementFilter, Package, LibraryPackage, RootNamespace
 
 
 # noinspection PyPep8Naming
@@ -1646,6 +1646,12 @@ class KerMLTransformer(KerMLTransTemplate):
             annotations=annotations,
             identification=identification,
             body=body,
+        )
+
+    @v_args(tree=True)
+    def root_namespace(self, tree: Tree):
+        return RootNamespace(
+            body=tree.children,
         )
 
 

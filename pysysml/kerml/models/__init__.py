@@ -18,4 +18,5 @@ from .name import name_escape, name_unescape, name_safe_repr, QualifiedName, Ide
 from .operators import ExtentOp, UnaryOp, BinOp, CondBinOp, IfTestOp, ClsTestOp, ClsCastOp, \
     MetaClsTestOp, MetaClsCastOp
 from .root import Comment, Dependency, Documentation, RelationshipBody, TextualRepresentation, Namespace, \
-    NonFeatureMember, NamespaceFeatureMember, Import, OwnedFeatureMember, TypeFeatureMember, Alias
+    NonFeatureMember, NamespaceFeatureMember, Import, OwnedFeatureMember, TypeFeatureMember, Alias, \
+    RootNamespace

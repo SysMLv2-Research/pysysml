@@ -50,6 +50,11 @@ class Namespace:
 
 
 @dataclass
+class RootNamespace:
+    body: List[Any]
+
+
+@dataclass
 class NonFeatureMember:
     visibility: Optional[Visibility]
     element: Any

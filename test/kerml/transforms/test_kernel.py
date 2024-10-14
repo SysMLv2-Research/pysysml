@@ -2763,7 +2763,6 @@ class TestKerMLTransformsKernel:
                        expression=BinOp(op='-', x=BinOp(op='+', x=IntValue(raw='2'), y=IntValue(raw='3')),
                                         y=BinOp(op='*', x=IntValue(raw='4'), y=IntValue(raw='5'))))),
     ])
-    @pytest.mark.focus
     def test_element_filter_member(self, text, expected):
         parser = _parser_for_rule('element_filter_member')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -3021,7 +3020,6 @@ class TestKerMLTransformsKernel:
                                                                                              'approved']))],
                     body=[])])),
     ])
-    @pytest.mark.focus
     def test_package(self, text, expected):
         parser = _parser_for_rule('package')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -3219,7 +3217,6 @@ class TestKerMLTransformsKernel:
                                                                     items=[QualifiedName(names=['Natural'])]),
                                                                 relationships=[], body=[]))], is_standard=True)),
     ])
-    @pytest.mark.focus
     def test_library_package(self, text, expected):
         parser = _parser_for_rule('library_package')
         if isinstance(expected, type) and issubclass(expected, Exception):
