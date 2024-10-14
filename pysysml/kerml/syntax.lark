@@ -539,7 +539,8 @@ collect_expression: primary_argument_member "." body_expression_member
 select_expression: primary_argument_member ".?" body_expression_member
 
 # Function Operation Expression
-function_operation_expression: primary_argument_member "->" reference_typing (body_argument_member | function_reference_argument_member | argument_list)
+function_operation_expression: primary_argument_member "->" reference_typing (body_argument_member | function_reference_argument_member) -> function_operation_expression_standalone
+                             | primary_argument_member "->" reference_typing argument_list                                               -> function_operation_expression_arglist
 
 ?body_argument_member: body_argument
 ?body_argument: body_argument_value

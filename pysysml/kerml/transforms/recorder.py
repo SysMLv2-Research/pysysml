@@ -122,6 +122,20 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.sequence_expression_list_standalone(self, tree)
 
     @v_args(tree=True)
+    def function_operation_expression_standalone(self, tree: Tree):
+        if 'function_operation_expression_standalone' not in self._rules_set:
+            self._rules_set.add('function_operation_expression_standalone')
+            self.rules.append('function_operation_expression_standalone')
+        return KerMLTransTemplate.function_operation_expression_standalone(self, tree)
+
+    @v_args(tree=True)
+    def function_operation_expression_arglist(self, tree: Tree):
+        if 'function_operation_expression_arglist' not in self._rules_set:
+            self._rules_set.add('function_operation_expression_arglist')
+            self.rules.append('function_operation_expression_arglist')
+        return KerMLTransTemplate.function_operation_expression_arglist(self, tree)
+
+    @v_args(tree=True)
     def fv_bind(self, tree: Tree):
         if 'fv_bind' not in self._rules_set:
             self._rules_set.add('fv_bind')

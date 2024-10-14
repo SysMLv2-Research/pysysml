@@ -6,7 +6,8 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     FeatureRelationshipType, InfValue, Association, AssociationStruct, Connector, ConnectorType, ConnectorEnd, \
     FeatureChain, FeatureValueType, BindingConnector, Succession, Behavior, Step, Function, FeatureDirection, Return, \
     Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate, BooleanExpression, Invariant, \
-    BoolValue, IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression
+    BoolValue, IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, \
+    BodyExpression, IfTestOp, ClsTestOp, ClsCastOp, FunctionOperationExpression, UnaryOp
 from .base import _parser_for_rule
 
 
@@ -2108,3 +2109,222 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'select_expression' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('{in x: Number; x + 1}',
+         BodyExpression(body=[OwnedFeatureMember(visibility=None,
+                                                 element=Feature(direction=FeatureDirection.IN, is_abstract=False,
+                                                                 relationship_type=None, is_readonly=False,
+                                                                 is_derived=False, is_end=False, annotations=[],
+                                                                 is_all=False,
+                                                                 identification=Identification(short_name=None,
+                                                                                               name='x'),
+                                                                 specializations=[TypingsPart(
+                                                                     items=[QualifiedName(names=['Number'])])],
+                                                                 multiplicity=None, is_ordered=False,
+                                                                 is_nonunique=False, conjugation=None, relationships=[],
+                                                                 is_default=False, value_type=None, value=None,
+                                                                 body=[])), Result(visibility=None,
+                                                                                   expression=BinOp(op='+',
+                                                                                                    x=QualifiedName(
+                                                                                                        names=['x']),
+                                                                                                    y=IntValue(
+                                                                                                        raw='1')))])),
+        ('{in x; if x istype Integer? (x as Integer) + 1 else 0}',
+         BodyExpression(body=[OwnedFeatureMember(visibility=None,
+                                                 element=Feature(direction=FeatureDirection.IN, is_abstract=False,
+                                                                 relationship_type=None, is_readonly=False,
+                                                                 is_derived=False, is_end=False, annotations=[],
+                                                                 is_all=False,
+                                                                 identification=Identification(short_name=None,
+                                                                                               name='x'),
+                                                                 specializations=[], multiplicity=None,
+                                                                 is_ordered=False, is_nonunique=False, conjugation=None,
+                                                                 relationships=[], is_default=False, value_type=None,
+                                                                 value=None, body=[])), Result(visibility=None,
+                                                                                               expression=IfTestOp(
+                                                                                                   condition=ClsTestOp(
+                                                                                                       op='istype',
+                                                                                                       x=QualifiedName(
+                                                                                                           names=['x']),
+                                                                                                       y=QualifiedName(
+                                                                                                           names=[
+                                                                                                               'Integer'])),
+                                                                                                   if_true=BinOp(op='+',
+                                                                                                                 x=SequenceExpression(
+                                                                                                                     sequence=[
+                                                                                                                         ClsCastOp(
+                                                                                                                             x=QualifiedName(
+                                                                                                                                 names=[
+                                                                                                                                     'x']),
+                                                                                                                             y=QualifiedName(
+                                                                                                                                 names=[
+                                                                                                                                     'Integer']))]),
+                                                                                                                 y=IntValue(
+                                                                                                                     raw='1')),
+                                                                                                   if_false=IntValue(
+                                                                                                       raw='0')))])),
+    ])
+    @pytest.mark.focus
+    def test_body_expression(self, text, expected):
+        parser = _parser_for_rule('body_expression')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'body_expression' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('sensors -> selectSensorsOver(limit)',
+         FunctionOperationExpression(entity=QualifiedName(names=['sensors']),
+                                     name=QualifiedName(names=['selectSensorsOver']),
+                                     arguments=[QualifiedName(names=['limit'])])),
+        ('sensors -> selectSensorsOver(limit) -> computeCriticalValue()',
+         FunctionOperationExpression(entity=FunctionOperationExpression(entity=QualifiedName(names=['sensors']),
+                                                                        name=QualifiedName(names=['selectSensorsOver']),
+                                                                        arguments=[QualifiedName(names=['limit'])]),
+                                     name=QualifiedName(names=['computeCriticalValue']), arguments=[])),
+        ('sensors -> select {in s: Sensor; s::isActive}',
+         FunctionOperationExpression(entity=QualifiedName(names=['sensors']), name=QualifiedName(names=['select']),
+                                     arguments=[BodyExpression(body=[OwnedFeatureMember(visibility=None,
+                                                                                        element=Feature(
+                                                                                            direction=FeatureDirection.IN,
+                                                                                            is_abstract=False,
+                                                                                            relationship_type=None,
+                                                                                            is_readonly=False,
+                                                                                            is_derived=False,
+                                                                                            is_end=False,
+                                                                                            annotations=[],
+                                                                                            is_all=False,
+                                                                                            identification=Identification(
+                                                                                                short_name=None,
+                                                                                                name='s'),
+                                                                                            specializations=[
+                                                                                                TypingsPart(items=[
+                                                                                                    QualifiedName(
+                                                                                                        names=[
+                                                                                                            'Sensor'])])],
+                                                                                            multiplicity=None,
+                                                                                            is_ordered=False,
+                                                                                            is_nonunique=False,
+                                                                                            conjugation=None,
+                                                                                            relationships=[],
+                                                                                            is_default=False,
+                                                                                            value_type=None, value=None,
+                                                                                            body=[])),
+                                                                     Result(visibility=None, expression=QualifiedName(
+                                                                         names=['s', 'isActive']))])])),
+        ('members -> reject {in mber: Member; not mber->isInGoodStanding()}',
+         FunctionOperationExpression(entity=QualifiedName(names=['members']), name=QualifiedName(names=['reject']),
+                                     arguments=[BodyExpression(body=[OwnedFeatureMember(visibility=None,
+                                                                                        element=Feature(
+                                                                                            direction=FeatureDirection.IN,
+                                                                                            is_abstract=False,
+                                                                                            relationship_type=None,
+                                                                                            is_readonly=False,
+                                                                                            is_derived=False,
+                                                                                            is_end=False,
+                                                                                            annotations=[],
+                                                                                            is_all=False,
+                                                                                            identification=Identification(
+                                                                                                short_name=None,
+                                                                                                name='mber'),
+                                                                                            specializations=[
+                                                                                                TypingsPart(items=[
+                                                                                                    QualifiedName(
+                                                                                                        names=[
+                                                                                                            'Member'])])],
+                                                                                            multiplicity=None,
+                                                                                            is_ordered=False,
+                                                                                            is_nonunique=False,
+                                                                                            conjugation=None,
+                                                                                            relationships=[],
+                                                                                            is_default=False,
+                                                                                            value_type=None, value=None,
+                                                                                            body=[])),
+                                                                     Result(visibility=None,
+                                                                            expression=UnaryOp(op='not',
+                                                                                               x=FunctionOperationExpression(
+                                                                                                   entity=QualifiedName(
+                                                                                                       names=['mber']),
+                                                                                                   name=QualifiedName(
+                                                                                                       names=[
+                                                                                                           'isInGoodStanding']),
+                                                                                                   arguments=[])))])])),
+        ('factors -> reduce {in x: Real; in y: Real; x * y}',
+         FunctionOperationExpression(entity=QualifiedName(names=['factors']), name=QualifiedName(names=['reduce']),
+                                     arguments=[BodyExpression(body=[OwnedFeatureMember(visibility=None,
+                                                                                        element=Feature(
+                                                                                            direction=FeatureDirection.IN,
+                                                                                            is_abstract=False,
+                                                                                            relationship_type=None,
+                                                                                            is_readonly=False,
+                                                                                            is_derived=False,
+                                                                                            is_end=False,
+                                                                                            annotations=[],
+                                                                                            is_all=False,
+                                                                                            identification=Identification(
+                                                                                                short_name=None,
+                                                                                                name='x'),
+                                                                                            specializations=[
+                                                                                                TypingsPart(items=[
+                                                                                                    QualifiedName(
+                                                                                                        names=[
+                                                                                                            'Real'])])],
+                                                                                            multiplicity=None,
+                                                                                            is_ordered=False,
+                                                                                            is_nonunique=False,
+                                                                                            conjugation=None,
+                                                                                            relationships=[],
+                                                                                            is_default=False,
+                                                                                            value_type=None, value=None,
+                                                                                            body=[])),
+                                                                     OwnedFeatureMember(visibility=None,
+                                                                                        element=Feature(
+                                                                                            direction=FeatureDirection.IN,
+                                                                                            is_abstract=False,
+                                                                                            relationship_type=None,
+                                                                                            is_readonly=False,
+                                                                                            is_derived=False,
+                                                                                            is_end=False,
+                                                                                            annotations=[],
+                                                                                            is_all=False,
+                                                                                            identification=Identification(
+                                                                                                short_name=None,
+                                                                                                name='y'),
+                                                                                            specializations=[
+                                                                                                TypingsPart(items=[
+                                                                                                    QualifiedName(
+                                                                                                        names=[
+                                                                                                            'Real'])])],
+                                                                                            multiplicity=None,
+                                                                                            is_ordered=False,
+                                                                                            is_nonunique=False,
+                                                                                            conjugation=None,
+                                                                                            relationships=[],
+                                                                                            is_default=False,
+                                                                                            value_type=None, value=None,
+                                                                                            body=[])),
+                                                                     Result(visibility=None, expression=BinOp(op='*',
+                                                                                                              x=QualifiedName(
+                                                                                                                  names=[
+                                                                                                                      'x']),
+                                                                                                              y=QualifiedName(
+                                                                                                                  names=[
+                                                                                                                      'y'])))])])),
+        ("factors -> reduce RealFunctions::'*'",
+         FunctionOperationExpression(entity=QualifiedName(names=['factors']), name=QualifiedName(names=['reduce']),
+                                     arguments=[QualifiedName(names=['RealFunctions', '*'])])),
+    ])
+    @pytest.mark.focus
+    def test_function_operation_expression(self, text, expected):
+        parser = _parser_for_rule('function_operation_expression')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            # assert 'function_operation_expression' in rules

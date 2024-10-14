@@ -8,7 +8,8 @@ from .core import UnioningPart, DifferencingPart, IntersectingPart, DisjoiningPa
 from .glob import MultiplicityBounds, Visibility
 from .kernel import Class, DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, \
     BindingConnector, Succession, Behavior, Step, Return, Result, Function, Expression, Predicate, BooleanExpression, \
-    Invariant, IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression
+    Invariant, IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, \
+    BodyExpression, FunctionOperationExpression
 from .literal_expression import InfValue, BoolValue, RealValue, StringValue, IntValue, LiteralValue
 from .metadata import PrefixMetadataAnnotation
 from .name import name_escape, name_unescape, name_safe_repr, QualifiedName, Identification, FeatureChain

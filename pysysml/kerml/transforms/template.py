@@ -67,6 +67,14 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def function_operation_expression_standalone(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def function_operation_expression_arglist(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def fv_bind(self, tree: Tree):
         return tree
 

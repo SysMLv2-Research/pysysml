@@ -216,3 +216,15 @@ class CollectExpression:
 class SelectExpression:
     entity: Any
     body: List[Any]
+
+
+@dataclass
+class BodyExpression:
+    body: List[Any]
+
+
+@dataclass
+class FunctionOperationExpression:
+    entity: Any
+    name: QualifiedName
+    arguments: List[Any]

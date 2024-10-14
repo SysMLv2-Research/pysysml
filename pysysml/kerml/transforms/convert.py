@@ -16,7 +16,8 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp, \
     DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector, \
     Succession, Behavior, Step, Return, Result, Function, Predicate, Expression, BooleanExpression, Invariant, \
-    IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression
+    IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, BodyExpression, \
+    FunctionOperationExpression
 
 
 # noinspection PyPep8Naming
@@ -1353,6 +1354,10 @@ class KerMLTransformer(KerMLTransTemplate):
         return body
 
     @v_args(inline=True)
+    def body_expression(self, body):
+        return BodyExpression(body=body)
+
+    @v_args(inline=True)
     def collect_expression(self, entity, body):
         return CollectExpression(
             entity=entity,
@@ -1365,6 +1370,26 @@ class KerMLTransformer(KerMLTransTemplate):
             entity=entity,
             body=body,
         )
+
+    @v_args(inline=True)
+    def function_operation_expression_standalone(self, entity, func_name, arg):
+        return FunctionOperationExpression(
+            entity=entity,
+            name=func_name,
+            arguments=[arg],
+        )
+
+    @v_args(inline=True)
+    def function_operation_expression_arglist(self, entity, func_name, args):
+        return FunctionOperationExpression(
+            entity=entity,
+            name=func_name,
+            arguments=args,
+        )
+
+    @v_args(inline=True)
+    def function_operation_expression(self, exp):
+        return exp
 
 
 def tree_to_cst(tree: Tree):
