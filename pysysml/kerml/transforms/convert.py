@@ -1654,7 +1654,11 @@ class KerMLTransformer(KerMLTransTemplate):
             body=tree.children,
         )
 
+    @v_args(inline=True)
+    def start(self, namespace: RootNamespace):
+        return namespace
 
-def tree_to_cst(tree: Tree):
+
+def tree_to_kerml_cst(tree: Tree):
     trans = KerMLTransformer()
     return trans.transform(tree)

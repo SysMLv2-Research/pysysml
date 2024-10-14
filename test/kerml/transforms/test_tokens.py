@@ -4,7 +4,7 @@ import pytest
 from hbutils.random import random_sha1_with_timestamp
 from lark import Lark, GrammarError, UnexpectedCharacters, Token, UnexpectedEOF
 
-from pysysml.kerml.transforms import tree_to_cst
+from pysysml.kerml.transforms import tree_to_kerml_cst
 
 
 def _parser_for_token(token_name):
@@ -24,7 +24,7 @@ def _parser_for_token(token_name):
     )
 
     def _parse(x):
-        node = tree_to_cst(lark.parse(x, start=start_name))
+        node = tree_to_kerml_cst(lark.parse(x, start=start_name))
         return node.children[0]
 
     return _parse

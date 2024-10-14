@@ -138,8 +138,9 @@ filter_package_list: filter_package_member*
                     | association | association_structure | interaction | behavior | function | predicate
                     | multiplicity | package | library_package | specialization | conjugation | subclassification
                     | disjoining | feature_inverting | feature_typing | subsetting | redefinition | type_featuring
-?feature_element: feature | step | expression | boolean_expression | invariant | connector | binding_connector
-                | succession | item_flow | succession_item_flow
+?feature_element: feature_element_selections
+?feature_element_selections: step | expression | boolean_expression | invariant | connector | binding_connector
+                           | succession | item_flow | succession_item_flow | feature
 
 
 # 8.2.4 Core Concrete Syntax
