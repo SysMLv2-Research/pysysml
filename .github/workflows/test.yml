@@ -226,6 +226,7 @@ jobs:
         shell: bash
         run: |
           make build
+          chmod +x dist/pysysml
           mkdir -p dist/${{ env.CLI_NAME }}
           cp dist/pysysml dist/${{ env.CLI_NAME }}/pysysml
           cd dist
