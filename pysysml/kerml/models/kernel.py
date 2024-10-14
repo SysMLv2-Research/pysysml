@@ -2,8 +2,7 @@ from dataclasses import dataclass
 from enum import unique, Enum
 from typing import Optional, Union, List, Any
 
-from .core import Classifier, FeatureDirection, FeatureRelationshipType, FeatureSpecializationPart, ConjugationPart, \
-    FeatureRelationshipPart, FeatureValueType, Feature
+from .core import Classifier, FeatureSpecializationPart, FeatureValueType, Feature, GenericFeature
 from .glob import MultiplicityBounds, PrefixMetadataAnnotation
 from .name import QualifiedName, FeatureChain, Identification
 from .root import VisibleMember
@@ -60,86 +59,24 @@ class ConnectorType(Enum):
 
 
 @dataclass
-class Connector:
-    direction: Optional[FeatureDirection]
-    is_abstract: bool
-    relationship_type: Optional[FeatureRelationshipType]
-    is_readonly: bool
-    is_derived: bool
-    is_end: bool
-    annotations: List[PrefixMetadataAnnotation]
-
-    is_all: bool
-    identification: Optional[Identification]
-    specializations: List[FeatureSpecializationPart]
-    multiplicity: Optional[MultiplicityBounds]
-    is_ordered: bool
-    is_nonunique: bool
-    conjugation: Optional[ConjugationPart]
-    relationships: List[FeatureRelationshipPart]
-
+class Connector(Feature):
     type: ConnectorType
-
-    is_default: bool
-    value_type: Optional[FeatureValueType]
-    value: Optional[Any]
-
     is_all_connect: bool
     ends: Optional[List[ConnectorEnd]]
 
-    body: List[Any]
-
 
 @dataclass
-class BindingConnector:
-    direction: Optional[FeatureDirection]
-    is_abstract: bool
-    relationship_type: Optional[FeatureRelationshipType]
-    is_readonly: bool
-    is_derived: bool
-    is_end: bool
-    annotations: List[PrefixMetadataAnnotation]
-
-    is_all: bool
-    identification: Optional[Identification]
-    specializations: List[FeatureSpecializationPart]
-    multiplicity: Optional[MultiplicityBounds]
-    is_ordered: bool
-    is_nonunique: bool
-    conjugation: Optional[ConjugationPart]
-    relationships: List[FeatureRelationshipPart]
-
+class BindingConnector(GenericFeature):
     is_all_binding: bool
     bind_entity: Optional[ConnectorEnd]
     bind_to: Optional[ConnectorEnd]
 
-    body: List[Any]
-
 
 @dataclass
-class Succession:
-    direction: Optional[FeatureDirection]
-    is_abstract: bool
-    relationship_type: Optional[FeatureRelationshipType]
-    is_readonly: bool
-    is_derived: bool
-    is_end: bool
-    annotations: List[PrefixMetadataAnnotation]
-
-    is_all: bool
-    identification: Optional[Identification]
-    specializations: List[FeatureSpecializationPart]
-    multiplicity: Optional[MultiplicityBounds]
-    is_ordered: bool
-    is_nonunique: bool
-    conjugation: Optional[ConjugationPart]
-    relationships: List[FeatureRelationshipPart]
-
+class Succession(GenericFeature):
     is_all_succession: bool
     first: Optional[ConnectorEnd]
     then: Optional[ConnectorEnd]
-
-    body: List[Any]
 
 
 @dataclass
@@ -254,34 +191,11 @@ class ItemFeature:
 
 
 @dataclass
-class ItemFlow:
-    direction: Optional[FeatureDirection]
-    is_abstract: bool
-    relationship_type: Optional[FeatureRelationshipType]
-    is_readonly: bool
-    is_derived: bool
-    is_end: bool
-    annotations: List[PrefixMetadataAnnotation]
-
-    is_all: bool
-    identification: Optional[Identification]
-    specializations: List[FeatureSpecializationPart]
-    multiplicity: Optional[MultiplicityBounds]
-    is_ordered: bool
-    is_nonunique: bool
-    conjugation: Optional[ConjugationPart]
-    relationships: List[FeatureRelationshipPart]
-
-    is_default: bool
-    value_type: Optional[FeatureValueType]
-    value: Optional[Any]
-
+class ItemFlow(Feature):
     is_all_flow: bool
     end_from: Optional[ItemFlowEnd]
     end_to: Optional[ItemFlowEnd]
     item_feature: Optional[ItemFeature]
-
-    body: List[Any]
 
 
 @dataclass

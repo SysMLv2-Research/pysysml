@@ -3,7 +3,7 @@ from .core import UnioningPart, DifferencingPart, IntersectingPart, DisjoiningPa
     TypingsPart, RedefinitionsPart, SubsettingsPart, ReferencesPart, FeatureDirection, \
     FeatureRelationshipType, FeatureValueType, TypeRelationshipPart, FeatureRelationshipPart, \
     FeatureSpecializationPart, Feature, Specialization, Conjugation, Disjoining, Classifier, Subclassification, \
-    FeatureTyping, Subsetting, Redefinition, TypeFeaturing, FeatureInverting
+    FeatureTyping, Subsetting, Redefinition, TypeFeaturing, FeatureInverting, GenericFeature
 from .glob import MultiplicityBounds, Visibility, PrefixMetadataAnnotation
 from .kernel import Class, DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, \
     BindingConnector, Succession, Behavior, Step, Return, Result, Function, Expression, Predicate, BooleanExpression, \

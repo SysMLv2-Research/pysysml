@@ -147,7 +147,7 @@ class FeatureValueType(Enum):
 
 
 @dataclass
-class Feature:
+class GenericFeature:
     direction: Optional[FeatureDirection]
     is_abstract: bool
     relationship_type: Optional[FeatureRelationshipType]
@@ -165,11 +165,14 @@ class Feature:
     conjugation: Optional[ConjugationPart]
     relationships: List[FeatureRelationshipPart]
 
+    body: List[Any]
+
+
+@dataclass
+class Feature(GenericFeature):
     is_default: bool
     value_type: Optional[FeatureValueType]
     value: Optional[Any]
-
-    body: List[Any]
 
 
 @dataclass
