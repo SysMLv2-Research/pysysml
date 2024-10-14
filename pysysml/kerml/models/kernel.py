@@ -228,3 +228,8 @@ class FunctionOperationExpression:
     entity: Any
     name: QualifiedName
     arguments: List[Any]
+
+
+@dataclass
+class Interaction(Behavior):
+    pass

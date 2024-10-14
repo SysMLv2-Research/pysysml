@@ -639,10 +639,6 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
-    def function_operation_expression(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
     def null_expression(self, tree: Tree):
         return tree
 

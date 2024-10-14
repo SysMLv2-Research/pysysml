@@ -7,7 +7,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     FeatureChain, FeatureValueType, BindingConnector, Succession, Behavior, Step, Function, FeatureDirection, Return, \
     Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate, BooleanExpression, Invariant, \
     BoolValue, IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, \
-    BodyExpression, IfTestOp, ClsTestOp, ClsCastOp, FunctionOperationExpression, UnaryOp
+    BodyExpression, IfTestOp, ClsTestOp, ClsCastOp, FunctionOperationExpression, UnaryOp, Interaction
 from .base import _parser_for_rule
 
 
@@ -1957,7 +1957,6 @@ class TestKerMLTransformsKernel:
                          sequence=[QualifiedName(names=['n']), QualifiedName(names=['m']), QualifiedName(names=['t']),
                                    QualifiedName(names=['z']), QualifiedName(names=['x'])])),
     ])
-    @pytest.mark.focus
     def test_index_expression(self, text, expected):
         parser = _parser_for_rule('index_expression')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -1986,7 +1985,6 @@ class TestKerMLTransformsKernel:
              sequence=[IntValue(raw='1'), SequenceExpression(sequence=[IntValue(raw='2'), IntValue(raw='3')]),
                        IntValue(raw='4')])])),
     ])
-    @pytest.mark.focus
     def test_sequence_expression(self, text, expected):
         parser = _parser_for_rule('sequence_expression')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -2009,7 +2007,6 @@ class TestKerMLTransformsKernel:
                                          arguments=[QualifiedName(names=['id'])]),
              member=QualifiedName(names=['sensors']))]), member=QualifiedName(names=['isActive']))),
     ])
-    @pytest.mark.focus
     def test_feature_chain_expression(self, text, expected):
         parser = _parser_for_rule('feature_chain_expression')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -2054,7 +2051,6 @@ class TestKerMLTransformsKernel:
                                                                                      member=QualifiedName(
                                                                                          names=['reading'])))])),
     ])
-    @pytest.mark.focus
     def test_collect_expression(self, text, expected):
         parser = _parser_for_rule('collect_expression')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -2099,7 +2095,6 @@ class TestKerMLTransformsKernel:
                                                                                     member=QualifiedName(
                                                                                         names=['isActive'])))])),
     ])
-    @pytest.mark.focus
     def test_select_expression(self, text, expected):
         parser = _parser_for_rule('select_expression')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -2165,7 +2160,6 @@ class TestKerMLTransformsKernel:
                                                                                                    if_false=IntValue(
                                                                                                        raw='0')))])),
     ])
-    @pytest.mark.focus
     def test_body_expression(self, text, expected):
         parser = _parser_for_rule('body_expression')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -2318,7 +2312,6 @@ class TestKerMLTransformsKernel:
          FunctionOperationExpression(entity=QualifiedName(names=['factors']), name=QualifiedName(names=['reduce']),
                                      arguments=[QualifiedName(names=['RealFunctions', '*'])])),
     ])
-    @pytest.mark.focus
     def test_function_operation_expression(self, text, expected):
         parser = _parser_for_rule('function_operation_expression')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -2328,3 +2321,161 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             # assert 'function_operation_expression' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('interaction Authorization {\n'
+         '    end feature client[*] : Computer;\n'
+         '    end feature server[*] : Computer;\n'
+         '    composite step login;\n'
+         '    composite step authorize;\n'
+         '    composite succession login then authorize;\n'
+         '}',
+         Interaction(is_abstract=False, annotations=[], is_all=False,
+                     identification=Identification(short_name=None, name='Authorization'), multiplicity_bounds=None,
+                     conjugation=None, superclassing=None, relationships=[], body=[OwnedFeatureMember(visibility=None,
+                                                                                                      element=Feature(
+                                                                                                          direction=None,
+                                                                                                          is_abstract=False,
+                                                                                                          relationship_type=None,
+                                                                                                          is_readonly=False,
+                                                                                                          is_derived=False,
+                                                                                                          is_end=True,
+                                                                                                          annotations=[],
+                                                                                                          is_all=False,
+                                                                                                          identification=Identification(
+                                                                                                              short_name=None,
+                                                                                                              name='client'),
+                                                                                                          specializations=[
+                                                                                                              TypingsPart(
+                                                                                                                  items=[
+                                                                                                                      QualifiedName(
+                                                                                                                          names=[
+                                                                                                                              'Computer'])])],
+                                                                                                          multiplicity=MultiplicityBounds(
+                                                                                                              lower_bound=None,
+                                                                                                              upper_bound=InfValue()),
+                                                                                                          is_ordered=False,
+                                                                                                          is_nonunique=False,
+                                                                                                          conjugation=None,
+                                                                                                          relationships=[],
+                                                                                                          is_default=False,
+                                                                                                          value_type=None,
+                                                                                                          value=None,
+                                                                                                          body=[])),
+                                                                                   OwnedFeatureMember(visibility=None,
+                                                                                                      element=Feature(
+                                                                                                          direction=None,
+                                                                                                          is_abstract=False,
+                                                                                                          relationship_type=None,
+                                                                                                          is_readonly=False,
+                                                                                                          is_derived=False,
+                                                                                                          is_end=True,
+                                                                                                          annotations=[],
+                                                                                                          is_all=False,
+                                                                                                          identification=Identification(
+                                                                                                              short_name=None,
+                                                                                                              name='server'),
+                                                                                                          specializations=[
+                                                                                                              TypingsPart(
+                                                                                                                  items=[
+                                                                                                                      QualifiedName(
+                                                                                                                          names=[
+                                                                                                                              'Computer'])])],
+                                                                                                          multiplicity=MultiplicityBounds(
+                                                                                                              lower_bound=None,
+                                                                                                              upper_bound=InfValue()),
+                                                                                                          is_ordered=False,
+                                                                                                          is_nonunique=False,
+                                                                                                          conjugation=None,
+                                                                                                          relationships=[],
+                                                                                                          is_default=False,
+                                                                                                          value_type=None,
+                                                                                                          value=None,
+                                                                                                          body=[])),
+                                                                                   OwnedFeatureMember(visibility=None,
+                                                                                                      element=Step(
+                                                                                                          direction=None,
+                                                                                                          is_abstract=False,
+                                                                                                          relationship_type=FeatureRelationshipType.COMPOSITE,
+                                                                                                          is_readonly=False,
+                                                                                                          is_derived=False,
+                                                                                                          is_end=False,
+                                                                                                          annotations=[],
+                                                                                                          is_all=False,
+                                                                                                          identification=Identification(
+                                                                                                              short_name=None,
+                                                                                                              name='login'),
+                                                                                                          specializations=[],
+                                                                                                          multiplicity=None,
+                                                                                                          is_ordered=False,
+                                                                                                          is_nonunique=False,
+                                                                                                          conjugation=None,
+                                                                                                          relationships=[],
+                                                                                                          is_default=False,
+                                                                                                          value_type=None,
+                                                                                                          value=None,
+                                                                                                          body=[])),
+                                                                                   OwnedFeatureMember(visibility=None,
+                                                                                                      element=Step(
+                                                                                                          direction=None,
+                                                                                                          is_abstract=False,
+                                                                                                          relationship_type=FeatureRelationshipType.COMPOSITE,
+                                                                                                          is_readonly=False,
+                                                                                                          is_derived=False,
+                                                                                                          is_end=False,
+                                                                                                          annotations=[],
+                                                                                                          is_all=False,
+                                                                                                          identification=Identification(
+                                                                                                              short_name=None,
+                                                                                                              name='authorize'),
+                                                                                                          specializations=[],
+                                                                                                          multiplicity=None,
+                                                                                                          is_ordered=False,
+                                                                                                          is_nonunique=False,
+                                                                                                          conjugation=None,
+                                                                                                          relationships=[],
+                                                                                                          is_default=False,
+                                                                                                          value_type=None,
+                                                                                                          value=None,
+                                                                                                          body=[])),
+                                                                                   OwnedFeatureMember(visibility=None,
+                                                                                                      element=Succession(
+                                                                                                          direction=None,
+                                                                                                          is_abstract=False,
+                                                                                                          relationship_type=FeatureRelationshipType.COMPOSITE,
+                                                                                                          is_readonly=False,
+                                                                                                          is_derived=False,
+                                                                                                          is_end=False,
+                                                                                                          annotations=[],
+                                                                                                          is_all=False,
+                                                                                                          identification=None,
+                                                                                                          specializations=[],
+                                                                                                          multiplicity=None,
+                                                                                                          is_ordered=False,
+                                                                                                          is_nonunique=False,
+                                                                                                          conjugation=None,
+                                                                                                          relationships=[],
+                                                                                                          is_all_succession=False,
+                                                                                                          first=ConnectorEnd(
+                                                                                                              name=None,
+                                                                                                              reference=QualifiedName(
+                                                                                                                  names=[
+                                                                                                                      'login']),
+                                                                                                              multiplicity=None),
+                                                                                                          then=ConnectorEnd(
+                                                                                                              name=None,
+                                                                                                              reference=QualifiedName(
+                                                                                                                  names=[
+                                                                                                                      'authorize']),
+                                                                                                              multiplicity=None),
+                                                                                                          body=[]))])),
+    ])
+    def test_interaction(self, text, expected):
+        parser = _parser_for_rule('interaction')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'interaction' in rules

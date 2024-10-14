@@ -1123,13 +1123,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.select_expression(self, tree)
 
     @v_args(tree=True)
-    def function_operation_expression(self, tree: Tree):
-        if 'function_operation_expression' not in self._rules_set:
-            self._rules_set.add('function_operation_expression')
-            self.rules.append('function_operation_expression')
-        return KerMLTransTemplate.function_operation_expression(self, tree)
-
-    @v_args(tree=True)
     def null_expression(self, tree: Tree):
         if 'null_expression' not in self._rules_set:
             self._rules_set.add('null_expression')

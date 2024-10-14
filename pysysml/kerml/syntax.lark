@@ -539,8 +539,8 @@ collect_expression: primary_argument_member "." body_expression_member
 select_expression: primary_argument_member ".?" body_expression_member
 
 # Function Operation Expression
-function_operation_expression: primary_argument_member "->" reference_typing (body_argument_member | function_reference_argument_member) -> function_operation_expression_standalone
-                             | primary_argument_member "->" reference_typing argument_list                                               -> function_operation_expression_arglist
+?function_operation_expression: primary_argument_member "->" reference_typing (body_argument_member | function_reference_argument_member) -> function_operation_expression_standalone
+                              | primary_argument_member "->" reference_typing argument_list                                               -> function_operation_expression_arglist
 
 ?body_argument_member: body_argument
 ?body_argument: body_argument_value
@@ -558,11 +558,11 @@ function_operation_expression: primary_argument_member "->" reference_typing (bo
 
 # 8.2.5.8.3 Base Expressions
 ?base_expression: null_expression
-               | literal_expression
-               | feature_reference_expression
-               | metadata_access_expression
-               | invocation_expression
-               | body_expression
+                | literal_expression
+                | feature_reference_expression
+                | metadata_access_expression
+                | invocation_expression
+                | body_expression
 
 null_expression: "null" | "(" ")"
 
@@ -587,10 +587,10 @@ expression_body: "{" function_body_part "}"
 
 # 8.2.5.8.4 Literal Expressions
 ?literal_expression: literal_boolean
-                  | literal_string
-                  | literal_integer
-                  | literal_real
-                  | literal_infinity
+                   | literal_string
+                   | literal_integer
+                   | literal_real
+                   | literal_infinity
 
 literal_boolean: BOOLEAN_VALUE
 BOOLEAN_VALUE: "true" | "false"

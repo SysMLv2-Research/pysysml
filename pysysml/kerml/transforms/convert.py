@@ -17,7 +17,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector, \
     Succession, Behavior, Step, Return, Result, Function, Predicate, Expression, BooleanExpression, Invariant, \
     IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, BodyExpression, \
-    FunctionOperationExpression
+    FunctionOperationExpression, Interaction
 
 
 # noinspection PyPep8Naming
@@ -1390,6 +1390,10 @@ class KerMLTransformer(KerMLTransTemplate):
     @v_args(inline=True)
     def function_operation_expression(self, exp):
         return exp
+
+    @v_args(tree=True)
+    def interaction(self, tree: Tree):
+        return self._classifier_like(tree, type_cls=Interaction)
 
 
 def tree_to_cst(tree: Tree):
