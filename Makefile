@@ -1,4 +1,4 @@
-.PHONY: docs test unittest resource
+.PHONY: docs test unittest resource build
 
 PYTHON := $(shell which python)
 
@@ -24,7 +24,7 @@ COV_TYPES ?= xml term-missing
 package:
 	$(PYTHON) -m build --sdist --wheel --outdir ${DIST_DIR}
 build:
-	pyinstaller -D -F -n pysysml -c pysysml_cli.py
+	pyinstaller -D -F $(shell python -m tools.build.resource) -n pysysml -c pysysml_cli.py
 clean:
 	rm -rf ${DIST_DIR} ${BUILD_DIR} *.egg-info
 	rm -rf build dist pysysml.spec

@@ -42,5 +42,5 @@ def print_version(ctx: Context, param: Option, value: bool) -> None:
 @click.option('-v', '--version', is_flag=True,
               callback=print_version, expose_value=False, is_eager=True,
               help="Show pysysml' version information.")
-def hfutilcli():
+def pysysmlcli():
     pass  # pragma: no cover

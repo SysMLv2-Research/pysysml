@@ -152,6 +152,7 @@ jobs:
           ls -al dist
           dist/pysysml -v
           dist/pysysml -h
+          dist/pysysml health
       - name: Build standalone CLI on Windows
         if: ${{ env.OS_NAME == 'Windows' }}
         shell: bash
@@ -165,6 +166,7 @@ jobs:
           ls -al dist
           dist/pysysml -v
           dist/pysysml -h
+          dist/pysysml health
       - name: Upload packed files to artifacts
         uses: actions/upload-artifact@v3
         with:

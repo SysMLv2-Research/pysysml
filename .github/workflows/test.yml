@@ -234,6 +234,7 @@ jobs:
           ls -al dist
           dist/pysysml -v
           dist/pysysml -h
+          dist/pysysml health
       - name: Build standalone CLI on Windows
         if: ${{ env.OS_NAME == 'Windows' }}
         shell: bash
@@ -247,6 +248,7 @@ jobs:
           ls -al dist
           dist/pysysml -v
           dist/pysysml -h
+          dist/pysysml health
       - uses: actions/upload-artifact@v3
         with:
           name: pysysml-v${{ env.PACKAGE_VERSION }}-${{ env.OS_NAME }}-${{ env.CPU_ARCH }}-${{ env.GIT_COMMIT_ID }}
