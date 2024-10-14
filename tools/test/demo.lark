@@ -1,0 +1,66 @@
+
+%import .kerml.syntax.IGNORANCE
+%ignore IGNORANCE
+
+start: owned_expression
+
+?owned_expression_reference_member:  owned_expression_reference
+?owned_expression_reference: owned_expression_member
+?owned_expression_member: owned_expression
+owned_expression: op_top
+
+?op_top: op_l5
+
+// L5(binary): + -
+?op_l5: binary_l5_operator_expression
+      | op_l4
+binary_l5_operator_expression: op_l5 binary_l5_operator op_l4
+!binary_l5_operator: "+" | "-"
+
+// L4(binary): * / %
+?op_l4: binary_l4_operator_expression
+      | op_l3
+binary_l4_operator_expression: op_l4 binary_l4_operator op_l3
+!binary_l4_operator: "*" | "/" | "%"
+
+// L3(binary): ^ **
+?op_l3: exp_operator_expression
+      | op_l2
+exp_operator_expression: op_l2 POWER op_l3
+POWER: "^" | "**"
+
+// L2(unary): + - ~ not
+?op_l2: unary_operator_expression
+      | op_l1
+unary_operator_expression: unary_operator op_l2
+!unary_operator: "+" | "-" | "~" | "not"
+
+
+// L1(unary): "all"
+?op_l1: extent_expression
+      | primary_expression
+extent_expression: "all" type_reference_member
+?type_reference_member: type_reference
+?type_result_member: type_reference
+?type_reference: reference_typing
+?reference_typing: qualified_name
+
+
+?primary_expression: literal_expression
+                   | qualified_name
+
+?literal_expression: literal_boolean
+                   | literal_string
+                   | literal_integer
+                   | literal_real
+                   | literal_infinity
+
+%import .kerml.syntax (STRING_VALUE, DECIMAL_VALUE, REAL_VALUE, BOOLEAN_VALUE)
+literal_boolean: BOOLEAN_VALUE
+literal_string: STRING_VALUE
+literal_integer: DECIMAL_VALUE
+literal_real: REAL_VALUE
+literal_infinity: "*"
+
+%import .kerml.syntax.NAME
+qualified_name: (NAME "::")* NAME

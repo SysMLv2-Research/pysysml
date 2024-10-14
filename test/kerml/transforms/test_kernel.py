@@ -9,7 +9,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     BoolValue, IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, \
     BodyExpression, IfTestOp, ClsTestOp, ClsCastOp, FunctionOperationExpression, UnaryOp, Interaction, ItemFlowEnd, \
     ItemFeature, ItemFlow, MultiplicitySubset, MultiplicityRange, Metaclass, SuccessionItemFlow, StringValue, \
-    MetadataRedefine, Metadata
+    MetadataRedefine, Metadata, ElementFilter, CondBinOp, Visibility, Package, Import, NullValue
 from .base import _parser_for_rule
 
 
@@ -2543,7 +2543,6 @@ class TestKerMLTransformsKernel:
                                            is_default=False, value_type=FeatureValueType.INITIAL,
                                            value=IntValue(raw='2')), body=[])),
     ])
-    @pytest.mark.focus
     def test_item_flow(self, text, expected):
         parser = _parser_for_rule('item_flow')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -2565,7 +2564,6 @@ class TestKerMLTransformsKernel:
                             end_to=ItemFlowEnd(owned=QualifiedName(names=['shoot']),
                                                member=QualifiedName(names=['image'])), item_feature=None, body=[])),
     ])
-    @pytest.mark.focus
     def test_succession_item_flow(self, text, expected):
         parser = _parser_for_rule('succession_item_flow')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -2587,7 +2585,6 @@ class TestKerMLTransformsKernel:
                                                    element=Comment(identification=None, about_list=None, locale=None,
                                                                    comment='/* 123 */'))])),
     ])
-    @pytest.mark.focus
     def test_multiplicity_subset(self, text, expected):
         parser = _parser_for_rule('multiplicity_subset')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -2604,7 +2601,6 @@ class TestKerMLTransformsKernel:
                            multiplicity=MultiplicityBounds(lower_bound=IntValue(raw='0'), upper_bound=InfValue()),
                            body=[])),
     ])
-    @pytest.mark.focus
     def test_multiplicity_range(self, text, expected):
         parser = _parser_for_rule('multiplicity_range')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -2646,7 +2642,6 @@ class TestKerMLTransformsKernel:
                            is_default=False, value_type=None, value=None, body=[]))
                    ])),
     ])
-    @pytest.mark.focus
     def test_metaclass(self, text, expected):
         parser = _parser_for_rule('metaclass')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -2714,7 +2709,6 @@ class TestKerMLTransformsKernel:
                                          is_ordered=False, is_nonunique=False, is_default=False, value_type=None,
                                          value=None, body=[])])),
     ])
-    @pytest.mark.focus
     def test_metadata_feature(self, text, expected):
         parser = _parser_for_rule('metadata_feature')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -2724,3 +2718,316 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'metadata_feature' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('filter @Annotations::ApprovalAnnotation and\n'
+         '        Annotations::ApprovalAnnotation::approved and\n'
+         '        Annotations::ApprovalAnnotation::level > 1;',
+         ElementFilter(visibility=None, expression=CondBinOp(
+             op='and', x=CondBinOp(op='and',
+                                   x=ClsTestOp(op='@', x=None,
+                                               y=QualifiedName(names=['Annotations', 'ApprovalAnnotation'])),
+                                   y=QualifiedName(names=['Annotations', 'ApprovalAnnotation', 'approved'])),
+             y=BinOp(op='>', x=QualifiedName(names=['Annotations', 'ApprovalAnnotation', 'level']),
+                     y=IntValue(raw='1'))))),
+        ('filter x and y and z > 1;',
+         ElementFilter(visibility=None, expression=CondBinOp(
+             op='and',
+             x=CondBinOp(op='and', x=QualifiedName(names=['x']),
+                         y=QualifiedName(names=['y'])),
+             y=BinOp(op='>', x=QualifiedName(names=['z']),
+                     y=IntValue(raw='1'))))),
+        ('filter x and y and z and t > 1;',
+         ElementFilter(visibility=None, expression=CondBinOp(
+             op='and', x=CondBinOp(op='and', x=CondBinOp(op='and', x=QualifiedName(names=['x']),
+                                                         y=QualifiedName(names=['y'])),
+                                   y=QualifiedName(names=['z'])),
+             y=BinOp(op='>', x=QualifiedName(names=['t']), y=IntValue(raw='1'))))),
+        ('filter x and y and z and t;',
+         ElementFilter(visibility=None, expression=CondBinOp(
+             op='and', x=CondBinOp(op='and', x=CondBinOp(op='and', x=QualifiedName(names=['x']),
+                                                         y=QualifiedName(names=['y'])),
+                                   y=QualifiedName(names=['z'])),
+             y=QualifiedName(names=['t'])))),
+        ('private filter x and y and z > 1;',
+         ElementFilter(visibility=Visibility.PRIVATE, expression=CondBinOp(
+             op='and', x=CondBinOp(op='and', x=QualifiedName(names=['x']), y=QualifiedName(names=['y'])),
+             y=BinOp(op='>', x=QualifiedName(names=['z']), y=IntValue(raw='1'))))),
+        ('private filter x and y and z and t > 1;',
+         ElementFilter(visibility=Visibility.PRIVATE, expression=CondBinOp(
+             op='and', x=CondBinOp(op='and', x=CondBinOp(
+                 op='and', x=QualifiedName(names=['x']), y=QualifiedName(names=['y'])), y=QualifiedName(names=['z'])),
+             y=BinOp(op='>', x=QualifiedName(names=['t']), y=IntValue(raw='1'))))),
+        ('filter 2 +3 - 4 * 5;',
+         ElementFilter(visibility=None,
+                       expression=BinOp(op='-', x=BinOp(op='+', x=IntValue(raw='2'), y=IntValue(raw='3')),
+                                        y=BinOp(op='*', x=IntValue(raw='4'), y=IntValue(raw='5'))))),
+    ])
+    @pytest.mark.focus
+    def test_element_filter_member(self, text, expected):
+        parser = _parser_for_rule('element_filter_member')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'element_filter_member' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('package AddressBooks {\n'
+         '    datatype Entry {\n'
+         '        feature name[1]: String;\n'
+         '        feature address[1]: String;\n'
+         '    }\n'
+         '    struct AddressBook {\n'
+         '        composite feature entries[*]: Entry;\n'
+         '    }\n'
+         '}',
+         Package(annotations=[], identification=Identification(short_name=None, name='AddressBooks'), body=[
+             NonFeatureMember(visibility=None, element=DataType(is_abstract=False, annotations=[], is_all=False,
+                                                                identification=Identification(short_name=None,
+                                                                                              name='Entry'),
+                                                                multiplicity_bounds=None, conjugation=None,
+                                                                superclassing=None, relationships=[], body=[
+                     OwnedFeatureMember(visibility=None,
+                                        element=Feature(direction=None, is_abstract=False, relationship_type=None,
+                                                        is_readonly=False, is_derived=False, is_end=False,
+                                                        annotations=[], is_all=False,
+                                                        identification=Identification(short_name=None, name='name'),
+                                                        specializations=[
+                                                            TypingsPart(items=[QualifiedName(names=['String'])])],
+                                                        multiplicity=MultiplicityBounds(lower_bound=None,
+                                                                                        upper_bound=IntValue(raw='1')),
+                                                        is_ordered=False, is_nonunique=False, conjugation=None,
+                                                        relationships=[], is_default=False, value_type=None, value=None,
+                                                        body=[])), OwnedFeatureMember(visibility=None,
+                                                                                      element=Feature(direction=None,
+                                                                                                      is_abstract=False,
+                                                                                                      relationship_type=None,
+                                                                                                      is_readonly=False,
+                                                                                                      is_derived=False,
+                                                                                                      is_end=False,
+                                                                                                      annotations=[],
+                                                                                                      is_all=False,
+                                                                                                      identification=Identification(
+                                                                                                          short_name=None,
+                                                                                                          name='address'),
+                                                                                                      specializations=[
+                                                                                                          TypingsPart(
+                                                                                                              items=[
+                                                                                                                  QualifiedName(
+                                                                                                                      names=[
+                                                                                                                          'String'])])],
+                                                                                                      multiplicity=MultiplicityBounds(
+                                                                                                          lower_bound=None,
+                                                                                                          upper_bound=IntValue(
+                                                                                                              raw='1')),
+                                                                                                      is_ordered=False,
+                                                                                                      is_nonunique=False,
+                                                                                                      conjugation=None,
+                                                                                                      relationships=[],
+                                                                                                      is_default=False,
+                                                                                                      value_type=None,
+                                                                                                      value=None,
+                                                                                                      body=[]))])),
+             NonFeatureMember(visibility=None, element=Struct(is_abstract=False, annotations=[], is_all=False,
+                                                              identification=Identification(short_name=None,
+                                                                                            name='AddressBook'),
+                                                              multiplicity_bounds=None, conjugation=None,
+                                                              superclassing=None, relationships=[], body=[
+                     OwnedFeatureMember(visibility=None, element=Feature(direction=None, is_abstract=False,
+                                                                         relationship_type=FeatureRelationshipType.COMPOSITE,
+                                                                         is_readonly=False, is_derived=False,
+                                                                         is_end=False, annotations=[], is_all=False,
+                                                                         identification=Identification(short_name=None,
+                                                                                                       name='entries'),
+                                                                         specializations=[TypingsPart(
+                                                                             items=[QualifiedName(names=['Entry'])])],
+                                                                         multiplicity=MultiplicityBounds(
+                                                                             lower_bound=None, upper_bound=InfValue()),
+                                                                         is_ordered=False, is_nonunique=False,
+                                                                         conjugation=None, relationships=[],
+                                                                         is_default=False, value_type=None, value=None,
+                                                                         body=[]))]))])),
+        ('package Annotations {\n'
+         '    metaclass ApprovalAnnotation {\n'
+         '        feature approved[1] : Boolean;\n'
+         '        feature approver[1] : String;\n'
+         '        feature level[1] : Natural;\n'
+         '    }\n'
+         '}',
+         Package(annotations=[], identification=Identification(short_name=None, name='Annotations'), body=[
+             NonFeatureMember(visibility=None, element=Metaclass(is_abstract=False, annotations=[], is_all=False,
+                                                                 identification=Identification(short_name=None,
+                                                                                               name='ApprovalAnnotation'),
+                                                                 multiplicity_bounds=None, conjugation=None,
+                                                                 superclassing=None, relationships=[], body=[
+                     OwnedFeatureMember(visibility=None,
+                                        element=Feature(direction=None, is_abstract=False, relationship_type=None,
+                                                        is_readonly=False, is_derived=False, is_end=False,
+                                                        annotations=[], is_all=False,
+                                                        identification=Identification(short_name=None, name='approved'),
+                                                        specializations=[
+                                                            TypingsPart(items=[QualifiedName(names=['Boolean'])])],
+                                                        multiplicity=MultiplicityBounds(lower_bound=None,
+                                                                                        upper_bound=IntValue(raw='1')),
+                                                        is_ordered=False, is_nonunique=False, conjugation=None,
+                                                        relationships=[], is_default=False, value_type=None, value=None,
+                                                        body=[])), OwnedFeatureMember(visibility=None,
+                                                                                      element=Feature(direction=None,
+                                                                                                      is_abstract=False,
+                                                                                                      relationship_type=None,
+                                                                                                      is_readonly=False,
+                                                                                                      is_derived=False,
+                                                                                                      is_end=False,
+                                                                                                      annotations=[],
+                                                                                                      is_all=False,
+                                                                                                      identification=Identification(
+                                                                                                          short_name=None,
+                                                                                                          name='approver'),
+                                                                                                      specializations=[
+                                                                                                          TypingsPart(
+                                                                                                              items=[
+                                                                                                                  QualifiedName(
+                                                                                                                      names=[
+                                                                                                                          'String'])])],
+                                                                                                      multiplicity=MultiplicityBounds(
+                                                                                                          lower_bound=None,
+                                                                                                          upper_bound=IntValue(
+                                                                                                              raw='1')),
+                                                                                                      is_ordered=False,
+                                                                                                      is_nonunique=False,
+                                                                                                      conjugation=None,
+                                                                                                      relationships=[],
+                                                                                                      is_default=False,
+                                                                                                      value_type=None,
+                                                                                                      value=None,
+                                                                                                      body=[])),
+                     OwnedFeatureMember(visibility=None,
+                                        element=Feature(direction=None, is_abstract=False, relationship_type=None,
+                                                        is_readonly=False, is_derived=False, is_end=False,
+                                                        annotations=[], is_all=False,
+                                                        identification=Identification(short_name=None, name='level'),
+                                                        specializations=[
+                                                            TypingsPart(items=[QualifiedName(names=['Natural'])])],
+                                                        multiplicity=MultiplicityBounds(lower_bound=None,
+                                                                                        upper_bound=IntValue(raw='1')),
+                                                        is_ordered=False, is_nonunique=False, conjugation=None,
+                                                        relationships=[], is_default=False, value_type=None, value=None,
+                                                        body=[]))]))])),
+        ('package UpperLevelApprovals {\n'
+         '    // This package imports all direct or indirect members\n'
+         '    // of the DesignModel package that have been approved\n'
+         '    // at a level greater than 1.\n'
+         '    import DesignModel::**;\n'
+         '    filter @Annotations::ApprovalAnnotation and\n'
+         '        Annotations::ApprovalAnnotation::approved and\n'
+         '        Annotations::ApprovalAnnotation::level > 1;\n'
+         '}',
+         Package(annotations=[], identification=Identification(short_name=None, name='UpperLevelApprovals'), body=[
+             Import(visibility=None, is_all=False, is_recursive=True, is_namespace=False,
+                    name=QualifiedName(names=['DesignModel']), filters=[], body=[]), ElementFilter(visibility=None,
+                                                                                                   expression=CondBinOp(
+                                                                                                       op='and',
+                                                                                                       x=CondBinOp(
+                                                                                                           op='and',
+                                                                                                           x=ClsTestOp(
+                                                                                                               op='@',
+                                                                                                               x=None,
+                                                                                                               y=QualifiedName(
+                                                                                                                   names=[
+                                                                                                                       'Annotations',
+                                                                                                                       'ApprovalAnnotation'])),
+                                                                                                           y=QualifiedName(
+                                                                                                               names=[
+                                                                                                                   'Annotations',
+                                                                                                                   'ApprovalAnnotation',
+                                                                                                                   'approved'])),
+                                                                                                       y=BinOp(op='>',
+                                                                                                               x=QualifiedName(
+                                                                                                                   names=[
+                                                                                                                       'Annotations',
+                                                                                                                       'ApprovalAnnotation',
+                                                                                                                       'level']),
+                                                                                                               y=IntValue(
+                                                                                                                   raw='1'))))])),
+        ('package UpperLevelApprovals {\n'
+         '    // Recursively import all annotation data types and all\n'
+         '    // features of those types.\n'
+         '    import Annotations::**;\n'
+         '    // The filter condition for this import applies only to\n'
+         '    // elements imported from the DesignModel package.\n'
+         '    import DesignModel::**[@ApprovalAnnotation and approved and level > 1];\n'
+         '}',
+         Package(annotations=[], identification=Identification(short_name=None, name='UpperLevelApprovals'), body=[
+             Import(visibility=None, is_all=False, is_recursive=True, is_namespace=False,
+                    name=QualifiedName(names=['Annotations']), filters=[], body=[]),
+             Import(visibility=None, is_all=False, is_recursive=True, is_namespace=False,
+                    name=QualifiedName(names=['DesignModel']), filters=[CondBinOp(op='and', x=CondBinOp(op='and',
+                                                                                                        x=ClsTestOp(
+                                                                                                            op='@',
+                                                                                                            x=None,
+                                                                                                            y=QualifiedName(
+                                                                                                                names=[
+                                                                                                                    'ApprovalAnnotation'])),
+                                                                                                        y=QualifiedName(
+                                                                                                            names=[
+                                                                                                                'approved'])),
+                                                                                  y=BinOp(op='>', x=QualifiedName(
+                                                                                      names=['level']),
+                                                                                          y=IntValue(raw='1')))],
+                    body=[])])),
+        ('package PackageApprovals {\n'
+         '    import Annotations::*;\n'
+         '    import KerML::*;\n'
+         '    // This imports all structures from the DesignModel that have\n'
+         '    // at least one owned feature and have been marked as approved.\n'
+         '    import DesignModel::**[@Structure and\n'
+         '        Structure::ownedFeature != null and\n'
+         '        @ApprovalAnnotation and\n'
+         '        ApprovalAnnotation::approved];\n'
+         '}',
+         Package(annotations=[], identification=Identification(short_name=None, name='PackageApprovals'), body=[
+             Import(visibility=None, is_all=False, is_recursive=False, is_namespace=True,
+                    name=QualifiedName(names=['Annotations']), filters=[], body=[]),
+             Import(visibility=None, is_all=False, is_recursive=False, is_namespace=True,
+                    name=QualifiedName(names=['KerML']), filters=[], body=[]),
+             Import(visibility=None, is_all=False, is_recursive=True, is_namespace=False,
+                    name=QualifiedName(names=['DesignModel']), filters=[CondBinOp(op='and', x=CondBinOp(op='and',
+                                                                                                        x=CondBinOp(
+                                                                                                            op='and',
+                                                                                                            x=ClsTestOp(
+                                                                                                                op='@',
+                                                                                                                x=None,
+                                                                                                                y=QualifiedName(
+                                                                                                                    names=[
+                                                                                                                        'Structure'])),
+                                                                                                            y=BinOp(
+                                                                                                                op='!=',
+                                                                                                                x=QualifiedName(
+                                                                                                                    names=[
+                                                                                                                        'Structure',
+                                                                                                                        'ownedFeature']),
+                                                                                                                y=NullValue())),
+                                                                                                        y=ClsTestOp(
+                                                                                                            op='@',
+                                                                                                            x=None,
+                                                                                                            y=QualifiedName(
+                                                                                                                names=[
+                                                                                                                    'ApprovalAnnotation']))),
+                                                                                  y=QualifiedName(
+                                                                                      names=['ApprovalAnnotation',
+                                                                                             'approved']))],
+                    body=[])])),
+    ])
+    @pytest.mark.focus
+    def test_package(self, text, expected):
+        parser = _parser_for_rule('package')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'package' in rules

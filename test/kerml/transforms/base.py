@@ -5,7 +5,7 @@ from pysysml.kerml.transforms import tree_to_cst, KerMLTransRecorder
 
 
 @lru_cache()
-def _parser_for_rule(rule_name):
+def _parser_for_rule(rule_name, no_previous_starts: bool = False):
     lark = open_kerml_lark_parser(start=[rule_name])
 
     def _parse(x):

@@ -1,0 +1,88 @@
+// L15(ternary): if
+?op_l15: conditional_expression
+       | op_l14
+conditional_expression: "if" op_l15 "?" op_l15 "else" op_l15
+
+// L14(binary): ??
+?op_l14: conditional_binary_l14_operator_expression
+       | op_l13
+conditional_binary_l14_operator_expression: op_l14 conditional_binary_l14_operator op_l13
+!conditional_binary_l14_operator: "??"
+
+// L13(binary): implies
+?op_l13: conditional_binary_l13_operator_expression
+       | op_l12
+conditional_binary_l13_operator_expression: op_l13 conditional_binary_l13_operator op_l12
+!conditional_binary_l13_operator: "implies"
+
+// L12(binary): | or
+// note: actually in this production, "|" has higher priority than "or"
+//       but the official documentation said they should have equal priority
+//       its weird, we can change it back if necessary
+?op_l12: conditional_binary_l12_operator_expression
+       | binary_l12_operator_expression
+       | op_l11
+conditional_binary_l12_operator_expression: op_l12 conditional_binary_l12_operator op_l11
+!conditional_binary_l12_operator: "or"
+binary_l12_operator_expression: op_l12 binary_l12_operator op_l11
+!binary_l12_operator: "|"
+
+// L11(binary): xor
+?op_l11: binary_l11_operator_expression
+       | op_l10
+binary_l11_operator_expression: op_l11 binary_l11_operator op_l10
+!binary_l11_operator: "xor"
+
+// L10(binary): & and
+// note: actually in this production, "&" has higher priority than "and"
+//       but the official documentation said they should have equal priority
+//       its weird, we can change it back if necessary
+?op_l10: conditional_binary_l10_operator_expression
+       | binary_l10_operator_expression
+       | op_l9
+conditional_binary_l10_operator_expression: op_l10 conditional_binary_l10_operator op_l9
+!conditional_binary_l10_operator: "and"
+binary_l10_operator_expression: op_l10 binary_l10_operator op_l9
+!binary_l10_operator: "&"
+
+
+// L9(binary):
+?op_l9: binary_l9_operator_expression
+      | op_l8
+binary_l9_operator_expression: op_l8 binary_l9_operator op_l8
+!binary_l9_operator: "==" | "!=" | "===" | "!=="
+
+// L8(binary): istype hastype @ @@ as meta
+?op_l8: classification_expression
+      | metaclassification_expression
+      | op_l7
+
+// classification_expression: argument_member? (classification_test_operator type_reference_member
+//                                             | cast_operator type_result_member)
+classification_expression: [op_l8] (classification_test_operator type_reference_member
+                                            | cast_operator type_result_member)
+!classification_test_operator: "istype" | "hastype" | "@"
+!cast_operator: "as"
+metaclassification_expression: metadata_argument_member (meta_classification_test_operator type_reference_member
+                                                       | meta_cast_operator type_result_member)
+!meta_classification_test_operator: "@@"
+!meta_cast_operator: "meta"
+
+// all elements starts with "metadata_" or "type_reference_" is based on "qualified_name"
+// which means it is actually not a free expression, only qualified name can be used
+?metadata_argument_member: metadata_argument
+?metadata_argument: metadata_value
+?metadata_value: metadata_reference
+?metadata_reference: qualified_name
+
+// L7(binary): < > <= >=
+?op_l7: binary_l7_operator_expression
+      | op_l6
+binary_l7_operator_expression: op_l7 binary_l7_operator op_l6
+!binary_l7_operator: "<" | ">" | "<=" | ">="
+
+// L6(binary): ..
+?op_l6: binary_l6_operator_expression
+      | op_l5
+binary_l6_operator_expression: op_l6 binary_l6_operator op_l5
+!binary_l6_operator: ".."

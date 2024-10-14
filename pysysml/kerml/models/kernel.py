@@ -333,3 +333,21 @@ class MetadataRedefine:
     value: Optional[Any]
 
     body: List[Any]
+
+
+@dataclass
+class ElementFilter:
+    visibility: Optional[Visibility]
+    expression: Any
+
+
+@dataclass
+class Package:
+    annotations: List[PrefixMetadataAnnotation]
+    identification: Identification
+    body: List[Any]
+
+
+@dataclass
+class LibraryPackage(Package):
+    is_standard: bool

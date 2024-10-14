@@ -18,8 +18,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     Succession, Behavior, Step, Return, Result, Function, Predicate, Expression, BooleanExpression, Invariant, \
     IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, BodyExpression, \
     FunctionOperationExpression, Interaction, ItemFlowEnd, ItemFlow, ItemFeature, MultiplicitySubset, MultiplicityRange, \
-    Metaclass, SuccessionItemFlow, Metadata
-from ..models.kernel import MetadataRedefine
+    Metaclass, SuccessionItemFlow, Metadata, MetadataRedefine, ElementFilter, Package, LibraryPackage
 
 
 # noinspection PyPep8Naming
@@ -1606,6 +1605,47 @@ class KerMLTransformer(KerMLTransTemplate):
             value=v,
 
             body=metadata_body,
+        )
+
+    @v_args(inline=True)
+    def element_filter_member(self, visibility: typing.Optional[Visibility], expression):
+        return ElementFilter(
+            visibility=visibility,
+            expression=expression,
+        )
+
+    @v_args(tree=True)
+    def package_body(self, tree: Tree):
+        return tree.children
+
+    @v_args(inline=True)
+    def package_declaration(self, identification: Identification):
+        return identification
+
+    @v_args(tree=True)
+    def package(self, tree: Tree):
+        annotations = tree.children[:-2]
+        identification = tree.children[-2]
+        body = tree.children[-1]
+
+        return Package(
+            annotations=annotations,
+            identification=identification,
+            body=body,
+        )
+
+    @v_args(tree=True)
+    def library_package(self, tree: Tree):
+        standard_token = tree.children[0]
+        annotations = tree.children[1:-2]
+        identification = tree.children[-2]
+        body = tree.children[-1]
+
+        return LibraryPackage(
+            is_standard=bool(standard_token),
+            annotations=annotations,
+            identification=identification,
+            body=body,
         )
 
 
