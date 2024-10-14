@@ -75,6 +75,26 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def item_flow_declaration_dec(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def item_flow_declaration_simple(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def item_feature_idx(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def item_feature_ft(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
+    def item_feature_m(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def fv_bind(self, tree: Tree):
         return tree
 
@@ -704,14 +724,6 @@ class KerMLTransTemplate(Transformer):
 
     @v_args(tree=True)
     def succession_item_flow(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def item_flow_declaration(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def item_feature(self, tree: Tree):
         return tree
 
     @v_args(tree=True)

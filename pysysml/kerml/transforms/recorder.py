@@ -136,6 +136,41 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.function_operation_expression_arglist(self, tree)
 
     @v_args(tree=True)
+    def item_flow_declaration_dec(self, tree: Tree):
+        if 'item_flow_declaration_dec' not in self._rules_set:
+            self._rules_set.add('item_flow_declaration_dec')
+            self.rules.append('item_flow_declaration_dec')
+        return KerMLTransTemplate.item_flow_declaration_dec(self, tree)
+
+    @v_args(tree=True)
+    def item_flow_declaration_simple(self, tree: Tree):
+        if 'item_flow_declaration_simple' not in self._rules_set:
+            self._rules_set.add('item_flow_declaration_simple')
+            self.rules.append('item_flow_declaration_simple')
+        return KerMLTransTemplate.item_flow_declaration_simple(self, tree)
+
+    @v_args(tree=True)
+    def item_feature_idx(self, tree: Tree):
+        if 'item_feature_idx' not in self._rules_set:
+            self._rules_set.add('item_feature_idx')
+            self.rules.append('item_feature_idx')
+        return KerMLTransTemplate.item_feature_idx(self, tree)
+
+    @v_args(tree=True)
+    def item_feature_ft(self, tree: Tree):
+        if 'item_feature_ft' not in self._rules_set:
+            self._rules_set.add('item_feature_ft')
+            self.rules.append('item_feature_ft')
+        return KerMLTransTemplate.item_feature_ft(self, tree)
+
+    @v_args(tree=True)
+    def item_feature_m(self, tree: Tree):
+        if 'item_feature_m' not in self._rules_set:
+            self._rules_set.add('item_feature_m')
+            self.rules.append('item_feature_m')
+        return KerMLTransTemplate.item_feature_m(self, tree)
+
+    @v_args(tree=True)
     def fv_bind(self, tree: Tree):
         if 'fv_bind' not in self._rules_set:
             self._rules_set.add('fv_bind')
@@ -1240,20 +1275,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
             self._rules_set.add('succession_item_flow')
             self.rules.append('succession_item_flow')
         return KerMLTransTemplate.succession_item_flow(self, tree)
-
-    @v_args(tree=True)
-    def item_flow_declaration(self, tree: Tree):
-        if 'item_flow_declaration' not in self._rules_set:
-            self._rules_set.add('item_flow_declaration')
-            self.rules.append('item_flow_declaration')
-        return KerMLTransTemplate.item_flow_declaration(self, tree)
-
-    @v_args(tree=True)
-    def item_feature(self, tree: Tree):
-        if 'item_feature' not in self._rules_set:
-            self._rules_set.add('item_feature')
-            self.rules.append('item_feature')
-        return KerMLTransTemplate.item_feature(self, tree)
 
     @v_args(tree=True)
     def item_feature_specialization_part(self, tree: Tree):

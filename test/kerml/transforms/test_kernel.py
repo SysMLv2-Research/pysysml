@@ -7,7 +7,8 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     FeatureChain, FeatureValueType, BindingConnector, Succession, Behavior, Step, Function, FeatureDirection, Return, \
     Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate, BooleanExpression, Invariant, \
     BoolValue, IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, \
-    BodyExpression, IfTestOp, ClsTestOp, ClsCastOp, FunctionOperationExpression, UnaryOp, Interaction
+    BodyExpression, IfTestOp, ClsTestOp, ClsCastOp, FunctionOperationExpression, UnaryOp, Interaction, ItemFlowEnd, \
+    ItemFeature, ItemFlow
 from .base import _parser_for_rule
 
 
@@ -2479,3 +2480,75 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'interaction' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('flow fuelFlow from fuelTank::fuelOut to engine::fuelIn;',
+         ItemFlow(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                  is_end=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='fuelFlow'), specializations=[],
+                  multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                  is_default=False, value_type=None, value=None, is_all_flow=False,
+                  end_from=ItemFlowEnd(owned=None, member=QualifiedName(names=['fuelTank', 'fuelOut'])),
+                  end_to=ItemFlowEnd(owned=None, member=QualifiedName(names=['engine', 'fuelIn'])), item_feature=None,
+                  body=[])),
+        ('flow fuelFlow from fuelTank.fuelOut to engine.fuelIn;',
+         ItemFlow(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                  is_end=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='fuelFlow'), specializations=[],
+                  multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                  is_default=False, value_type=None, value=None, is_all_flow=False,
+                  end_from=ItemFlowEnd(owned=QualifiedName(names=['fuelTank']),
+                                       member=QualifiedName(names=['fuelOut'])),
+                  end_to=ItemFlowEnd(owned=QualifiedName(names=['engine']), member=QualifiedName(names=['fuelIn'])),
+                  item_feature=None, body=[])),
+        ('flow of flowingFuel : Fuel from fuelTank.fuelOut to engine.fuelIn;',
+         ItemFlow(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                  is_end=False, annotations=[], is_all=False, identification=None, specializations=[],
+                  multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                  is_default=False, value_type=None, value=None, is_all_flow=False,
+                  end_from=ItemFlowEnd(owned=QualifiedName(names=['fuelTank']),
+                                       member=QualifiedName(names=['fuelOut'])),
+                  end_to=ItemFlowEnd(owned=QualifiedName(names=['engine']), member=QualifiedName(names=['fuelIn'])),
+                  item_feature=ItemFeature(identification=Identification(short_name=None, name='flowingFuel'),
+                                           specializations=[TypingsPart(items=[QualifiedName(names=['Fuel'])])],
+                                           multiplicity=None, is_ordered=False, is_nonunique=False, feature_typing=None,
+                                           is_default=False, value_type=None, value=None), body=[])),
+        ('flow fuelTank.fuelOut to engine.fuelIn;',
+         ItemFlow(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                  is_end=False, annotations=[], is_all=False, identification=None, specializations=[],
+                  multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                  is_default=False, value_type=None, value=None, is_all_flow=False,
+                  end_from=ItemFlowEnd(owned=QualifiedName(names=['fuelTank']),
+                                       member=QualifiedName(names=['fuelOut'])),
+                  end_to=ItemFlowEnd(owned=QualifiedName(names=['engine']), member=QualifiedName(names=['fuelIn'])),
+                  item_feature=None, body=[])),
+        ('flow xxx = 1;',
+         ItemFlow(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                  is_end=False, annotations=[], is_all=False,
+                  identification=Identification(short_name=None, name='xxx'), specializations=[], multiplicity=None,
+                  is_ordered=False, is_nonunique=False, conjugation=None, relationships=[], is_default=False,
+                  value_type=FeatureValueType.BIND, value=IntValue(raw='1'), is_all_flow=False, end_from=None,
+                  end_to=None, item_feature=None, body=[])),
+        ('flow of flowingFuel : Fuel := 2 from fuelOut to fuelIn;',
+         ItemFlow(direction=None, is_abstract=False, relationship_type=None, is_readonly=False, is_derived=False,
+                  is_end=False, annotations=[], is_all=False, identification=None, specializations=[],
+                  multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                  is_default=False, value_type=None, value=None, is_all_flow=False,
+                  end_from=ItemFlowEnd(owned=None, member=QualifiedName(names=['fuelOut'])),
+                  end_to=ItemFlowEnd(owned=None, member=QualifiedName(names=['fuelIn'])),
+                  item_feature=ItemFeature(identification=Identification(short_name=None, name='flowingFuel'),
+                                           specializations=[TypingsPart(items=[QualifiedName(names=['Fuel'])])],
+                                           multiplicity=None, is_ordered=False, is_nonunique=False, feature_typing=None,
+                                           is_default=False, value_type=FeatureValueType.INITIAL,
+                                           value=IntValue(raw='2')), body=[])),
+    ])
+    @pytest.mark.focus
+    def test_item_flow(self, text, expected):
+        parser = _parser_for_rule('item_flow')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'item_flow' in rules

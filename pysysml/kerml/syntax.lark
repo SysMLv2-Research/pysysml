@@ -610,15 +610,21 @@ interaction: type_prefix "interaction" classifier_declaration type_body
 # 8.2.5.9.2 Item Flows
 item_flow: feature_prefix "flow" item_flow_declaration type_body
 succession_item_flow: feature_prefix "succession" "flow" item_flow_declaration type_body
-item_flow_declaration: feature_declaration value_part? ("of" item_feature_member)? ("from" item_flow_end_member "to" item_flow_end_member)?
-                     | "all"? item_flow_end_member "to" item_flow_end_member
+// note: in the original official syntax, the "feature_declaration" is required
+//       but actually something like "flow of flowingFuel : Fuel from fuelTank.fuelOut to engine.fuelIn;"
+//       is allowed in examples, so i changed it to optional
+?item_flow_declaration: [feature_declaration] [value_part] ["of" item_feature_member] ("from" item_flow_end_member "to" item_flow_end_member)? -> item_flow_declaration_dec
+                      | [ALL] item_flow_end_member "to" item_flow_end_member                                                                   -> item_flow_declaration_simple
 ?item_feature_member: item_feature
-item_feature: identification item_feature_specialization_part value_part?
-            | (owned_feature_typing (owned_multiplicity)? | owned_multiplicity (owned_feature_typing)?)
+// note: i really dont know what these 2 shits "item_feature_ft" and "item_feature_m" are for...
+//       even no examples in the official documentations
+?item_feature: identification item_feature_specialization_part [value_part] -> item_feature_idx
+             | owned_feature_typing [owned_multiplicity]                    -> item_feature_ft
+             | owned_multiplicity [owned_feature_typing]                    -> item_feature_m
 item_feature_specialization_part: feature_specialization+ multiplicity_part? feature_specialization*
                                 | multiplicity_part feature_specialization+
 ?item_flow_end_member: item_flow_end
-item_flow_end: (owned_reference_subsetting ".")? item_flow_feature_member
+item_flow_end: [owned_reference_subsetting "."] item_flow_feature_member
 ?item_flow_feature_member: item_flow_feature
 ?item_flow_feature: item_flow_redefinition
 ?item_flow_redefinition: qualified_name

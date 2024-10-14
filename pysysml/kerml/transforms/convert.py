@@ -17,7 +17,7 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector, \
     Succession, Behavior, Step, Return, Result, Function, Predicate, Expression, BooleanExpression, Invariant, \
     IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, BodyExpression, \
-    FunctionOperationExpression, Interaction
+    FunctionOperationExpression, Interaction, ItemFlowEnd, ItemFlow, ItemFeature
 
 
 # noinspection PyPep8Naming
@@ -1394,6 +1394,137 @@ class KerMLTransformer(KerMLTransTemplate):
     @v_args(tree=True)
     def interaction(self, tree: Tree):
         return self._classifier_like(tree, type_cls=Interaction)
+
+    @v_args(inline=True)
+    def item_flow_end(self, owned, member):
+        return ItemFlowEnd(
+            owned=owned,
+            member=member,
+        )
+
+    @v_args(tree=True)
+    def item_feature_specialization_part(self, tree: Tree):
+        items = []
+        multiplicity, is_ordered, is_nonunique = None, False, False
+        for item in tree.children:
+            if isinstance(item, tuple):
+                multiplicity, is_ordered, is_nonunique = item
+            else:
+                items.append(item)
+
+        return items, multiplicity, is_ordered, is_nonunique
+
+    @v_args(inline=True)
+    def item_feature_m(self, multiplicity, feature_typing):
+        return ItemFeature(
+            identification=None,
+            specializations=[],
+            multiplicity=multiplicity,
+            is_ordered=False,
+            is_nonunique=False,
+            feature_typing=feature_typing,
+            is_default=False,
+            value_type=None,
+            value=None
+        )
+
+    @v_args(inline=True)
+    def item_feature_ft(self, feature_typing, multiplicity):
+        return ItemFeature(
+            identification=None,
+            specializations=[],
+            multiplicity=multiplicity,
+            is_ordered=False,
+            is_nonunique=False,
+            feature_typing=feature_typing,
+            is_default=False,
+            value_type=None,
+            value=None
+        )
+
+    @v_args(inline=True)
+    def item_feature_idx(self, identification, spc, value_part):
+        specs, multiplicity, is_ordered, is_nonunique = spc
+        if value_part is not None:
+            is_default, value_type, v = value_part
+        else:
+            is_default, value_type, v = False, None, None
+        return ItemFeature(
+            identification=identification,
+            specializations=specs,
+            multiplicity=multiplicity,
+            is_ordered=is_ordered,
+            is_nonunique=is_nonunique,
+            feature_typing=None,
+            is_default=is_default,
+            value_type=value_type,
+            value=v,
+        )
+
+    @v_args(inline=True)
+    def item_flow_declaration_simple(self, all_token: Token, end1: ItemFlowEnd, end2: ItemFlowEnd):
+        is_all_flow = bool(all_token)
+        return None, None, None, is_all_flow, end1, end2
+
+    @v_args(inline=True)
+    def item_flow_declaration_dec(self, declaration, value_part, item_feat, *ends: ItemFlowEnd):
+        if ends:
+            end1, end2 = ends
+        else:
+            end1, end2 = None, None
+        is_all_flow = False
+        return declaration, value_part, item_feat, is_all_flow, end1, end2
+
+    @v_args(inline=True)
+    def item_flow(self, prefix, item_flow_declaration, type_body):
+        direction, is_abstract, relationship_type, is_readonly, is_derived, is_end, annotations = prefix
+        declaration, value_part, item_feat, is_all_flow, end1, end2 = item_flow_declaration
+        if declaration:
+            is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = declaration
+        else:
+            is_all, identification, specs, (multiplicity, is_ordered, is_nonunique), conj, relationships = \
+                (False, None, [], (None, False, False), None, [])
+        if value_part is not None:
+            is_default, value_type, v = value_part
+        else:
+            is_default, value_type, v = False, None, None
+
+        return ItemFlow(
+            # for prefix
+            direction=direction,
+            is_abstract=is_abstract,
+            relationship_type=relationship_type,
+            is_readonly=is_readonly,
+            is_derived=is_derived,
+            is_end=is_end,
+            annotations=annotations,
+
+            # for declaration
+            is_all=is_all,
+            identification=identification,
+            specializations=specs,
+            multiplicity=multiplicity,
+            is_ordered=is_ordered,
+            is_nonunique=is_nonunique,
+            conjugation=conj,
+            relationships=relationships,
+
+            # for type - value
+            is_default=is_default,
+            value_type=value_type,
+            value=v,
+
+            # for type - binary &
+            is_all_flow=is_all_flow,
+            end_from=end1,
+            end_to=end2,
+
+            # item_feat
+            item_feature=item_feat,
+
+            # body part
+            body=type_body,
+        )
 
 
 def tree_to_cst(tree: Tree):
