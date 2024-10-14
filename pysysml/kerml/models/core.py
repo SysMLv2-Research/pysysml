@@ -2,8 +2,7 @@ from dataclasses import dataclass
 from enum import unique, Enum
 from typing import List, Union, Optional, Any
 
-from .glob import MultiplicityBounds
-from .metadata import PrefixMetadataAnnotation
+from .glob import MultiplicityBounds, PrefixMetadataAnnotation
 from .name import QualifiedName, Identification, FeatureChain
 
 

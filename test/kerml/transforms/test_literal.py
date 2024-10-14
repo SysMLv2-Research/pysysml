@@ -8,7 +8,7 @@ from .base import _parser_for_rule
 
 
 @pytest.mark.unittest
-class TestKerMLTransformsLiteralExpression:
+class TestKerMLTransformsLiteral:
     @pytest.mark.parametrize(['text', 'expected'], [
         ('true', True),
         ('false', False),

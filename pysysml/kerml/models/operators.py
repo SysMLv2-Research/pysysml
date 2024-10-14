@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Optional
 
-from pysysml.kerml.models import QualifiedName
+from .name import QualifiedName
 
 
 @dataclass

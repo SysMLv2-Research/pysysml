@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from enum import unique, Enum
 from typing import Optional, Union
 
-from .literal_expression import LiteralValue
-from .name import QualifiedName
+from .literal import LiteralValue
+from .name import QualifiedName, FeatureChain
 
 
 @dataclass
@@ -28,3 +28,8 @@ class Visibility(Enum):
 
     def __repr__(self):
         return f'{self.__class__.__name__}.{self.name}'
+
+
+@dataclass
+class PrefixMetadataAnnotation:
+    feature: Union[QualifiedName, FeatureChain]
