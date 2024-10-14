@@ -17,7 +17,8 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector, \
     Succession, Behavior, Step, Return, Result, Function, Predicate, Expression, BooleanExpression, Invariant, \
     IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, BodyExpression, \
-    FunctionOperationExpression, Interaction, ItemFlowEnd, ItemFlow, ItemFeature, MultiplicitySubset, MultiplicityRange
+    FunctionOperationExpression, Interaction, ItemFlowEnd, ItemFlow, ItemFeature, MultiplicitySubset, MultiplicityRange, \
+    Metaclass, SuccessionItemFlow
 
 
 # noinspection PyPep8Naming
@@ -1475,8 +1476,7 @@ class KerMLTransformer(KerMLTransTemplate):
         is_all_flow = False
         return declaration, value_part, item_feat, is_all_flow, end1, end2
 
-    @v_args(inline=True)
-    def item_flow(self, prefix, item_flow_declaration, type_body):
+    def _item_flow_like(self, prefix, item_flow_declaration, type_body, type_cls: typing.Type[ItemFlow]):
         direction, is_abstract, relationship_type, is_readonly, is_derived, is_end, annotations = prefix
         declaration, value_part, item_feat, is_all_flow, end1, end2 = item_flow_declaration
         if declaration:
@@ -1489,7 +1489,8 @@ class KerMLTransformer(KerMLTransTemplate):
         else:
             is_default, value_type, v = False, None, None
 
-        return ItemFlow(
+        # noinspection PyArgumentList
+        return type_cls(
             # for prefix
             direction=direction,
             is_abstract=is_abstract,
@@ -1527,6 +1528,14 @@ class KerMLTransformer(KerMLTransTemplate):
         )
 
     @v_args(inline=True)
+    def item_flow(self, prefix, item_flow_declaration, type_body):
+        return self._item_flow_like(prefix, item_flow_declaration, type_body, type_cls=ItemFlow)
+
+    @v_args(inline=True)
+    def succession_item_flow(self, prefix, item_flow_declaration, type_body):
+        return self._item_flow_like(prefix, item_flow_declaration, type_body, type_cls=SuccessionItemFlow)
+
+    @v_args(inline=True)
     def multiplicity_subset(self, identification, superset, type_body):
         return MultiplicitySubset(
             identification=identification,
@@ -1541,6 +1550,10 @@ class KerMLTransformer(KerMLTransTemplate):
             multiplicity=multiplicity,
             body=type_body,
         )
+
+    @v_args(tree=True)
+    def metaclass(self, tree: Tree):
+        return self._classifier_like(tree, type_cls=Metaclass)
 
 
 def tree_to_cst(tree: Tree):

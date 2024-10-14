@@ -8,7 +8,7 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate, BooleanExpression, Invariant, \
     BoolValue, IndexExpression, SequenceExpression, FeatureChainExpression, CollectExpression, SelectExpression, \
     BodyExpression, IfTestOp, ClsTestOp, ClsCastOp, FunctionOperationExpression, UnaryOp, Interaction, ItemFlowEnd, \
-    ItemFeature, ItemFlow, MultiplicitySubset, MultiplicityRange
+    ItemFeature, ItemFlow, MultiplicitySubset, MultiplicityRange, Metaclass, SuccessionItemFlow
 from .base import _parser_for_rule
 
 
@@ -2554,6 +2554,28 @@ class TestKerMLTransformsKernel:
             assert 'item_flow' in rules
 
     @pytest.mark.parametrize(['text', 'expected'], [
+        ('succession flow focus.image to shoot.image;',
+         SuccessionItemFlow(direction=None, is_abstract=False, relationship_type=None, is_readonly=False,
+                            is_derived=False, is_end=False, annotations=[], is_all=False, identification=None,
+                            specializations=[], multiplicity=None, is_ordered=False, is_nonunique=False,
+                            conjugation=None, relationships=[], is_default=False, value_type=None, value=None,
+                            is_all_flow=False, end_from=ItemFlowEnd(owned=QualifiedName(names=['focus']),
+                                                                    member=QualifiedName(names=['image'])),
+                            end_to=ItemFlowEnd(owned=QualifiedName(names=['shoot']),
+                                               member=QualifiedName(names=['image'])), item_feature=None, body=[])),
+    ])
+    @pytest.mark.focus
+    def test_succession_item_flow(self, text, expected):
+        parser = _parser_for_rule('succession_item_flow')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'succession_item_flow' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
         ('multiplicity m subsets zeroOrMore;',
          MultiplicitySubset(identification=Identification(short_name=None, name='m'),
                             superset=QualifiedName(names=['zeroOrMore']), body=[])),
@@ -2591,3 +2613,45 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'multiplicity_range' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('metaclass SecurityRelated;',
+         Metaclass(is_abstract=False, annotations=[], is_all=False,
+                   identification=Identification(short_name=None, name='SecurityRelated'), multiplicity_bounds=None,
+                   conjugation=None, superclassing=None, relationships=[], body=[])),
+        ('metaclass ApprovalAnnotation {\n'
+         '    feature approved[1] : Boolean;\n'
+         '    feature approver[1] : String;\n'
+         '}',
+         Metaclass(is_abstract=False, annotations=[], is_all=False,
+                   identification=Identification(short_name=None, name='ApprovalAnnotation'), multiplicity_bounds=None,
+                   conjugation=None, superclassing=None, relationships=[],
+                   body=[
+                       OwnedFeatureMember(visibility=None, element=Feature(
+                           direction=None, is_abstract=False, relationship_type=None, is_readonly=False,
+                           is_derived=False, is_end=False, annotations=[], is_all=False,
+                           identification=Identification(short_name=None, name='approved'),
+                           specializations=[TypingsPart(items=[QualifiedName(names=['Boolean'])])],
+                           multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=IntValue(raw='1')),
+                           is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                           is_default=False, value_type=None, value=None, body=[])),
+                       OwnedFeatureMember(visibility=None, element=Feature(
+                           direction=None, is_abstract=False, relationship_type=None, is_readonly=False,
+                           is_derived=False, is_end=False, annotations=[], is_all=False,
+                           identification=Identification(short_name=None, name='approver'),
+                           specializations=[TypingsPart(items=[QualifiedName(names=['String'])])],
+                           multiplicity=MultiplicityBounds(lower_bound=None, upper_bound=IntValue(raw='1')),
+                           is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
+                           is_default=False, value_type=None, value=None, body=[]))
+                   ])),
+    ])
+    @pytest.mark.focus
+    def test_metaclass(self, text, expected):
+        parser = _parser_for_rule('metaclass')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'metaclass' in rules

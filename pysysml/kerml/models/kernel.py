@@ -287,6 +287,11 @@ class ItemFlow:
 
 
 @dataclass
+class SuccessionItemFlow(ItemFlow):
+    pass
+
+
+@dataclass
 class MultiplicitySubset:
     identification: Identification
     superset: Union[QualifiedName, FeatureChain]
@@ -298,3 +303,8 @@ class MultiplicityRange:
     identification: Identification
     multiplicity: MultiplicityBounds
     body: List[Any]
+
+
+@dataclass
+class Metaclass(Struct):
+    pass

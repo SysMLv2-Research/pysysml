@@ -657,9 +657,9 @@ metadata_feature: prefix_metadata_member* ("@" | "metadata") metadata_feature_de
 metadata_feature_declaration: (identification (":" | "typed" "by"))? owned_feature_typing
 metadata_body: ";" | "{" metadata_body_element* "}"
 ?metadata_body_element: non_feature_member
-                     | metadata_body_feature_member
-                     | alias_member
-                     | import_statement
+                      | metadata_body_feature_member
+                      | alias_member
+                      | import_statement
 ?metadata_body_feature_member: metadata_body_feature
 metadata_body_feature: "feature"? (":>>" | "redefines")? owned_redefinition feature_specialization_part? value_part? metadata_body
 
