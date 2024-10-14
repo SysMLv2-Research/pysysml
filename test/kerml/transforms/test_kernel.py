@@ -995,7 +995,6 @@ class TestKerMLTransformsKernel:
                                                                                                                    raw='1'))),
                                                                                                        body=[]))])),
     ])
-    @pytest.mark.focus
     def test_behavior(self, text, expected):
         parser = _parser_for_rule('behavior')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -1020,7 +1019,6 @@ class TestKerMLTransformsKernel:
               specializations=[], multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None,
               relationships=[], is_default=False, value_type=FeatureValueType.BIND, value=IntValue(raw='1'), body=[])),
     ])
-    @pytest.mark.focus
     def test_step(self, text, expected):
         parser = _parser_for_rule('step')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -1480,7 +1478,6 @@ class TestKerMLTransformsKernel:
                                                                    'scores'])])),
                                                body=[]))])),
     ])
-    @pytest.mark.focus
     def test_function(self, text, expected):
         parser = _parser_for_rule('function')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -1721,7 +1718,6 @@ class TestKerMLTransformsKernel:
                     multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
                     is_default=False, value_type=FeatureValueType.BIND, value=BoolValue(raw='false'), body=[])),
     ])
-    @pytest.mark.focus
     def test_expression(self, text, expected):
         parser = _parser_for_rule('expression')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -1840,7 +1836,6 @@ class TestKerMLTransformsKernel:
                                                                                                              names=[
                                                                                                                  'tank_maxFuelLevel'])))])),
     ])
-    @pytest.mark.focus
     def test_predicate(self, text, expected):
         parser = _parser_for_rule('predicate')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -1880,7 +1875,6 @@ class TestKerMLTransformsKernel:
                            multiplicity=None, is_ordered=False, is_nonunique=False, conjugation=None, relationships=[],
                            is_default=False, value_type=FeatureValueType.BIND, value=BoolValue(raw='false'), body=[])),
     ])
-    @pytest.mark.focus
     def test_boolean_expression(self, text, expected):
         parser = _parser_for_rule('boolean_expression')
         if isinstance(expected, type) and issubclass(expected, Exception):
@@ -1939,7 +1933,6 @@ class TestKerMLTransformsKernel:
                    relationships=[], is_default=False, value_type=FeatureValueType.BIND, value=IntValue(raw='1'),
                    body=[], asserted=True)),
     ])
-    @pytest.mark.focus
     def test_invariant(self, text, expected):
         parser = _parser_for_rule('invariant')
         if isinstance(expected, type) and issubclass(expected, Exception):
