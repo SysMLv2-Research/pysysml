@@ -187,3 +187,20 @@ class BooleanExpression(Expression):
 @dataclass
 class Invariant(BooleanExpression):
     asserted: Optional[bool]
+
+
+@dataclass
+class IndexExpression:
+    entity: Any
+    sequence: List[Any]
+
+
+@dataclass
+class SequenceExpression:
+    sequence: List[Any]
+
+
+@dataclass
+class FeatureChainExpression:
+    entity: Any
+    member: Union[QualifiedName, FeatureChain]

@@ -63,6 +63,10 @@ class KerMLTransTemplate(Transformer):
         return tree
 
     @v_args(tree=True)
+    def sequence_expression_list_standalone(self, tree: Tree):
+        return tree
+
+    @v_args(tree=True)
     def fv_bind(self, tree: Tree):
         return tree
 
@@ -608,10 +612,6 @@ class KerMLTransTemplate(Transformer):
 
     @v_args(tree=True)
     def sequence_expression(self, tree: Tree):
-        return tree
-
-    @v_args(tree=True)
-    def sequence_expression_list(self, tree: Tree):
         return tree
 
     @v_args(tree=True)

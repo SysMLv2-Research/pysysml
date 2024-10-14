@@ -15,7 +15,8 @@ from ..models import BoolValue, IntValue, RealValue, StringValue, InfValue, Null
     Conjugation, Disjoining, Classifier, Subclassification, FeatureTyping, Subsetting, Redefinition, FeatureInverting, \
     TypeFeaturing, ExtentOp, UnaryOp, IfTestOp, CondBinOp, BinOp, ClsCastOp, ClsTestOp, MetaClsCastOp, MetaClsTestOp, \
     DataType, Struct, Association, AssociationStruct, ConnectorEnd, Connector, ConnectorType, BindingConnector, \
-    Succession, Behavior, Step, Return, Result, Function, Predicate, Expression, BooleanExpression, Invariant
+    Succession, Behavior, Step, Return, Result, Function, Predicate, Expression, BooleanExpression, Invariant, \
+    IndexExpression, SequenceExpression, FeatureChainExpression
 
 
 # noinspection PyPep8Naming
@@ -1320,6 +1321,32 @@ class KerMLTransformer(KerMLTransTemplate):
     @v_args(inline=True)
     def invariant_bool(self, token: Token):
         return json.loads(token.value)
+
+    @v_args(inline=True)
+    def sequence_expression_list_standalone(self, expression):
+        return [expression]
+
+    @v_args(inline=True)
+    def sequence_operator_expression(self, exp1, exps):
+        return [exp1, *exps]
+
+    @v_args(inline=True)
+    def sequence_expression(self, sequence):
+        return SequenceExpression(sequence=sequence)
+
+    @v_args(inline=True)
+    def index_expression(self, entity, sequence):
+        return IndexExpression(
+            entity=entity,
+            sequence=sequence
+        )
+
+    @v_args(inline=True)
+    def feature_chain_expression(self, entity, member):
+        return FeatureChainExpression(
+            entity=entity,
+            member=member,
+        )
 
 
 def tree_to_cst(tree: Tree):

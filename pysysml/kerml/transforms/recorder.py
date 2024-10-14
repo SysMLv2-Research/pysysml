@@ -115,6 +115,13 @@ class KerMLTransRecorder(KerMLTransTemplate):
         return KerMLTransTemplate.non_all_binary_connector_declaration(self, tree)
 
     @v_args(tree=True)
+    def sequence_expression_list_standalone(self, tree: Tree):
+        if 'sequence_expression_list_standalone' not in self._rules_set:
+            self._rules_set.add('sequence_expression_list_standalone')
+            self.rules.append('sequence_expression_list_standalone')
+        return KerMLTransTemplate.sequence_expression_list_standalone(self, tree)
+
+    @v_args(tree=True)
     def fv_bind(self, tree: Tree):
         if 'fv_bind' not in self._rules_set:
             self._rules_set.add('fv_bind')
@@ -1072,13 +1079,6 @@ class KerMLTransRecorder(KerMLTransTemplate):
             self._rules_set.add('sequence_expression')
             self.rules.append('sequence_expression')
         return KerMLTransTemplate.sequence_expression(self, tree)
-
-    @v_args(tree=True)
-    def sequence_expression_list(self, tree: Tree):
-        if 'sequence_expression_list' not in self._rules_set:
-            self._rules_set.add('sequence_expression_list')
-            self.rules.append('sequence_expression_list')
-        return KerMLTransTemplate.sequence_expression_list(self, tree)
 
     @v_args(tree=True)
     def sequence_operator_expression(self, tree: Tree):

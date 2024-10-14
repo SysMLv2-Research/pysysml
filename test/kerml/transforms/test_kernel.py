@@ -5,7 +5,8 @@ from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation
     NonFeatureMember, Documentation, Comment, OwnedFeatureMember, Feature, TypingsPart, DataType, Struct, \
     FeatureRelationshipType, InfValue, Association, AssociationStruct, Connector, ConnectorType, ConnectorEnd, \
     FeatureChain, FeatureValueType, BindingConnector, Succession, Behavior, Step, Function, FeatureDirection, Return, \
-    Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate, BooleanExpression, Invariant, BoolValue
+    Result, BinOp, InvocationExpression, Expression, SubsettingsPart, Predicate, BooleanExpression, Invariant, \
+    BoolValue, IndexExpression, SequenceExpression, FeatureChainExpression
 from .base import _parser_for_rule
 
 
@@ -1942,3 +1943,78 @@ class TestKerMLTransformsKernel:
             v, rules = parser(text)
             assert v == expected
             assert 'invariant' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('sensors#(activeSensorIndex)',
+         IndexExpression(entity=QualifiedName(names=['sensors']),
+                         sequence=[QualifiedName(names=['activeSensorIndex'])])),
+        ('detectorArray#(n, m)',
+         IndexExpression(entity=QualifiedName(names=['detectorArray']),
+                         sequence=[QualifiedName(names=['n']), QualifiedName(names=['m'])])),
+        ('detectorArray#(n, m, t, z, x)',
+         IndexExpression(entity=QualifiedName(names=['detectorArray']),
+                         sequence=[QualifiedName(names=['n']), QualifiedName(names=['m']), QualifiedName(names=['t']),
+                                   QualifiedName(names=['z']), QualifiedName(names=['x'])])),
+    ])
+    @pytest.mark.focus
+    def test_index_expression(self, text, expected):
+        parser = _parser_for_rule('index_expression')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'index_expression' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('(temperatureSensor, windSensor, precipitationSensor)',
+         SequenceExpression(sequence=[QualifiedName(names=['temperatureSensor']), QualifiedName(names=['windSensor']),
+                                      QualifiedName(names=['precipitationSensor'])])),
+        ('( 1, 3, 5, 7, 11, 13, )',
+         SequenceExpression(
+             sequence=[IntValue(raw='1'), IntValue(raw='3'), IntValue(raw='5'), IntValue(raw='7'), IntValue(raw='11'),
+                       IntValue(raw='13')])),
+        ('(highValue + lowValue)',
+         SequenceExpression(
+             sequence=[BinOp(op='+', x=QualifiedName(names=['highValue']), y=QualifiedName(names=['lowValue']))])),
+        ('(((1, 2, 3), 4), (1, (2, 3), 4))',
+         SequenceExpression(sequence=[SequenceExpression(
+             sequence=[SequenceExpression(sequence=[IntValue(raw='1'), IntValue(raw='2'), IntValue(raw='3')]),
+                       IntValue(raw='4')]), SequenceExpression(
+             sequence=[IntValue(raw='1'), SequenceExpression(sequence=[IntValue(raw='2'), IntValue(raw='3')]),
+                       IntValue(raw='4')])])),
+    ])
+    @pytest.mark.focus
+    def test_sequence_expression(self, text, expected):
+        parser = _parser_for_rule('sequence_expression')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'sequence_expression' in rules
+
+    @pytest.mark.parametrize(['text', 'expected'], [
+        ('getPlatform(id).sensors.isActive',
+         FeatureChainExpression(entity=InvocationExpression(name=QualifiedName(names=['getPlatform']),
+                                                            arguments=[QualifiedName(names=['id'])]),
+                                member=FeatureChain(
+                                    items=[QualifiedName(names=['sensors']), QualifiedName(names=['isActive'])]))),
+        ('(getPlatform(id).sensors).isActive',
+         FeatureChainExpression(entity=SequenceExpression(sequence=[FeatureChainExpression(
+             entity=InvocationExpression(name=QualifiedName(names=['getPlatform']),
+                                         arguments=[QualifiedName(names=['id'])]),
+             member=QualifiedName(names=['sensors']))]), member=QualifiedName(names=['isActive']))),
+    ])
+    @pytest.mark.focus
+    def test_feature_chain_expression(self, text, expected):
+        parser = _parser_for_rule('feature_chain_expression')
+        if isinstance(expected, type) and issubclass(expected, Exception):
+            with pytest.raises(expected):
+                _ = parser(text)
+        else:
+            v, rules = parser(text)
+            assert v == expected
+            assert 'feature_chain_expression' in rules

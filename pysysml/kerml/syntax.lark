@@ -505,12 +505,12 @@ extent_expression: "all" type_reference_member
 ?primary_argument_member: primary_argument
 
 ?non_feature_chain_primary_expression: bracket_expression
-                                    | index_expression
-                                    | sequence_expression
-                                    | select_expression
-                                    | collect_expression
-                                    | function_operation_expression
-                                    | base_expression
+                                     | index_expression
+                                     | sequence_expression
+                                     | select_expression
+                                     | collect_expression
+                                     | function_operation_expression
+                                     | base_expression
 
 ?non_feature_chain_primary_argument_value: non_feature_chain_primary_expression
 ?non_feature_chain_primary_argument: non_feature_chain_primary_argument_value
@@ -524,7 +524,8 @@ index_expression: primary_argument_member "#" "(" sequence_expression_list_membe
 
 # Sequence Expression
 sequence_expression: "(" sequence_expression_list ")"
-sequence_expression_list: owned_expression ","? | sequence_operator_expression
+?sequence_expression_list: owned_expression ","?        -> sequence_expression_list_standalone
+                         | sequence_operator_expression
 sequence_operator_expression: owned_expression_member "," sequence_expression_list_member
 ?sequence_expression_list_member: sequence_expression_list
 
