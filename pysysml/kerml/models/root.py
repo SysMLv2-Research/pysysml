@@ -16,25 +16,27 @@ class Dependency:
 
 
 @dataclass
-class Comment:
+class IRegularComment:
+    comment: str
+
+
+@dataclass
+class Comment(IRegularComment):
     identification: Optional[Identification]
     about_list: Optional[List[QualifiedName]]
     locale: Optional[str]
-    comment: str
 
 
 @dataclass
-class Documentation:
+class Documentation(IRegularComment):
     identification: Identification
     locale: Optional[str]
-    comment: str
 
 
 @dataclass
-class TextualRepresentation:
+class TextualRepresentation(IRegularComment):
     identification: Optional[Identification]
     language: str
-    comment: str
 
 
 @dataclass
