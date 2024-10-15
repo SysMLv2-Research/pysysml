@@ -15,3 +15,4 @@ where>=1.0.2
 responses>=0.20.0
 natsort
 hfutils>=0.4.4
+tqdm
