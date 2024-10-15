@@ -103,6 +103,7 @@ jobs:
         shell: bash
         run: |
           git clone https://github.com/Systems-Modeling/SysML-v2-Release.git root
-          ls -al root/sysml.library
+          find root/sysml.library -name ".*" -exec rm -rf "{}" \; | true
+          tree root/sysml.library
           hfutils upload -r sysmlv2research/official_library_source -i root/sysml.library -d src --clear
           hfutils upload -r sysmlv2research/official_library_source -i root/sysml.library -a src.zip
