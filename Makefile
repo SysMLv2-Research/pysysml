@@ -1,4 +1,4 @@
-.PHONY: docs test unittest resource build
+.PHONY: docs test unittest resource build hash
 
 PYTHON := $(shell which python)
 
@@ -21,11 +21,11 @@ UMODE ?= unittest
 
 COV_TYPES ?= xml term-missing
 
-package:
+package: hash
 	$(PYTHON) -m build --sdist --wheel --outdir ${DIST_DIR}
 hash:
 	$(PYTHON) -m tools.build.hash
-build:
+build: hash
 	pyinstaller -D -F $(shell python -m tools.build.resource) -n pysysml -c pysysml_cli.py
 clean:
 	rm -rf ${DIST_DIR} ${BUILD_DIR} *.egg-info
@@ -33,7 +33,7 @@ clean:
 
 test: unittest
 
-unittest:
+unittest: hash
 	UNITTEST=1 \
 		pytest "${RANGE_TEST_DIR}" \
 		-sv -m "${UMODE}" \

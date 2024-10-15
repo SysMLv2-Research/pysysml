@@ -24,6 +24,6 @@ def is_reserved_word(word: str) -> bool:
     return word in _reserved_words_set()
 
 
-def resource_file_check():
+def resource_health_check():
     file_health_check(_reserved_words_file)
     file_health_check(_grammar_file)

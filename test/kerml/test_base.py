@@ -1,6 +1,6 @@
 import pytest
 
-from pysysml.kerml.base import list_reserved_words, is_reserved_word
+from pysysml.kerml import list_reserved_words, is_reserved_word, resource_health_check
 
 
 @pytest.mark.unittest
@@ -215,3 +215,6 @@ class TestKermlBase:
     ])
     def test_is_reserved_word(self, rword, is_reserved):
         assert is_reserved_word(rword) == is_reserved
+
+    def test_resource_health_check(self):
+        resource_health_check()
