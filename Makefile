@@ -23,6 +23,8 @@ COV_TYPES ?= xml term-missing
 
 package:
 	$(PYTHON) -m build --sdist --wheel --outdir ${DIST_DIR}
+hash:
+	$(PYTHON) -m tools.build.hash
 build:
 	pyinstaller -D -F $(shell python -m tools.build.resource) -n pysysml -c pysysml_cli.py
 clean:

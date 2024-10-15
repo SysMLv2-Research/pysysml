@@ -3,6 +3,8 @@ import re
 from functools import lru_cache
 from typing import List, Set
 
+from ..utils import file_health_check
+
 _reserved_words_file = os.path.normpath(os.path.join(__file__, '..', 'reserved_words.txt'))
 _grammar_file = os.path.normpath(os.path.join(__file__, '..', 'syntax.lark'))
 
@@ -23,11 +25,5 @@ def is_reserved_word(word: str) -> bool:
 
 
 def resource_file_check():
-    if not os.path.exists(_reserved_words_file):
-        raise FileNotFoundError(f'Reserved words file for KerML not found - {_reserved_words_file!r}.')
-    if not os.path.isfile(_reserved_words_file):
-        raise IsADirectoryError(f'Reserved words file for KerML is not a file - {_reserved_words_file!r}.')
-    if not os.path.exists(_grammar_file):
-        raise FileNotFoundError(f'Grammar lark file for KerML not found - {_reserved_words_file!r}.')
-    if not os.path.isfile(_grammar_file):
-        raise IsADirectoryError(f'Grammar lark file for KerML not found - {_reserved_words_file!r}.')
+    file_health_check(_reserved_words_file)
+    file_health_check(_grammar_file)
