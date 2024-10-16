@@ -1,7 +1,7 @@
 import pytest
 from lark import UnexpectedInput, GrammarError
 
-from pysysml.kerml.models import Class, Identification, PrefixMetadataAnnotation, SuperclassingPart, \
+from pysysml.kerml.cst.models import Class, Identification, PrefixMetadataAnnotation, SuperclassingPart, \
     MultiplicityBounds, ConjugationPart, DisjoiningPart, UnioningPart, IntersectingPart, DifferencingPart, \
     NonFeatureMember, Documentation, Comment, OwnedFeatureMember, Feature, TypingsPart, DataType, Struct, \
     FeatureRelationshipType, InfValue, Association, AssociationStruct, Connector, ConnectorType, ConnectorEnd, \

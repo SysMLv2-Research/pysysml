@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Optional, Any
 
-from . import PrefixMetadataAnnotation
-from .glob import Visibility
+from .glob import PrefixMetadataAnnotation, Visibility
 from .name import Identification, QualifiedName
 
 

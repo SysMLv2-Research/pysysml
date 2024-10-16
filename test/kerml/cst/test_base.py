@@ -1,6 +1,6 @@
 import pytest
 
-from pysysml.kerml import list_reserved_words, is_reserved_word, resource_health_check
+from pysysml.kerml.cst import list_reserved_words, is_reserved_word, resource_health_check
 
 
 @pytest.mark.unittest

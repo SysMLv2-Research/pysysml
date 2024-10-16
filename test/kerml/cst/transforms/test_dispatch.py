@@ -1,6 +1,6 @@
 import pytest
 
-from pysysml.kerml.models import RootNamespace, NonFeatureMember, LibraryPackage, Identification, DataType, \
+from pysysml.kerml.cst.models import RootNamespace, NonFeatureMember, LibraryPackage, Identification, DataType, \
     OwnedFeatureMember, QualifiedName, MultiplicityBounds, TypingsPart, IntValue, Feature, Struct, \
     FeatureRelationshipType, Classifier, Documentation, InfValue, Visibility, SuperclassingPart, Import
 from .base import _parser_for_rule

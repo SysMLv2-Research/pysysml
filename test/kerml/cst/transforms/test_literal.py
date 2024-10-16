@@ -3,7 +3,7 @@ import math
 import pytest
 from lark import UnexpectedCharacters
 
-from pysysml.kerml.models import BoolValue, IntValue, RealValue, StringValue, InfValue
+from pysysml.kerml.cst.models import BoolValue, IntValue, RealValue, StringValue, InfValue
 from .base import _parser_for_rule
 
 

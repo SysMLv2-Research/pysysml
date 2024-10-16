@@ -4,7 +4,7 @@ from typing import List, Optional
 from lark import Lark
 
 from .base import _grammar_file
-from ..utils import list_rules_from_grammar
+from pysysml.utils import list_rules_from_grammar
 
 
 def open_kerml_lark_parser(start: Optional[List[str]] = None) -> Lark:

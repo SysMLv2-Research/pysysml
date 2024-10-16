@@ -1,7 +1,7 @@
 import pytest
 from lark import UnexpectedInput, GrammarError
 
-from pysysml.kerml.models import QualifiedName
+from pysysml.kerml.cst.models import QualifiedName
 from .base import _parser_for_rule
 
 

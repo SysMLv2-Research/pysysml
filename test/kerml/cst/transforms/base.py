@@ -1,7 +1,6 @@
 from functools import lru_cache
 
-from pysysml.kerml import open_kerml_lark_parser
-from pysysml.kerml.transforms import tree_to_kerml_cst, KerMLTransRecorder
+from pysysml.kerml.cst import open_kerml_lark_parser, tree_to_kerml_cst, KerMLTransRecorder
 
 
 @lru_cache()

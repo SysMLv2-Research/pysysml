@@ -5,14 +5,14 @@ from pysysml.utils import list_rules_from_grammar
 
 
 def _get_all_starts():
-    from pysysml.kerml import __grammar_file__
+    from pysysml.kerml.cst import __grammar_file__
     grammar_code = pathlib.Path(__grammar_file__).read_text()
     return list_rules_from_grammar(grammar_code=grammar_code, show_alias=True)
 
 
 def main():
     all_starts = _get_all_starts()
-    from pysysml.kerml.transforms import __file__ as _template_file
+    from pysysml.kerml.cst.transforms import __file__ as _template_file
 
     template_file = os.path.normpath(os.path.join(_template_file, '..', 'template.py'))
     with open(template_file, 'w') as f:

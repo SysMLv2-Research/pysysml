@@ -3,7 +3,7 @@ import re
 from functools import lru_cache
 from typing import List, Set
 
-from ..utils import file_health_check
+from pysysml.utils import file_health_check
 
 _reserved_words_file = os.path.normpath(os.path.join(__file__, '..', 'reserved_words.txt'))
 _grammar_file = os.path.normpath(os.path.join(__file__, '..', 'syntax.lark'))

@@ -1,6 +1,6 @@
 import pytest
 
-from pysysml.kerml.models import Comment, Identification, QualifiedName, Documentation, Dependency, \
+from pysysml.kerml.cst.models import Comment, Identification, QualifiedName, Documentation, Dependency, \
     PrefixMetadataAnnotation, FeatureChain, TextualRepresentation, Namespace, NonFeatureMember, Visibility, Class, \
     Import, Alias, NamespaceFeatureMember, Feature
 from .base import _parser_for_rule

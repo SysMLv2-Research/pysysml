@@ -1,6 +1,6 @@
 import pytest
 
-from pysysml.kerml.models import Identification, PrefixMetadataAnnotation, QualifiedName, SuperclassingPart, \
+from pysysml.kerml.cst.models import Identification, PrefixMetadataAnnotation, QualifiedName, SuperclassingPart, \
     MultiplicityBounds, IntValue, ConjugationPart, DisjoiningPart, IntersectingPart, DifferencingPart, \
     NonFeatureMember, Documentation, Comment, Type, SpecializationPart, Visibility, Feature, SubsettingsPart, \
     RedefinitionsPart, TypingsPart, ReferencesPart, ChainingPart, InvertingPart, TypeFeaturingPart, FeatureDirection, \

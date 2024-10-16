@@ -1,7 +1,7 @@
 import click
 
 from .base import CONTEXT_SETTINGS
-from ..kerml import resource_health_check
+from ..kerml.cst import resource_health_check
 
 
 def _add_health_subcommand(cli: click.Group) -> click.Group:

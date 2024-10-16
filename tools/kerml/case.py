@@ -5,7 +5,7 @@ from typing import List
 
 
 def print_cases(start: str, cases: List[str], file=sys.stdout):
-    from test.kerml.transforms.base import _parser_for_rule
+    from test.kerml.cst.transforms.base import _parser_for_rule
 
     parser = _parser_for_rule(start)
     print(f"@pytest.mark.parametrize(['text', 'expected'], [", file=file)

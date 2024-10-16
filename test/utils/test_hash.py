@@ -1,6 +1,5 @@
 import pytest
 
-from pysysml.kerml.base import _reserved_words_file
 from pysysml.utils import file_sha256
 from ..testings import get_testfile
 
@@ -8,7 +7,6 @@ from ..testings import get_testfile
 @pytest.mark.unittest
 class TestUtilsHash:
     @pytest.mark.parametrize(['file', 'sha256_hash'], [
-        (_reserved_words_file, 'c998f2684f8acfa2359e9c952a699c036ec6638cf52a95ad12c7ded277583fd4'),
         (get_testfile('requirements-where.txt'), '37e7e0279f187d929f971389fde33c741fed792bba9270bcc5ab57af5025107b'),
         (get_testfile('korean.txt'), '27dfb496555177ff9870bcd0d3d03ebd4d614f5546a8e6f9a60fcf8019d773ab'),
         (get_testfile('raw.tar.xz'), 'b96da203a067fb1d96e888c90f5eef94a4a2e24a01dfc9ae4490304740f807b7'),

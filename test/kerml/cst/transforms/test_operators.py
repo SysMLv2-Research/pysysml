@@ -1,6 +1,6 @@
 import pytest
 
-from pysysml.kerml.models import ExtentOp, QualifiedName, IntValue, RealValue, UnaryOp, StringValue, InfValue, \
+from pysysml.kerml.cst.models import ExtentOp, QualifiedName, IntValue, RealValue, UnaryOp, StringValue, InfValue, \
     CondBinOp, BinOp, ClsTestOp, ClsCastOp, MetaClsTestOp, MetaClsCastOp, IfTestOp
 from .base import _parser_for_rule
 
