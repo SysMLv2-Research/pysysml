@@ -1,16 +1,18 @@
+import re
 import uuid
 from typing import List, Optional
 
 from ..base import Env, IElementID, ConstraintsError
 
 
+# noinspection PyUnresolvedReferences
 class Element(IElementID):
     def __init__(self,
                  env: Env,
                  alias_ids: List[str],
                  declared_name: Optional[str],
                  declared_short_name: Optional[str],
-                 is_implied_included: bool,
+                 is_implied_included: bool = False,
                  element_id: Optional[str] = None):
         super().__init__(env, element_id)
 
@@ -26,77 +28,63 @@ class Element(IElementID):
         # Whether all necessary implied Relationships have been included in the ownedRelationships of this Element.
         self.is_implied_included: bool = is_implied_included
 
-        # The Relationship for which this Element is an ownedRelatedElement, if any.
-        self._owning_relationship_id: Optional[str] = None
-
     @property
     def documentation(self) -> List["Documentation"]:
-        return self._get_documentation()
-
-    def _get_documentation(self) -> List["Documentation"]:
-        # TODO: Implement method to return Documentation owned by this Element.
-        # This should return a list of Documentation objects that are owned elements and annotating elements of this Element.
-        # The list should be ordered.
-        raise NotImplementedError()
+        from .annotating import Documentation
+        return [item for item in self.owned_element if isinstance(item, Documentation)]
 
     @property
     def is_library_element(self) -> bool:
-        return self._get_is_library_element()
-
-    def _get_is_library_element(self) -> bool:
-        # TODO: Implement method to determine if this Element is contained in the ownership tree of a library model.
-        raise NotImplementedError()
+        return bool(self.library_namespace())
 
     @property
     def name(self) -> Optional[str]:
+        return self._get_name()
+
+    def _get_name(self):
         return self.effective_name()
 
     @property
     def owned_annotation(self) -> List["Annotation"]:
-        return self._get_owned_annotation()
-
-    def _get_owned_annotation(self) -> List["Annotation"]:
-        # TODO: Implement method to return ownedRelationships of this Element that are Annotations,
-        # for which this Element is the annotatedElement. This should be a subset of ownedRelationship and annotation,
-        # and should be ordered.
-        raise NotImplementedError()
+        from .annotating import Annotation
+        return [item for item in self.owned_relationship if isinstance(item, Annotation)]
 
     @property
     def owned_element(self) -> List["Element"]:
-        return [self._env[element_id] for element_id in self._owned_element_ids]
+        retval = []
+        for relationship in self.owned_relationship:
+            retval.extend(relationship.owned_related_element)
+        return retval
 
     @property
     def owner(self) -> Optional["Element"]:
-        return self._get_owner()
-
-    def _get_owner(self) -> Optional["Element"]:
-        # TODO: Implement method to return the owner of this Element, derived as the owningRelatedElement
-        # of the owningRelationship of this Element, if any.
-        raise NotImplementedError()
+        if self.owning_relationship:
+            return self.owning_relationship.owning_related_element
+        else:
+            return None
 
     @property
     def owning_membership(self) -> Optional["OwningMembership"]:
-        return self._get_owning_membership()
-
-    def _get_owning_membership(self) -> Optional["OwningMembership"]:
-        # TODO: Implement method to return the owningRelationship of this Element,
-        # if that Relationship is a Membership. This should be a subset of owningRelationship and membership.
-        raise NotImplementedError()
+        from .namespace import OwningMembership
+        owning_relationship = self.owning_relationship
+        if owning_relationship and isinstance(owning_relationship, OwningMembership):
+            return owning_relationship
+        else:
+            return None
 
     @property
     def owning_namespace(self) -> Optional["Namespace"]:
-        return self._get_owning_namespace()
-
-    def _get_owning_namespace(self) -> Optional["Namespace"]:
-        # TODO: Implement method to return the Namespace that owns this Element,
-        # which is the membershipOwningNamespace of the owningMembership of this Element, if any.
-        # This should be a subset of namespace.
-        raise NotImplementedError()
+        from .namespace import Namespace
+        owning_membership = self.owning_membership
+        if owning_membership and isinstance(owning_membership, Namespace):
+            return owning_membership
+        else:
+            return None
 
     @property
     def owning_relationship(self) -> Optional["Relationship"]:
         owning_relationship_id = self._get_owning_relationship_id()
-        return self._env[owning_relationship_id] if self._owning_relationship_id else None
+        return self._env[owning_relationship_id] if owning_relationship_id else None
 
     def _get_owning_relationship_id(self) -> Optional[str]:
         raise NotImplementedError
@@ -119,20 +107,19 @@ class Element(IElementID):
         # TODO: Implement method to return the full ownership-qualified name of this Element.
         # This should be represented in a form that is valid according to the KerML textual concrete syntax for qualified names.
         # Return null if this Element has no owningNamespace or if there is not a complete ownership chain of named Namespaces.
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @property
     def short_name(self) -> Optional[str]:
+        return self._get_short_name()
+
+    def _get_short_name(self):
         return self.effective_short_name()
 
     @property
     def textual_representation(self) -> List["TextualRepresentation"]:
-        return self._get_textual_representation()
-
-    def _get_textual_representation(self) -> List["TextualRepresentation"]:
-        # TODO: Implement method to return TextualRepresentations that annotate this Element.
-        # This should be a subset of ownedElement and annotatingElement, and should be ordered.
-        raise NotImplementedError()
+        from .annotating import TextualRepresentation
+        return [item for item in self.owned_element if isinstance(item, TextualRepresentation)]
 
     def effective_name(self) -> Optional[str]:
         return self.declared_name
@@ -146,11 +133,11 @@ class Element(IElementID):
             return None
         if self._is_basic_name(name):
             return name
-        return repr(name.replace('\'', '\\\''))
+        else:
+            return repr(name)
 
     def _is_basic_name(self, name: str) -> bool:
-        # TODO: Implement method to check if the name has the form of a basic name
-        raise NotImplementedError()
+        return bool(re.fullmatch(r'^[a-zA-Z_][a-zA-Z\d_]*$', name))
 
     def library_namespace(self) -> Optional["Namespace"]:
         if self.owning_relationship:
@@ -311,11 +298,6 @@ class Relationship(Element):
 
     @property
     def related_element(self) -> List[Element]:
-        return self._get_related_element()
-
-    def _get_related_element(self) -> List[Element]:
-        # This should be a list of ElementProxy objects, ordered with source elements followed by target elements.
-        # The list may contain non-unique elements.
         return [*self.source, *self.target]
 
     @property
@@ -326,7 +308,7 @@ class Relationship(Element):
         # TODO: Implement this method to return the owned related elements.
         # This should be a list of ElementProxy objects that are owned by this Relationship.
         # These elements are a subset of relatedElement and should be ordered.
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @property
     def owning_related_element(self) -> Optional[Element]:
@@ -336,28 +318,24 @@ class Relationship(Element):
         # TODO: Implement this method to return the owning related element.
         # This should return an ElementProxy object that owns this Relationship, if any.
         # It is a subset of relatedElement.
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def library_namespace(self) -> Optional['Namespace']:
         # Implement the libraryNamespace operation
         owning_related_element = self.owning_related_element
         if owning_related_element is not None:
-            return owning_related_element.get().library_namespace()
-        owning_relationship = self._get_owning_relationship()
+            return owning_related_element.library_namespace()
+        owning_relationship = self.owning_relationship
         if owning_relationship is not None:
             return owning_relationship.library_namespace()
         return None
-
-    def _get_owning_relationship(self) -> Optional['Relationship']:
-        # TODO: Implement this method to return the owning relationship.
-        # This should return an ElementProxy object that represents the owning relationship, if any.
-        raise NotImplementedError()
 
     def check_constraints(self):
         """
         Check all constraints for the Relationship.
         Raises ConstraintsError if any constraint is not satisfied.
         """
+        Element.check_constraints(self)
         self._check_derive_relationship_related_element()
 
     def _check_derive_relationship_related_element(self):
