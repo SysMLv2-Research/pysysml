@@ -38,7 +38,7 @@ class Element(IElementID):
         self._owning_relationship_id: Optional[str] = None
         self.owning_relationship = owning_relationship  # use the property setter to initialize
         self._owned_relationships: EList['Relationship'] = (
-            EList(env=self._env, initial_elements=owned_relationships or []))
+            EList(env=self.env, initial_elements=owned_relationships or []))
 
     @property
     def documentation(self) -> List["Documentation"]:
@@ -96,7 +96,7 @@ class Element(IElementID):
     @property
     def owning_relationship(self) -> Optional["Relationship"]:
         if self._owning_relationship_id:
-            return self._env[self._owning_relationship_id]
+            return self.env[self._owning_relationship_id]
         else:
             return None
 
@@ -104,7 +104,7 @@ class Element(IElementID):
     def owning_relationship(self, value: Union[str, 'Relationship']):
         if value is not None:
             if isinstance(value, str):
-                value = self._env[value]
+                value = self.env[value]
             if isinstance(value, Relationship):
                 self._owning_relationship_id = value.element_id
             else:
@@ -308,10 +308,10 @@ class Relationship(Element):
             element_id=element_id,
         )
         self._is_implied = is_implied
-        self._sources: EList[Element] = EList(env=self._env, initial_elements=source or [])
-        self._targets: EList[Element] = EList(env=self._env, initial_elements=target or [])
+        self._sources: EList[Element] = EList(env=self.env, initial_elements=source or [])
+        self._targets: EList[Element] = EList(env=self.env, initial_elements=target or [])
         self._owned_related_elements: EList[Element] = (
-            EList(env=self._env, initial_elements=owning_related_elements or []))
+            EList(env=self.env, initial_elements=owning_related_elements or []))
         self._owning_related_element_id: Optional[str] = None
         self.owning_related_element = owned_related_element
 
@@ -329,7 +329,7 @@ class Relationship(Element):
 
     @property
     def related_elements(self) -> EFrozenList[Element]:
-        return EFrozenList(self._env, [*self.sources, *self.targets])
+        return EFrozenList(self.env, [*self.sources, *self.targets])
 
     @property
     def owned_related_elements(self) -> EList[Element]:
@@ -338,7 +338,7 @@ class Relationship(Element):
     @property
     def owning_related_element(self) -> Optional[Element]:
         if self._owning_relationship_id is not None:
-            return self._env[self._owning_related_element_id]
+            return self.env[self._owning_related_element_id]
         else:
             return None
 
@@ -346,7 +346,7 @@ class Relationship(Element):
     def owning_related_element(self, value: Optional[Union[str, Element]]):
         if value is not None:
             if isinstance(value, str):
-                value = self._env[value]
+                value = self.env[value]
             if isinstance(value, Element):
                 self._owning_related_element_id = value.element_id
             else:
