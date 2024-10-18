@@ -136,6 +136,18 @@ class TestEFrozenList:
         assert isinstance(sliced, EFrozenList)
         assert len(sliced) == 2
 
+    def test_elist_methods(self, env, mock_element):
+        elist = EFrozenList(env, [mock_element] * 3)
+        assert elist.count(mock_element) == 3
+        assert elist.index(mock_element) == 0
+        assert mock_element in elist
+
+    def test_elist_repr_and_eq(self, env, mock_element):
+        elist1 = EFrozenList(env, [mock_element])
+        elist2 = EFrozenList(env, [mock_element])
+        assert repr(elist1) == f"EFrozenList([{mock_element!r}])"
+        assert elist1 == elist2
+
 
 @pytest.mark.unittest
 class TestExceptions:

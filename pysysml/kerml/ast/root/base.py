@@ -65,7 +65,7 @@ class Element(IElementID):
     def owned_elements(self) -> List["Element"]:
         retval = []
         for relationship in self.owned_relationships:
-            retval.extend(relationship.owned_related_element)
+            retval.extend(relationship.owned_related_elements)
         return retval
 
     @property

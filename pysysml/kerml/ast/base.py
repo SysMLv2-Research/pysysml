@@ -117,12 +117,30 @@ class _AbstractEList(ABC, Generic[T], Sequence, Sized):
         return len(self) == len(other) and all(x == y for x, y in zip(self, other))
 
 
-class EFrozenList(_AbstractEList):
+class EFrozenList(_AbstractEList, Generic[T]):
+    def __init__(self, env: Env, initial_elements: Optional[List[Union[str, T]]] = None):
+        _AbstractEList.__init__(self, env, initial_elements)
+
     def __getitem__(self, index: Union[int, slice]) -> Union[T, 'EFrozenList[T]']:
         return _AbstractEList.__getitem__(self, index)
 
+    def __len__(self) -> int:
+        return _AbstractEList.__len__(self)
 
-class EList(_AbstractEList, MutableSequence):
+    def __iter__(self) -> Iterator[T]:
+        yield from _AbstractEList.__iter__(self)
+
+    def __contains__(self, value: Union[str, T]) -> bool:
+        return _AbstractEList.__contains__(self, value)
+
+    def index(self, value: Union[str, T], start: int = 0, stop: Optional[int] = None) -> int:
+        return _AbstractEList.index(self, value, start, stop)
+
+    def count(self, value: Union[str, T]) -> int:
+        return _AbstractEList.count(self, value)
+
+
+class EList(_AbstractEList, Generic[T], MutableSequence):
     def __init__(self, env: Env, initial_elements: Optional[List[Union[str, T]]] = None):
         _AbstractEList.__init__(self, env, initial_elements)
 
@@ -138,6 +156,15 @@ class EList(_AbstractEList, MutableSequence):
     def __delitem__(self, index: Union[int, slice]):
         del self._elements[index]
 
+    def __len__(self) -> int:
+        return _AbstractEList.__len__(self)
+
+    def __iter__(self) -> Iterator[T]:
+        yield from _AbstractEList.__iter__(self)
+
+    def __contains__(self, value: Union[str, T]) -> bool:
+        return _AbstractEList.__contains__(self, value)
+
     def insert(self, index: int, value: Union[str, T]):
         self._elements.insert(index, _to_element_id(value))
 
@@ -146,3 +173,9 @@ class EList(_AbstractEList, MutableSequence):
 
     def extend(self, values: List[Union[str, T]]):
         self._elements.extend(_to_element_id(v) for v in values)
+
+    def index(self, value: Union[str, T], start: int = 0, stop: Optional[int] = None) -> int:
+        return _AbstractEList.index(self, value, start, stop)
+
+    def count(self, value: Union[str, T]) -> int:
+        return _AbstractEList.count(self, value)
