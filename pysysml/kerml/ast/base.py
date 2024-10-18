@@ -1,5 +1,7 @@
 import uuid
-from typing import Dict, Any, Optional
+from abc import ABC
+from collections.abc import MutableSequence
+from typing import Dict, Any, List, Union, Optional, Iterator, TypeVar, Generic, Sequence
 
 
 class ElementNotFoundError(Exception):
@@ -47,74 +49,88 @@ class ConstraintsError(Exception):
     pass
 
 
-class IElementID:
+class IElementID(ABC):
     def __init__(self, env: Env, element_id: Optional[str] = None):
         self._env = env
-        self.element_id: str = element_id if element_id else str(uuid.uuid4())
-        self._env[self.element_id] = self
+        self._element_id: str = element_id if element_id else str(uuid.uuid4())
+        self._env[self._element_id] = self
+
+    @property
+    def element_id(self) -> str:
+        return self._element_id
 
     def __del__(self):
         if self.element_id in self._env:
-            del self._env[self.element_id]
+            del self._env[self._element_id]
 
 
-from typing import List, Union, Optional, Iterator
-from collections.abc import MutableSequence
+def _to_element_id(value: Union[str, IElementID]) -> str:
+    return value.element_id if isinstance(value, IElementID) else value
 
 
-class Sequence(MutableSequence):
-    def __init__(self, env: Env, initial_elements: Optional[List[Union[str, IElementID]]] = None):
+T = TypeVar('T', bound=IElementID)
+
+
+class _AbstractEList(ABC, Generic[T], Sequence[T]):
+    def __init__(self, env: Env, initial_elements: Optional[List[Union[str, T]]] = None):
         self._env = env
-        self._elements: List[str] = []
-        if initial_elements:
-            self.extend(initial_elements)
+        self._elements: List[str] = [_to_element_id(v) for v in (initial_elements or [])]
 
-    def _to_element_id(self, value: Union[str, IElementID]) -> str:
-        return value.element_id if isinstance(value, IElementID) else value
-
-    def _to_ielement(self, element_id: str) -> IElementID:
+    def _to_ielement(self, element_id: str) -> T:
         return self._env[element_id]
 
-    def __getitem__(self, index: Union[int, slice]) -> Union[IElementID, List[IElementID]]:
-        if isinstance(index, slice):
-            return [self._to_ielement(element_id) for element_id in self._elements[index]]
-        return self._to_ielement(self._elements[index])
-
-    def __setitem__(self, index: Union[int, slice], value: Union[str, IElementID, List[Union[str, IElementID]]]):
-        if isinstance(index, slice):
-            self._elements[index] = [self._to_element_id(v) for v in value]
+    def __getitem__(self, index: Union[int, slice]) -> Union[T, '_AbstractEList[T]']:
+        result = self._elements[index]
+        if isinstance(result, list):
+            return self.__class__(env=self._env, initial_elements=result)
         else:
-            self._elements[index] = self._to_element_id(value)
-
-    def __delitem__(self, index: Union[int, slice]):
-        del self._elements[index]
+            self._to_ielement(result)
 
     def __len__(self) -> int:
         return len(self._elements)
 
-    def insert(self, index: int, value: Union[str, IElementID]):
-        self._elements.insert(index, self._to_element_id(value))
-
-    def append(self, value: Union[str, IElementID]):
-        self._elements.append(self._to_element_id(value))
-
-    def extend(self, values: List[Union[str, IElementID]]):
-        self._elements.extend(self._to_element_id(v) for v in values)
-
-    def __iter__(self) -> Iterator[IElementID]:
+    def __iter__(self) -> Iterator[T]:
         return (self._to_ielement(element_id) for element_id in self._elements)
 
-    def __contains__(self, value: Union[str, IElementID]) -> bool:
-        return self._to_element_id(value) in self._elements
+    def __contains__(self, value: Union[str, T]) -> bool:
+        return _to_element_id(value) in self._elements
 
-    def index(self, value: Union[str, IElementID], start: int = 0, stop: Optional[int] = None) -> int:
-        return self._elements.index(self._to_element_id(value), start, stop)
+    def index(self, value: Union[str, T], start: int = 0, stop: Optional[int] = None) -> int:
+        return self._elements.index(_to_element_id(value), start, stop)
 
-    def count(self, value: Union[str, IElementID]) -> int:
-        return self._elements.count(self._to_element_id(value))
-
-    def remove(self, value: Union[str, IElementID]):
-        self._elements.remove(self._to_element_id(value))
+    def count(self, value: Union[str, T]) -> int:
+        return self._elements.count(_to_element_id(value))
 
     def __repr__(self):
-        return f"Sequence({self._elements})"
+        return f"{self.__class__.__name__}({[self._to_ielement(item) for item in self._elements]})"
+
+
+class EFrozenList(_AbstractEList):
+    def __getitem__(self, index: Union[int, slice]) -> Union[T, 'EFrozenList[T]']:
+        return _AbstractEList.__getitem__(self, index)
+
+
+class EList(_AbstractEList, MutableSequence[T]):
+    def __init__(self, env: Env, initial_elements: Optional[List[Union[str, T]]] = None):
+        _AbstractEList.__init__(self, env, initial_elements)
+
+    def __getitem__(self, index: Union[int, slice]) -> Union[T, 'EList[T]']:
+        return _AbstractEList.__getitem__(self, index)
+
+    def __setitem__(self, index: Union[int, slice], value: Union[str, T, List[Union[str, T]]]):
+        if isinstance(index, slice):
+            self._elements[index] = [_to_element_id(v) for v in value]
+        else:
+            self._elements[index] = _to_element_id(value)
+
+    def __delitem__(self, index: Union[int, slice]):
+        del self._elements[index]
+
+    def insert(self, index: int, value: Union[str, T]):
+        self._elements.insert(index, _to_element_id(value))
+
+    def append(self, value: Union[str, T]):
+        self._elements.append(_to_element_id(value))
+
+    def extend(self, values: List[Union[str, T]]):
+        self._elements.extend(_to_element_id(v) for v in values)

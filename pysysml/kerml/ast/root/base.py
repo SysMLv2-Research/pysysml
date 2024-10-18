@@ -1,23 +1,30 @@
 import re
-import uuid
-from typing import List, Optional
+from typing import List, Optional, Union
 
-from ..base import Env, IElementID, ConstraintsError
+from ..base import Env, IElementID, ConstraintsError, EList, EFrozenList
+
+
+def _is_basic_name(name: str) -> bool:
+    return bool(re.fullmatch(r'^[a-zA-Z_][a-zA-Z\d_]*$', name))
 
 
 # noinspection PyUnresolvedReferences
 class Element(IElementID):
-    def __init__(self,
-                 env: Env,
-                 alias_ids: List[str],
-                 declared_name: Optional[str],
-                 declared_short_name: Optional[str],
-                 is_implied_included: bool = False,
-                 element_id: Optional[str] = None):
+    def __init__(
+            self,
+            env: Env,
+            alias_ids: Optional[List[str]] = None,
+            declared_name: Optional[str] = None,
+            declared_short_name: Optional[str] = None,
+            owning_relationship: Optional[Union[str, Relationship]] = None,
+            owned_relationships: Optional[List[Union[str, Relationship]]] = None,
+            is_implied_included: bool = False,
+            element_id: Optional[str] = None,
+    ):
         super().__init__(env, element_id)
 
         # Various alternative identifiers for this Element. Generally, these will be set by tools.
-        self.alias_ids: List[str] = alias_ids
+        self.alias_ids: List[str] = list(alias_ids or [])
 
         # The declared name of this Element.
         self.declared_name: Optional[str] = declared_name
@@ -28,10 +35,15 @@ class Element(IElementID):
         # Whether all necessary implied Relationships have been included in the ownedRelationships of this Element.
         self.is_implied_included: bool = is_implied_included
 
+        self._owning_relationship_id: Optional[str] = None
+        self.owning_relationship = owning_relationship  # use the property setter to initialize
+        self._owned_relationships: EList['Relationship'] = (
+            EList(env=self._env, initial_elements=owned_relationships or []))
+
     @property
     def documentation(self) -> List["Documentation"]:
         from .annotating import Documentation
-        return [item for item in self.owned_element if isinstance(item, Documentation)]
+        return [item for item in self.owned_elements if isinstance(item, Documentation)]
 
     @property
     def is_library_element(self) -> bool:
@@ -45,14 +57,14 @@ class Element(IElementID):
         return self.effective_name()
 
     @property
-    def owned_annotation(self) -> List["Annotation"]:
+    def owned_annotations(self) -> List["Annotation"]:
         from .annotating import Annotation
-        return [item for item in self.owned_relationship if isinstance(item, Annotation)]
+        return [item for item in self.owned_relationships if isinstance(item, Annotation)]
 
     @property
-    def owned_element(self) -> List["Element"]:
+    def owned_elements(self) -> List["Element"]:
         retval = []
-        for relationship in self.owned_relationship:
+        for relationship in self.owned_relationships:
             retval.extend(relationship.owned_related_element)
         return retval
 
@@ -83,31 +95,32 @@ class Element(IElementID):
 
     @property
     def owning_relationship(self) -> Optional["Relationship"]:
-        owning_relationship_id = self._get_owning_relationship_id()
-        return self._env[owning_relationship_id] if owning_relationship_id else None
+        if self._owning_relationship_id:
+            return self._env[self._owning_relationship_id]
+        else:
+            return None
 
-    def _get_owning_relationship_id(self) -> Optional[str]:
-        raise NotImplementedError
+    @owning_relationship.setter
+    def owning_relationship(self, value: Union[str, 'Relationship']):
+        if value is not None:
+            if isinstance(value, str):
+                value = self._env[value]
+            if isinstance(value, Relationship):
+                self._owning_relationship_id = value.element_id
+            else:
+                raise TypeError(f'Type error when setting owning_relationship for element {self!r},'
+                                f'Relationship expected but {value!r} found.')
+        else:
+            self._owning_relationship_id = None
 
     @property
-    def owned_relationship(self) -> List["Relationship"]:
-        return [
-            self._env[id_]
-            for id_ in self._get_owned_relationship_ids()
-        ]
-
-    def _get_owned_relationship_ids(self) -> List[str]:
-        raise NotImplementedError
+    def owned_relationships(self) -> EList["Relationship"]:
+        return self._owned_relationships
 
     @property
     def qualified_name(self) -> Optional[str]:
-        return self._get_qualified_name()
-
-    def _get_qualified_name(self) -> Optional[str]:
-        # TODO: Implement method to return the full ownership-qualified name of this Element.
-        # This should be represented in a form that is valid according to the KerML textual concrete syntax for qualified names.
-        # Return null if this Element has no owningNamespace or if there is not a complete ownership chain of named Namespaces.
-        raise NotImplementedError
+        from .namespace import Namespace
+        return self._compute_qualified_name()
 
     @property
     def short_name(self) -> Optional[str]:
@@ -117,9 +130,9 @@ class Element(IElementID):
         return self.effective_short_name()
 
     @property
-    def textual_representation(self) -> List["TextualRepresentation"]:
+    def textual_representations(self) -> List["TextualRepresentation"]:
         from .annotating import TextualRepresentation
-        return [item for item in self.owned_element if isinstance(item, TextualRepresentation)]
+        return [item for item in self.owned_elements if isinstance(item, TextualRepresentation)]
 
     def effective_name(self) -> Optional[str]:
         return self.declared_name
@@ -131,13 +144,10 @@ class Element(IElementID):
         name = self.name or self.short_name
         if name is None:
             return None
-        if self._is_basic_name(name):
+        if _is_basic_name(name):
             return name
         else:
             return repr(name)
-
-    def _is_basic_name(self, name: str) -> bool:
-        return bool(re.fullmatch(r'^[a-zA-Z_][a-zA-Z\d_]*$', name))
 
     def library_namespace(self) -> Optional["Namespace"]:
         if self.owning_relationship:
@@ -163,7 +173,7 @@ class Element(IElementID):
         """
         from .annotating import Documentation
 
-        expected_documentation = [elem for elem in self.owned_element if isinstance(elem, Documentation)]
+        expected_documentation = [elem for elem in self.owned_elements if isinstance(elem, Documentation)]
         if self.documentation != expected_documentation:
             raise ConstraintsError("Documentation constraint violated")
 
@@ -190,10 +200,10 @@ class Element(IElementID):
         from .annotating import Annotation
 
         expected_owned_annotation = [
-            rel for rel in self.owned_relationship
+            rel for rel in self.owned_relationships
             if isinstance(rel, Annotation) and rel.annotated_element == self
         ]
-        if self.owned_annotation != expected_owned_annotation:
+        if self.owned_annotations != expected_owned_annotation:
             raise ConstraintsError("OwnedAnnotation constraint violated")
 
     def _check_derive_element_owned_element(self):
@@ -201,10 +211,10 @@ class Element(IElementID):
         Constraint: The ownedElements of an Element are the ownedRelatedElements of its ownedRelationships.
         """
         expected_owned_element = [
-            elem for rel in self.owned_relationship
+            elem for rel in self.owned_relationships
             for elem in rel.owned_related_element
         ]
-        if self.owned_element != expected_owned_element:
+        if self.owned_elements != expected_owned_element:
             raise ConstraintsError("OwnedElement constraint violated")
 
     def _check_derive_element_owner(self):
@@ -244,9 +254,9 @@ class Element(IElementID):
         Constraint: The textualRepresentations of an Element are its ownedElements that are TextualRepresentations.
         """
         from .annotating import TextualRepresentation
-        expected_textual_representation = [elem for elem in self.owned_element if
+        expected_textual_representation = [elem for elem in self.owned_elements if
                                            isinstance(elem, TextualRepresentation)]
-        if self.textual_representation != expected_textual_representation:
+        if self.textual_representations != expected_textual_representation:
             raise ConstraintsError("TextualRepresentation constraint violated")
 
     def _check_derive_owning_namespace(self):
@@ -262,63 +272,88 @@ class Element(IElementID):
         Constraint: If an Element has any ownedRelationships for which isImplied = true,
         then the Element must also have isImpliedIncluded = true.
         """
-        if any(rel.is_implied for rel in self.owned_relationship) and not self.is_implied_included:
+        if any(rel.is_implied for rel in self.owned_relationships) and not self.is_implied_included:
             raise ConstraintsError("IsImpliedIncluded constraint violated")
 
 
 class Relationship(Element):
-    def __init__(self,
-                 env: Env,
-                 is_implied: bool,
-                 source_element_ids: List[str],
-                 target_element_ids: List[str],
-                 element_id: Optional[str] = None):
-        self._env = env
-        self._is_implied = is_implied
-        self._source = source_element_ids
-        self._target = target_element_ids
-        self._element_id = element_id if element_id is not None else str(uuid.uuid4())
-        self._env[self._element_id] = self
+    def __init__(
+            self,
+            env: Env,
 
-    @property
-    def element_id(self) -> str:
-        return self._element_id
+            is_implied: bool = False,
+            source: Optional[List[Union[str, 'Relationship']]] = None,
+            target: Optional[List[Union[str, 'Relationship']]] = None,
+            owning_related_elements: Optional[List[Union[str, Element]]] = None,
+            owned_related_element: Optional[Union[str, Element]] = None,
+
+            alias_ids: Optional[List[str]] = None,
+            declared_name: Optional[str] = None,
+            declared_short_name: Optional[str] = None,
+            owning_relationship: Optional[Union[str, 'Relationship']] = None,
+            owned_relationships: Optional[List[Union[str, 'Relationship']]] = None,
+            is_implied_included: bool = False,
+
+            element_id: Optional[str] = None
+    ):
+        Element.__init__(
+            self,
+            env=env,
+            alias_ids=alias_ids,
+            declared_name=declared_name,
+            declared_short_name=declared_short_name,
+            owning_relationship=owning_relationship,
+            owned_relationships=owned_relationships,
+            is_implied_included=is_implied_included,
+            element_id=element_id,
+        )
+        self._is_implied = is_implied
+        self._sources: EList[Element] = EList(env=self._env, initial_elements=source or [])
+        self._targets: EList[Element] = EList(env=self._env, initial_elements=target or [])
+        self._owned_related_elements: EList[Element] = (
+            EList(env=self._env, initial_elements=owning_related_elements or []))
+        self._owning_related_element_id: Optional[str] = None
+        self.owning_related_element = owned_related_element
 
     @property
     def is_implied(self) -> bool:
         return self._is_implied
 
     @property
-    def source(self) -> List[Element]:
-        return [self._env[s] for s in self._source]
+    def sources(self) -> EList[Element]:
+        return self._sources
 
     @property
-    def target(self) -> List[Element]:
-        return [self._env[t] for t in self._target]
+    def targets(self) -> EList[Element]:
+        return self._targets
 
     @property
-    def related_element(self) -> List[Element]:
-        return [*self.source, *self.target]
+    def related_elements(self) -> EFrozenList[Element]:
+        return EFrozenList(self._env, [*self.sources, *self.targets])
 
     @property
-    def owned_related_element(self) -> List[Element]:
-        return self._get_owned_related_element()
-
-    def _get_owned_related_element(self) -> List[Element]:
-        # TODO: Implement this method to return the owned related elements.
-        # This should be a list of ElementProxy objects that are owned by this Relationship.
-        # These elements are a subset of relatedElement and should be ordered.
-        raise NotImplementedError
+    def owned_related_elements(self) -> EList[Element]:
+        return self._owned_related_elements
 
     @property
     def owning_related_element(self) -> Optional[Element]:
-        return self._get_owning_related_element()
+        if self._owning_relationship_id is not None:
+            return self._env[self._owning_related_element_id]
+        else:
+            return None
 
-    def _get_owning_related_element(self) -> Optional[Element]:
-        # TODO: Implement this method to return the owning related element.
-        # This should return an ElementProxy object that owns this Relationship, if any.
-        # It is a subset of relatedElement.
-        raise NotImplementedError
+    @owning_related_element.setter
+    def owning_related_element(self, value: Optional[Union[str, Element]]):
+        if value is not None:
+            if isinstance(value, str):
+                value = self._env[value]
+            if isinstance(value, Element):
+                self._owning_related_element_id = value.element_id
+            else:
+                raise TypeError(f'Type error when setting owning_relationship for element {self!r},'
+                                f'Relationship expected but {value!r} found.')
+        else:
+            self._owning_related_element_id = None
 
     def library_namespace(self) -> Optional['Namespace']:
         # Implement the libraryNamespace operation
@@ -337,6 +372,8 @@ class Relationship(Element):
         """
         Element.check_constraints(self)
         self._check_derive_relationship_related_element()
+        self._check_consistence_of_owned_related_element()
+        self._check_consistence_of_owning_related_element()
 
     def _check_derive_relationship_related_element(self):
         """
@@ -344,7 +381,19 @@ class Relationship(Element):
         The relatedElements of a Relationship consist of all of its source Elements followed by all of its target Elements.
         relatedElement = source->union(target)
         """
-        expected_related_elements = self.source + self.target
-        if self.related_element != expected_related_elements:
+        expected_related_elements = self.sources + self.targets
+        if self.related_elements != expected_related_elements:
             raise ConstraintsError(
                 "The relatedElement property must be the union of source and target elements, in that order.")
+
+    def _check_consistence_of_owned_related_element(self):
+        for item in self.owned_related_elements:
+            if item not in self.related_elements:
+                raise ConstraintsError(
+                    f"The item {item!r} in owned_related_elements not in the related_elements.")
+
+    def _check_consistence_of_owning_related_element(self):
+        item = self.owning_related_element
+        if item is not None and item not in self.related_elements:
+            raise ConstraintsError(
+                f"The item {item!r} of owning_related_elements not in the related_elements.")
