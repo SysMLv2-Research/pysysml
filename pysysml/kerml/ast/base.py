@@ -51,7 +51,7 @@ class Env(Sized, Generic[T]):
         return len(self._elements)
 
     def add(self, element: T):
-        self[element.element_id] = element
+        self[element] = element
 
     def __repr__(self):
         return f'<{self.__class__.__name__} {hex(id(self))}, {plural_word(len(self._elements), "item")}>'
