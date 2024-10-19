@@ -1,7 +1,7 @@
 from typing import Optional, List
 
-from .base import Relationship, ConstraintsError
-from ..base import Env
+from .base import Relationship, ConstraintsError, Element
+from ..base import Env, EConn
 
 
 class Dependency(Relationship):
@@ -31,22 +31,22 @@ class Dependency(Relationship):
         )
 
     @property
-    def clients(self):
+    def clients(self) -> EConn[Element]:
         return self.sources
 
     @property
-    def suppliers(self):
+    def suppliers(self) -> EConn[Element]:
         return self.targets
 
-    def _check_number_of_clients(self):
+    def _check_num_of_clients(self):
         if len(self.clients) < 1:
             raise ConstraintsError('Dependency should have no less than 1 client.')
 
-    def _check_number_of_suppliers(self):
+    def _check_num_of_suppliers(self):
         if len(self.suppliers) < 1:
             raise ConstraintsError('Dependency should have no less than 1 supplier.')
 
     def check_constraints(self):
         super().check_constraints()
-        self._check_number_of_clients()
-        self._check_number_of_suppliers()
+        self._check_num_of_clients()
+        self._check_num_of_suppliers()

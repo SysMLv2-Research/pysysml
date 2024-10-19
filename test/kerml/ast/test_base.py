@@ -408,3 +408,21 @@ class TestEConn:
         assert addings == [e1, e2, e3, e4, e5]
         assert remove_count == 4
         assert removings == [e1, e2, e3, e4]
+
+        conn.set_to(e5)
+        assert len(conn) == 1
+        assert list(conn) == [e5]
+        assert e1 not in conn
+        assert e1.element_id not in conn
+        assert e2 not in conn
+        assert e2.element_id not in conn
+        assert e3 not in conn
+        assert e3.element_id not in conn
+        assert e4 not in conn
+        assert e4.element_id not in conn
+        assert e5 in conn
+        assert e5.element_id in conn
+        assert add_count == 5
+        assert addings == [e1, e2, e3, e4, e5]
+        assert remove_count == 4
+        assert removings == [e1, e2, e3, e4]

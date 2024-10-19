@@ -98,10 +98,10 @@ class Element(IElementID):
             return None
 
     def _fn_add_to_owned_relationship(self, relationship: 'Relationship'):
-        relationship._owning_related_elements.add(self, no_conj=True)
+        relationship.owning_related_element = self
 
     def _fn_remove_from_owned_relationship(self, relationship: 'Relationship'):
-        relationship._owning_related_elements.remove(self, no_conj=True)
+        relationship.owning_related_element = None
 
     @property
     def owned_relationships(self) -> EConn['Relationship']:
@@ -344,10 +344,10 @@ class Relationship(Element):
         return [*self._sources, *self.targets]
 
     def _fn_add_to_owned_related_element(self, element: Element):
-        element._owning_relationships.add(self, no_conj=True)
+        element.owning_relationship = self
 
     def _fn_remove_from_owned_related_element(self, element: Element):
-        element._owning_relationships.remove(self, no_conj=True)
+        element.owning_relationship = None
 
     @property
     def owned_related_elements(self) -> EConn[Element]:
