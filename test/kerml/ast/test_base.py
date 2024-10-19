@@ -141,8 +141,17 @@ class TestEConn:
         assert conn
         assert repr(conn) == f'EConn({e2!r})'
 
-        with pytest.raises(KeyError):
-            conn.remove(e1)
+        conn.remove(e1)
+        assert len(conn) == 1
+        assert list(conn) == [e2]
+        assert e1 not in conn
+        assert e1.element_id not in conn
+        assert e2 in conn
+        assert e2.element_id in conn
+        assert conn.first() == e2
+        assert conn == [e2]
+        assert conn
+        assert repr(conn) == f'EConn({e2!r})'
 
         conn.remove(e2)
         assert len(conn) == 0

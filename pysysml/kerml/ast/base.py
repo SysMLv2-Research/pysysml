@@ -134,10 +134,10 @@ class EConn(Generic[T]):
     def remove(self, value: Union[T, str], no_conj: bool = False) -> 'EConn[T]':
         element_id = _to_element_id(value)
         element = self.env[element_id]
-        isin = element_id in self._set
-        self._set.remove(element_id)
-        if isin and not no_conj and self._fn_remove_conj:
-            self._fn_remove_conj(element)
+        if element_id in self._set:
+            self._set.remove(element_id)
+            if not no_conj and self._fn_remove_conj:
+                self._fn_remove_conj(element)
         return self
 
     def clear(self, no_conj: bool = False):
