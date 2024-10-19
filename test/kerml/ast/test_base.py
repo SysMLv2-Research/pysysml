@@ -3,6 +3,7 @@ import uuid
 import pytest
 
 from pysysml.kerml.ast import Env, IElementID, ElementNotFoundError, EList, EFrozenList, ConstraintsError
+from pysysml.kerml.ast.base import EConn
 
 
 @pytest.fixture
@@ -17,11 +18,16 @@ def env():
     return Env()
 
 
+class MockElement(IElementID):
+    pass
+
+
+class AnotherTypeElement(IElementID):
+    pass
+
+
 @pytest.fixture
 def mock_element(env):
-    class MockElement(IElementID):
-        pass
-
     return MockElement(env)
 
 
@@ -162,3 +168,205 @@ class TestExceptions:
     def test_constraints_error(self):
         with pytest.raises(ConstraintsError):
             raise ConstraintsError("Test constraints error")
+
+
+@pytest.mark.unittest
+class TestEConn:
+    def test_econn(self, env):
+        conn = EConn(env)
+        assert conn.env is env
+        assert len(conn) == 0
+        assert list(conn) == []
+
+    def test_elements(self, env, mock_element):
+        e1 = MockElement(env)
+        e2 = MockElement(env)
+        conn = EConn(env, initial=[e1, e2])
+        assert len(conn) == 2
+        assert e1 in conn
+        assert e1.element_id in conn
+        assert e2 in conn
+        assert e2.element_id in conn
+
+        e3 = MockElement(env)
+        assert e3 not in conn
+        assert e3.element_id not in conn
+        assert list(conn) == [e1, e2]
+
+        with pytest.raises(ElementNotFoundError):
+            conn.add('xxxx')
+
+        conn.remove(e1)
+        assert len(conn) == 1
+        assert list(conn) == [e2]
+        assert e1 not in conn
+        assert e1.element_id not in conn
+        assert e2 in conn
+        assert e2.element_id in conn
+
+        with pytest.raises(KeyError):
+            conn.remove(e1)
+
+        conn.remove(e2)
+        assert len(conn) == 0
+        assert list(conn) == []
+        assert e1 not in conn
+        assert e1.element_id not in conn
+        assert e2 not in conn
+        assert e2.element_id not in conn
+
+    def test_type_check(self, env):
+        e1 = MockElement(env)
+        e2 = MockElement(env)
+        conn = EConn(env, type_=MockElement, initial=[e1, e2])
+        assert len(conn) == 2
+        assert list(conn) == [e1, e2]
+        assert e1 in conn
+        assert e1.element_id in conn
+        assert e2 in conn
+        assert e2.element_id in conn
+
+        e3 = MockElement(env)
+        conn.add(e3)
+        assert len(conn) == 3
+        assert list(conn) == [e1, e2, e3]
+        assert e1 in conn
+        assert e1.element_id in conn
+        assert e2 in conn
+        assert e2.element_id in conn
+        assert e3 in conn
+        assert e3.element_id in conn
+
+        e4 = AnotherTypeElement(env)
+        with pytest.raises(TypeError):
+            conn.add(e4)
+
+    def test_update(self, env):
+        conn = EConn(env)
+        assert len(conn) == 0
+        assert list(conn) == []
+
+        e1 = MockElement(env)
+        e2 = MockElement(env)
+        assert conn.update([e1, e2]) is conn
+        assert len(conn) == 2
+        assert list(conn) == [e1, e2]
+        assert e1 in conn
+        assert e1.element_id in conn
+        assert e2 in conn
+        assert e2.element_id in conn
+
+    def test_clear(self, env):
+        e1 = MockElement(env)
+        e2 = MockElement(env)
+        conn = EConn(env, type_=MockElement, initial=[e1, e2])
+        assert len(conn) == 2
+        assert list(conn) == [e1, e2]
+        assert e1 in conn
+        assert e1.element_id in conn
+        assert e2 in conn
+        assert e2.element_id in conn
+
+        assert conn.clear() is conn
+        assert len(conn) == 0
+        assert list(conn) == []
+        assert e1 not in conn
+        assert e1.element_id not in conn
+        assert e2 not in conn
+        assert e2.element_id not in conn
+
+    def test_add_conj(self, env):
+        add_count = 0
+        addings = []
+
+        def _fn_add(e):
+            nonlocal add_count
+            add_count += 1
+            addings.append(e)
+
+        e1 = MockElement(env)
+        e2 = MockElement(env)
+        conn = EConn(env, type_=MockElement, initial=[e1, e2], fn_add_conj=_fn_add)
+        assert len(conn) == 2
+        assert list(conn) == [e1, e2]
+        assert e1 in conn
+        assert e1.element_id in conn
+        assert e2 in conn
+        assert e2.element_id in conn
+        assert add_count == 2
+        assert addings == [e1, e2]
+
+        e3 = MockElement(env)
+        conn.add(e3)
+        assert len(conn) == 3
+        assert list(conn) == [e1, e2, e3]
+        assert e1 in conn
+        assert e1.element_id in conn
+        assert e2 in conn
+        assert e2.element_id in conn
+        assert e3 in conn
+        assert e3.element_id in conn
+        assert add_count == 3
+        assert addings == [e1, e2, e3]
+
+        e4 = AnotherTypeElement(env)
+        with pytest.raises(TypeError):
+            conn.add(e4)
+        assert len(conn) == 3
+        assert list(conn) == [e1, e2, e3]
+        assert e1 in conn
+        assert e1.element_id in conn
+        assert e2 in conn
+        assert e2.element_id in conn
+        assert e3 in conn
+        assert e3.element_id in conn
+        assert add_count == 3
+        assert addings == [e1, e2, e3]
+
+    def test_remove_conj(self, env):
+        remove_count = 0
+        removings = []
+
+        def _fn_remove(e):
+            nonlocal remove_count
+            remove_count += 1
+            removings.append(e)
+
+        e1 = MockElement(env)
+        e2 = MockElement(env)
+        e3 = MockElement(env)
+        conn = EConn(env, type_=MockElement, initial=[e1, e2, e3], fn_remove_conj=_fn_remove)
+        assert len(conn) == 3
+        assert list(conn) == [e1, e2, e3]
+        assert e1 in conn
+        assert e1.element_id in conn
+        assert e2 in conn
+        assert e2.element_id in conn
+        assert e3 in conn
+        assert e3.element_id in conn
+        assert remove_count == 0
+        assert removings == []
+
+        conn.remove(e2)
+        assert len(conn) == 2
+        assert list(conn) == [e1, e3]
+        assert e1 in conn
+        assert e1.element_id in conn
+        assert e2 not in conn
+        assert e2.element_id not in conn
+        assert e3 in conn
+        assert e3.element_id in conn
+        assert remove_count == 1
+        assert removings == [e2]
+
+        conn.clear()
+        assert len(conn) == 0
+        assert list(conn) == []
+        assert e1 not in conn
+        assert e1.element_id not in conn
+        assert e2 not in conn
+        assert e2.element_id not in conn
+        assert e3 not in conn
+        assert e3.element_id not in conn
+        assert remove_count == 3
+        assert removings == [e2, e1, e3]

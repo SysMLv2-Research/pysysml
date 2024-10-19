@@ -2,9 +2,10 @@ import uuid
 import weakref
 from abc import ABC
 from collections.abc import MutableSequence, Sequence, Sized
-from typing import Dict, List, Union, Optional, Iterator, TypeVar, Generic
+from typing import Dict, List, Union, Optional, Iterator, TypeVar, Generic, Iterable, Type, Callable
 
 from hbutils.string import plural_word
+from ordered_set import OrderedSet
 
 
 class ElementNotFoundError(Exception):
@@ -179,3 +180,66 @@ class EList(_AbstractEList, Generic[T], MutableSequence):
 
     def count(self, value: Union[str, T]) -> int:
         return _AbstractEList.count(self, value)
+
+
+_AddConjFuncTyping = Callable[[T], None]
+_RemoveConjFuncTyping = Callable[[T], None]
+
+
+class EConn(Generic[T]):
+    def __init__(self, env: Env, type_: Type[T] = IElementID, initial: Optional[Iterable[Union[str, T]]] = None,
+                 fn_add_conj: Optional[_AddConjFuncTyping] = None,
+                 fn_remove_conj: Optional[_RemoveConjFuncTyping] = None):
+        self._env_ref = weakref.ref(env)
+        self._type: Type[T] = type_
+        self._set = OrderedSet()
+        self._fn_add_conj = fn_add_conj
+        self._fn_remove_conj = fn_remove_conj
+
+        for element in (initial or []):
+            self.add(element)
+
+    @property
+    def env(self) -> Env:
+        return self._env_ref()
+
+    def _to_ielement(self, element_id: str) -> T:
+        return self.env[element_id]
+
+    def __len__(self) -> int:
+        return len(self._set)
+
+    def __iter__(self) -> Iterator[T]:
+        yield from (self._to_ielement(idx) for idx in self._set)
+
+    def __contains__(self, value: Union[str, T]) -> bool:
+        return _to_element_id(value) in self._set
+
+    def add(self, value: Union[T, str], no_conj: bool = False) -> 'EConn[T]':
+        element_id = _to_element_id(value)
+        element = self.env[element_id]
+        if not isinstance(element, self._type):
+            raise TypeError(f'Element type {self._type!r} expected, but {element!r} found.')
+        else:
+            self._set.add(element_id)
+        if not no_conj and self._fn_add_conj:
+            self._fn_add_conj(element)
+        return self
+
+    def update(self, values: Iterable[Union[T, str]], no_conj: bool = False) -> 'EConn[T]':
+        for item in values:
+            self.add(item, no_conj=no_conj)
+        return self
+
+    def remove(self, value: Union[T, str], no_conj: bool = False) -> 'EConn[T]':
+        element_id = _to_element_id(value)
+        element = self.env[element_id]
+        self._set.remove(element_id)
+        if not no_conj and self._fn_remove_conj:
+            self._fn_remove_conj(element)
+        return self
+
+    def clear(self, no_conj: bool = False):
+        for element in list(self._set):
+            self.remove(element, no_conj=no_conj)
+        return self
