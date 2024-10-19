@@ -1,7 +1,7 @@
 import re
 from typing import List, Optional, Union
 
-from ..base import Env, IElementID, ConstraintsError, EList, EFrozenList
+from ..base import Env, IElementID, ConstraintsError, EConn
 
 
 def _is_basic_name(name: str) -> bool:
@@ -33,12 +33,16 @@ class Element(IElementID):
         # Whether all necessary implied Relationships have been included in the ownedRelationships of this Element.
         self.is_implied_included: bool = is_implied_included
 
-
-
-        self._owning_relationship_id: Optional[str] = None
-        self.owning_relationship = owning_relationship  # use the property setter to initialize
-        self._owned_relationships: EList['Relationship'] = (
-            EList(env=self.env, initial_elements=owned_relationships or []))
+        self._owning_relationships: EConn['Relationship'] = EConn(
+            env=self.env, type_=Relationship,
+            fn_add_conj=self._fn_add_to_owning_relationship,
+            fn_remove_conj=self._fn_remove_from_owning_relationship,
+        )
+        self._owned_relationships: EConn['Relationship'] = EConn(
+            env=self.env, type_=Relationship,
+            fn_add_conj=self._fn_add_to_owned_relationship,
+            fn_remove_conj=self._fn_remove_from_owned_relationship,
+        )
 
     @property
     def documentation(self) -> List["Documentation"]:
@@ -93,29 +97,32 @@ class Element(IElementID):
         else:
             return None
 
+    def _fn_add_to_owned_relationship(self, relationship: 'Relationship'):
+        relationship._owning_related_elements.add(self, no_conj=True)
+
+    def _fn_remove_from_owned_relationship(self, relationship: 'Relationship'):
+        relationship._owning_related_elements.remove(self, no_conj=True)
+
+    @property
+    def owned_relationships(self) -> EConn['Relationship']:
+        return self._owned_relationships
+
+    def _fn_add_to_owning_relationship(self, relationship: 'Relationship'):
+        relationship.owned_related_elements.add(self, no_conj=True)
+
+    def _fn_remove_from_owning_relationship(self, relationship: 'Relationship'):
+        relationship.owned_related_elements.remove(self, no_conj=True)
+
     @property
     def owning_relationship(self) -> Optional["Relationship"]:
-        if self._owning_relationship_id:
-            return self.env[self._owning_relationship_id]
-        else:
-            return None
+        return self._owning_relationships.first()
 
     @owning_relationship.setter
-    def owning_relationship(self, value: Union[str, 'Relationship']):
+    def owning_relationship(self, value: Optional[Union[str, 'Relationship']]):
         if value is not None:
-            if isinstance(value, str):
-                value = self.env[value]
-            if isinstance(value, Relationship):
-                self._owning_relationship_id = value.element_id
-            else:
-                raise TypeError(f'Type error when setting owning_relationship for element {self!r},'
-                                f'Relationship expected but {value!r} found.')
+            self._owning_relationships.set_to(value)
         else:
-            self._owning_relationship_id = None
-
-    @property
-    def owned_relationships(self) -> EList["Relationship"]:
-        return self._owned_relationships
+            self._owning_relationships.clear()
 
     @property
     def qualified_name(self) -> Optional[str]:
@@ -155,6 +162,7 @@ class Element(IElementID):
         return None
 
     def check_constraints(self):
+        self._check_num_owning_relationships()
         self._check_derive_element_documentation()
         self._check_derive_element_is_library_element()
         self._check_derive_element_name()
@@ -166,6 +174,11 @@ class Element(IElementID):
         self._check_derive_element_textual_representation()
         self._check_derive_owning_namespace()
         self._check_validate_element_is_implied_included()
+
+    def _check_num_owning_relationships(self):
+        if len(self._owning_relationships) > 1:
+            raise ConstraintsError(
+                f'Owning relationships should not exceed 1 not {self._owning_relationships!r} found.')
 
     def _check_derive_element_documentation(self):
         """
@@ -282,16 +295,9 @@ class Relationship(Element):
             env: Env,
 
             is_implied: bool = False,
-            source: Optional[List[Union[str, 'Relationship']]] = None,
-            target: Optional[List[Union[str, 'Relationship']]] = None,
-            owning_related_elements: Optional[List[Union[str, Element]]] = None,
-            owned_related_element: Optional[Union[str, Element]] = None,
-
             alias_ids: Optional[List[str]] = None,
             declared_name: Optional[str] = None,
             declared_short_name: Optional[str] = None,
-            owning_relationship: Optional[Union[str, 'Relationship']] = None,
-            owned_relationships: Optional[List[Union[str, 'Relationship']]] = None,
             is_implied_included: bool = False,
 
             element_id: Optional[str] = None
@@ -302,58 +308,67 @@ class Relationship(Element):
             alias_ids=alias_ids,
             declared_name=declared_name,
             declared_short_name=declared_short_name,
-            owning_relationship=owning_relationship,
-            owned_relationships=owned_relationships,
             is_implied_included=is_implied_included,
             element_id=element_id,
         )
         self._is_implied = is_implied
-        self._sources: EList[Element] = EList(env=self.env, initial_elements=source or [])
-        self._targets: EList[Element] = EList(env=self.env, initial_elements=target or [])
-        self._owned_related_elements: EList[Element] = (
-            EList(env=self.env, initial_elements=owning_related_elements or []))
-        self._owning_related_element_id: Optional[str] = None
-        self.owning_related_element = owned_related_element
+
+        self._sources: EConn[Element] = EConn(env=self.env, type_=Element)
+        self._targets: EConn[Element] = EConn(env=self.env, type_=Element)
+
+        self._owned_related_elements: EConn[Element] = EConn(
+            env=self.env, type_=Element,
+            fn_add_conj=self._fn_add_to_owned_related_element,
+            fn_remove_conj=self._fn_remove_from_owned_related_element,
+        )
+        self._owning_related_elements: EConn[Element] = EConn(
+            env=self.env, type_=Element,
+            fn_add_conj=self._fn_add_to_owning_related_element,
+            fn_remove_conj=self._fn_remove_from_owning_related_element,
+        )
 
     @property
     def is_implied(self) -> bool:
         return self._is_implied
 
     @property
-    def sources(self) -> EList[Element]:
+    def sources(self) -> EConn[Element]:
         return self._sources
 
     @property
-    def targets(self) -> EList[Element]:
+    def targets(self) -> EConn[Element]:
         return self._targets
 
     @property
-    def related_elements(self) -> EFrozenList[Element]:
-        return EFrozenList(self.env, [*self.sources, *self.targets])
+    def related_elements(self) -> List[Element]:
+        return [*self._sources, *self.targets]
+
+    def _fn_add_to_owned_related_element(self, element: Element):
+        element._owning_relationships.add(self, no_conj=True)
+
+    def _fn_remove_from_owned_related_element(self, element: Element):
+        element._owning_relationships.remove(self, no_conj=True)
 
     @property
-    def owned_related_elements(self) -> EList[Element]:
+    def owned_related_elements(self) -> EConn[Element]:
         return self._owned_related_elements
+
+    def _fn_add_to_owning_related_element(self, element: Element):
+        element.owned_relationships.add(self, no_conj=True)
+
+    def _fn_remove_from_owning_related_element(self, element: Element):
+        element.owned_relationships.remove(self, no_conj=True)
 
     @property
     def owning_related_element(self) -> Optional[Element]:
-        if self._owning_relationship_id is not None:
-            return self.env[self._owning_related_element_id]
-        else:
-            return None
+        return self._owning_related_elements.first()
 
     @owning_related_element.setter
     def owning_related_element(self, value: Optional[Union[str, Element]]):
         if value is not None:
-            if isinstance(value, str):
-                value = self.env[value]
-            if isinstance(value, Element):
-                self._owning_related_element_id = value.element_id
-            else:
-                raise TypeError(f'Type error when setting owning_relationship for element {self!r},'
-                                f'Relationship expected but {value!r} found.')
+            self._owning_related_elements.set_to(value)
         else:
-            self._owning_related_element_id = None
+            self._owning_related_elements.clear()
 
     def library_namespace(self) -> Optional['Namespace']:
         # Implement the libraryNamespace operation
@@ -371,9 +386,15 @@ class Relationship(Element):
         Raises ConstraintsError if any constraint is not satisfied.
         """
         Element.check_constraints(self)
+        self._check_num_owning_related_element()
         self._check_derive_relationship_related_element()
         self._check_consistence_of_owned_related_element()
         self._check_consistence_of_owning_related_element()
+
+    def _check_num_owning_related_element(self):
+        if len(self._owning_related_elements) > 1:
+            raise ConstraintsError(
+                f'Owning relationships should not exceed 1 not {self._owning_related_elements!r} found.')
 
     def _check_derive_relationship_related_element(self):
         """

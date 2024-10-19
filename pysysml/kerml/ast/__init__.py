@@ -1,1 +1,1 @@
-from .base import Env, ElementNotFoundError, ConstraintsError, EList, EFrozenList, IElementID
+from .base import Env, ElementNotFoundError, ConstraintsError, IElementID, EConn

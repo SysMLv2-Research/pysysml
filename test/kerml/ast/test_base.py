@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from pysysml.kerml.ast import Env, IElementID, ElementNotFoundError, EList, EFrozenList, ConstraintsError
+from pysysml.kerml.ast import Env, IElementID, ElementNotFoundError, ConstraintsError
 from pysysml.kerml.ast.base import EConn
 
 
@@ -77,82 +77,6 @@ class TestEnvAndElementID:
         element = IElementID(env, element_id=custom_id)
         assert element.element_id == custom_id
         assert element.env == env
-
-
-@pytest.mark.unittest
-class TestEList:
-    def test_elist_init(self, env, mock_element):
-        elist = EList(env, [mock_element])
-        assert len(elist) == 1
-        assert elist[0] == mock_element
-
-    def test_elist_operations(self, env, mock_element):
-        elist = EList(env)
-        elist.append(mock_element)
-        assert len(elist) == 1
-        assert elist[0] == mock_element
-
-        elist.extend([mock_element, mock_element])
-        assert len(elist) == 3
-
-        del elist[1]
-        assert len(elist) == 2
-
-        elist[0] = mock_element.element_id
-        assert elist[0] == mock_element
-
-        elist.insert(1, mock_element)
-        assert len(elist) == 3
-
-    def test_elist_slicing(self, env, mock_element):
-        elist = EList(env, [mock_element] * 3)
-        sliced = elist[1:]
-        assert isinstance(sliced, EList)
-        assert len(sliced) == 2
-
-        elist[1:] = [mock_element]
-        assert len(elist) == 2
-
-    def test_elist_methods(self, env, mock_element):
-        elist = EList(env, [mock_element] * 3)
-        assert elist.count(mock_element) == 3
-        assert elist.index(mock_element) == 0
-        assert mock_element in elist
-
-    def test_elist_repr_and_eq(self, env, mock_element):
-        elist1 = EList(env, [mock_element])
-        elist2 = EList(env, [mock_element])
-        assert repr(elist1) == f"EList([{mock_element!r}])"
-        assert elist1 == elist2
-
-
-@pytest.mark.unittest
-class TestEFrozenList:
-    def test_efrozenlist_init_and_immutability(self, env, mock_element):
-        efrozen = EFrozenList(env, [mock_element])
-        assert len(efrozen) == 1
-        assert efrozen[0] == mock_element
-
-        with pytest.raises(AttributeError):
-            efrozen.append(mock_element)
-
-    def test_efrozenlist_slicing(self, env, mock_element):
-        efrozen = EFrozenList(env, [mock_element] * 3)
-        sliced = efrozen[1:]
-        assert isinstance(sliced, EFrozenList)
-        assert len(sliced) == 2
-
-    def test_elist_methods(self, env, mock_element):
-        elist = EFrozenList(env, [mock_element] * 3)
-        assert elist.count(mock_element) == 3
-        assert elist.index(mock_element) == 0
-        assert mock_element in elist
-
-    def test_elist_repr_and_eq(self, env, mock_element):
-        elist1 = EFrozenList(env, [mock_element])
-        elist2 = EFrozenList(env, [mock_element])
-        assert repr(elist1) == f"EFrozenList([{mock_element!r}])"
-        assert elist1 == elist2
 
 
 @pytest.mark.unittest
