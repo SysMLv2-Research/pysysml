@@ -154,3 +154,12 @@ class EConn(Generic[T]):
         self.clear(no_conj=no_conj)
         self.add(element, no_conj=no_conj)
         return self
+
+    def __bool__(self) -> bool:
+        return bool(self._set)
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({", ".join(map(repr, self))})'
+
+    def __eq__(self, other) -> bool:
+        return len(self) == len(other) and all(x == y for x, y in zip(self, other))

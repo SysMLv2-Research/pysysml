@@ -103,6 +103,10 @@ class TestEConn:
         assert list(conn) == []
         assert conn.first() is None
 
+        assert conn == []
+        assert not conn
+        assert repr(conn) == 'EConn()'
+
     def test_elements(self, env, mock_element):
         e1 = MockElement(env)
         e2 = MockElement(env)
@@ -113,6 +117,9 @@ class TestEConn:
         assert e2 in conn
         assert e2.element_id in conn
         assert conn.first() == e1
+
+        assert conn == [e1, e2]
+        assert conn
 
         e3 = MockElement(env)
         assert e3 not in conn
@@ -130,6 +137,9 @@ class TestEConn:
         assert e2 in conn
         assert e2.element_id in conn
         assert conn.first() == e2
+        assert conn == [e2]
+        assert conn
+        assert repr(conn) == f'EConn({e2!r})'
 
         with pytest.raises(KeyError):
             conn.remove(e1)
@@ -142,6 +152,8 @@ class TestEConn:
         assert e2 not in conn
         assert e2.element_id not in conn
         assert conn.first() is None
+        assert conn == []
+        assert not conn
 
     def test_type_check(self, env):
         e1 = MockElement(env)
