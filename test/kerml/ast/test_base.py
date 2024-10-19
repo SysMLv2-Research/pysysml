@@ -177,6 +177,7 @@ class TestEConn:
         assert conn.env is env
         assert len(conn) == 0
         assert list(conn) == []
+        assert conn.first() is None
 
     def test_elements(self, env, mock_element):
         e1 = MockElement(env)
@@ -187,6 +188,7 @@ class TestEConn:
         assert e1.element_id in conn
         assert e2 in conn
         assert e2.element_id in conn
+        assert conn.first() == e1
 
         e3 = MockElement(env)
         assert e3 not in conn
@@ -203,6 +205,7 @@ class TestEConn:
         assert e1.element_id not in conn
         assert e2 in conn
         assert e2.element_id in conn
+        assert conn.first() == e2
 
         with pytest.raises(KeyError):
             conn.remove(e1)
@@ -214,6 +217,7 @@ class TestEConn:
         assert e1.element_id not in conn
         assert e2 not in conn
         assert e2.element_id not in conn
+        assert conn.first() is None
 
     def test_type_check(self, env):
         e1 = MockElement(env)
@@ -370,3 +374,101 @@ class TestEConn:
         assert e3.element_id not in conn
         assert remove_count == 3
         assert removings == [e2, e1, e3]
+
+    def test_set_to(self, env):
+        add_count = 0
+        addings = []
+
+        def _fn_add(e):
+            nonlocal add_count
+            add_count += 1
+            addings.append(e)
+
+        remove_count = 0
+        removings = []
+
+        def _fn_remove(e):
+            nonlocal remove_count
+            remove_count += 1
+            removings.append(e)
+
+        e1 = MockElement(env)
+        e2 = MockElement(env)
+        conn = EConn(env, type_=MockElement, initial=[e1, e2], fn_add_conj=_fn_add, fn_remove_conj=_fn_remove)
+        assert len(conn) == 2
+        assert list(conn) == [e1, e2]
+        assert e1 in conn
+        assert e1.element_id in conn
+        assert e2 in conn
+        assert e2.element_id in conn
+        assert add_count == 2
+        assert addings == [e1, e2]
+        assert remove_count == 0
+        assert removings == []
+
+        e3 = MockElement(env)
+        conn.set_to(e3)
+        assert len(conn) == 1
+        assert list(conn) == [e3]
+        assert e1 not in conn
+        assert e1.element_id not in conn
+        assert e2 not in conn
+        assert e2.element_id not in conn
+        assert e3 in conn
+        assert e3.element_id in conn
+        assert add_count == 3
+        assert addings == [e1, e2, e3]
+        assert remove_count == 2
+        assert removings == [e1, e2]
+
+        e4 = MockElement(env)
+        conn.set_to(e4)
+        assert len(conn) == 1
+        assert list(conn) == [e4]
+        assert e1 not in conn
+        assert e1.element_id not in conn
+        assert e2 not in conn
+        assert e2.element_id not in conn
+        assert e3 not in conn
+        assert e3.element_id not in conn
+        assert e4 in conn
+        assert e4.element_id in conn
+        assert add_count == 4
+        assert addings == [e1, e2, e3, e4]
+        assert remove_count == 3
+        assert removings == [e1, e2, e3]
+
+        conn.clear()
+        assert len(conn) == 0
+        assert list(conn) == []
+        assert e1 not in conn
+        assert e1.element_id not in conn
+        assert e2 not in conn
+        assert e2.element_id not in conn
+        assert e3 not in conn
+        assert e3.element_id not in conn
+        assert e4 not in conn
+        assert e4.element_id not in conn
+        assert add_count == 4
+        assert addings == [e1, e2, e3, e4]
+        assert remove_count == 4
+        assert removings == [e1, e2, e3, e4]
+
+        e5 = MockElement(env)
+        conn.set_to(e5)
+        assert len(conn) == 1
+        assert list(conn) == [e5]
+        assert e1 not in conn
+        assert e1.element_id not in conn
+        assert e2 not in conn
+        assert e2.element_id not in conn
+        assert e3 not in conn
+        assert e3.element_id not in conn
+        assert e4 not in conn
+        assert e4.element_id not in conn
+        assert e5 in conn
+        assert e5.element_id in conn
+        assert add_count == 5
+        assert addings == [e1, e2, e3, e4, e5]
+        assert remove_count == 4
+        assert removings == [e1, e2, e3, e4]

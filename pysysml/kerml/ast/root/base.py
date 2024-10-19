@@ -16,8 +16,6 @@ class Element(IElementID):
             alias_ids: Optional[List[str]] = None,
             declared_name: Optional[str] = None,
             declared_short_name: Optional[str] = None,
-            owning_relationship: Optional[Union[str, Relationship]] = None,
-            owned_relationships: Optional[List[Union[str, Relationship]]] = None,
             is_implied_included: bool = False,
             element_id: Optional[str] = None,
     ):
@@ -34,6 +32,8 @@ class Element(IElementID):
 
         # Whether all necessary implied Relationships have been included in the ownedRelationships of this Element.
         self.is_implied_included: bool = is_implied_included
+
+
 
         self._owning_relationship_id: Optional[str] = None
         self.owning_relationship = owning_relationship  # use the property setter to initialize

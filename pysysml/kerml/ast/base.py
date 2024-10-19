@@ -243,3 +243,15 @@ class EConn(Generic[T]):
         for element in list(self._set):
             self.remove(element, no_conj=no_conj)
         return self
+
+    def first(self) -> Optional[T]:
+        for element_id in self._set:
+            return self._to_ielement(element_id)
+        return None
+
+    def set_to(self, element: Union[str, T], no_conj: bool = False):
+        element_id = _to_element_id(element)
+        element = self.env[element_id]
+        self.clear(no_conj=no_conj)
+        self.add(element, no_conj=no_conj)
+        return self
