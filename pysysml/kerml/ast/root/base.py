@@ -108,10 +108,10 @@ class Element(IElementID):
         return self._owned_relationships
 
     def _fn_add_to_owning_relationship(self, relationship: 'Relationship'):
-        relationship.owned_related_elements.add(self, no_conj=True)
+        relationship.owned_related_elements.add(self)
 
     def _fn_remove_from_owning_relationship(self, relationship: 'Relationship'):
-        relationship.owned_related_elements.remove(self, no_conj=True)
+        relationship.owned_related_elements.remove(self)
 
     @property
     def owning_relationship(self) -> Optional["Relationship"]:
@@ -354,10 +354,10 @@ class Relationship(Element):
         return self._owned_related_elements
 
     def _fn_add_to_owning_related_element(self, element: Element):
-        element.owned_relationships.add(self, no_conj=True)
+        element.owned_relationships.add(self)
 
     def _fn_remove_from_owning_related_element(self, element: Element):
-        element.owned_relationships.remove(self, no_conj=True)
+        element.owned_relationships.remove(self)
 
     @property
     def owning_related_element(self) -> Optional[Element]:
