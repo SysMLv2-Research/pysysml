@@ -43,16 +43,15 @@ class Element(IElementID):
             env=self.env, type_=Relationship,
             fn_add_conj=self._fn_add_to_owning_relationship,
             fn_remove_conj=self._fn_remove_from_owning_relationship,
-            no_conj_when_init=no_conj_when_init,
-            initial=[owning_relationship] if owning_relationship else [],
         )
         self._owned_relationships: EConn['Relationship'] = EConn(
             env=self.env, type_=Relationship,
             fn_add_conj=self._fn_add_to_owned_relationship,
             fn_remove_conj=self._fn_remove_from_owned_relationship,
-            no_conj_when_init=no_conj_when_init,
-            initial=list(owned_relationships or []),
         )
+        if owning_relationship:
+            self._owning_relationships.set_to(owning_relationship, no_conj=no_conj_when_init)
+        self._owned_relationships.update(owned_relationships or [], no_conj=no_conj_when_init)
 
     @property
     def documentation(self) -> List["Documentation"]:
@@ -101,9 +100,9 @@ class Element(IElementID):
     @property
     def owning_namespace(self) -> Optional["Namespace"]:
         from .namespace import Namespace
-        owning_membership = self.owning_membership
-        if owning_membership and isinstance(owning_membership, Namespace):
-            return owning_membership
+        owning_membership: Optional[Namespace] = self.owning_membership
+        if owning_membership:
+            return owning_membership.membership_owning_namespace
         else:
             return None
 
@@ -235,7 +234,7 @@ class Element(IElementID):
         """
         expected_owned_element = [
             elem for rel in self.owned_relationships
-            for elem in rel.owned_related_element
+            for elem in rel.owned_related_elements
         ]
         if self.owned_elements != expected_owned_element:
             raise ConstraintsError("OwnedElement constraint violated")
@@ -349,16 +348,15 @@ class Relationship(Element):
             env=self.env, type_=Element,
             fn_add_conj=self._fn_add_to_owned_related_element,
             fn_remove_conj=self._fn_remove_from_owned_related_element,
-            no_conj_when_init=no_conj_when_init,
-            initial=list(owned_related_elements or []),
         )
         self._owning_related_elements: EConn[Element] = EConn(
             env=self.env, type_=Element,
             fn_add_conj=self._fn_add_to_owning_related_element,
             fn_remove_conj=self._fn_remove_from_owning_related_element,
-            no_conj_when_init=no_conj_when_init,
-            initial=[owning_related_element] if owning_related_element else [],
         )
+        self._owned_related_elements.update(owned_related_elements or [], no_conj=no_conj_when_init)
+        if owning_related_element:
+            self._owning_related_elements.set_to(owning_related_element, no_conj=no_conj_when_init)
 
     @property
     def is_implied(self) -> bool:
