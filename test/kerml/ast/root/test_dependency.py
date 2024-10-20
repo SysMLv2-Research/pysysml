@@ -33,6 +33,15 @@ def d1(e1, e2, env):
     )
 
 
+@pytest.fixture()
+def d2(e1, e2, env):
+    return Dependency(
+        env,
+        clients=[],
+        suppliers=[],
+    )
+
+
 @pytest.mark.unittest
 class TestKerMLAstRootBaseRelationship:
     def test_precondition(self, e1, e2, env):
@@ -111,3 +120,29 @@ class TestKerMLAstRootBaseRelationship:
         assert d1.related_elements == [e1, e2, e3]
         assert d1.owning_related_element is None
         assert d1.owned_related_elements == []
+
+    def test_simple_d2(self, e1, e2, d2, env):
+        assert d2.sources == d2.clients == []
+        assert d2.targets == d2.suppliers == []
+        assert d2.related_elements == []
+        assert d2.owning_related_element is None
+        assert d2.owned_related_elements == []
+        with pytest.raises(ConstraintsError):
+            d2.check_constraints()
+
+        d2.clients.add(e2)
+        assert d2.sources == d2.clients == [e2]
+        assert d2.targets == d2.suppliers == []
+        assert d2.related_elements == [e2]
+        assert d2.owning_related_element is None
+        assert d2.owned_related_elements == []
+        with pytest.raises(ConstraintsError):
+            d2.check_constraints()
+
+        d2.suppliers.add(e1)
+        assert d2.sources == d2.clients == [e2]
+        assert d2.targets == d2.suppliers == [e1]
+        assert d2.related_elements == [e2, e1]
+        assert d2.owning_related_element is None
+        assert d2.owned_related_elements == []
+        d2.check_constraints()
