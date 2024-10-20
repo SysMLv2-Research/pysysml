@@ -54,7 +54,7 @@ class Element(IElementID):
         self._owned_relationships.update(owned_relationships or [], no_conj=no_conj_when_init)
 
     @property
-    def documentation(self) -> List["Documentation"]:
+    def documentations(self) -> List["Documentation"]:
         from .annotating import Documentation
         return [item for item in self.owned_elements if isinstance(item, Documentation)]
 
@@ -196,7 +196,7 @@ class Element(IElementID):
         from .annotating import Documentation
 
         expected_documentation = [elem for elem in self.owned_elements if isinstance(elem, Documentation)]
-        if self.documentation != expected_documentation:
+        if self.documentations != expected_documentation:
             raise ConstraintsError("Documentation constraint violated")
 
     def _check_derive_element_is_library_element(self):
