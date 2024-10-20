@@ -13,10 +13,16 @@ class Element(IElementID):
     def __init__(
             self,
             env: Env,
+
             alias_ids: Optional[List[str]] = None,
             declared_name: Optional[str] = None,
             declared_short_name: Optional[str] = None,
             is_implied_included: bool = False,
+
+            owning_relationship: Optional[Union[str, 'Relationship']] = None,
+            owned_relationships: Optional[List[Union[str, 'Relationship']]] = None,
+            no_conj_when_init: bool = False,
+
             element_id: Optional[str] = None,
     ):
         super().__init__(env, element_id)
@@ -37,11 +43,15 @@ class Element(IElementID):
             env=self.env, type_=Relationship,
             fn_add_conj=self._fn_add_to_owning_relationship,
             fn_remove_conj=self._fn_remove_from_owning_relationship,
+            no_conj_when_init=no_conj_when_init,
+            initial=[owning_relationship] if owning_relationship else [],
         )
         self._owned_relationships: EConn['Relationship'] = EConn(
             env=self.env, type_=Relationship,
             fn_add_conj=self._fn_add_to_owned_relationship,
             fn_remove_conj=self._fn_remove_from_owned_relationship,
+            no_conj_when_init=no_conj_when_init,
+            initial=list(owned_relationships or []),
         )
 
     @property
@@ -300,6 +310,14 @@ class Relationship(Element):
             declared_short_name: Optional[str] = None,
             is_implied_included: bool = False,
 
+            sources: Optional[List[Union[str, Element]]] = None,
+            targets: Optional[List[Union[str, Element]]] = None,
+            owning_related_element: Optional[Union[str, Element]] = None,
+            owned_related_elements: Optional[List[Union[str, Element]]] = None,
+            owning_relationship: Optional[Union[str, 'Relationship']] = None,
+            owned_relationships: Optional[List[Union[str, 'Relationship']]] = None,
+            no_conj_when_init: bool = False,
+
             element_id: Optional[str] = None
     ):
         Element.__init__(
@@ -309,22 +327,37 @@ class Relationship(Element):
             declared_name=declared_name,
             declared_short_name=declared_short_name,
             is_implied_included=is_implied_included,
+            owning_relationship=owning_relationship,
+            owned_relationships=owned_relationships,
+            no_conj_when_init=no_conj_when_init,
             element_id=element_id,
         )
         self._is_implied = is_implied
 
-        self._sources: EConn[Element] = EConn(env=self.env, type_=Element)
-        self._targets: EConn[Element] = EConn(env=self.env, type_=Element)
+        self._sources: EConn[Element] = EConn(
+            env=self.env, type_=Element,
+            no_conj_when_init=no_conj_when_init,
+            initial=list(sources or []),
+        )
+        self._targets: EConn[Element] = EConn(
+            env=self.env, type_=Element,
+            no_conj_when_init=no_conj_when_init,
+            initial=list(targets or []),
+        )
 
         self._owned_related_elements: EConn[Element] = EConn(
             env=self.env, type_=Element,
             fn_add_conj=self._fn_add_to_owned_related_element,
             fn_remove_conj=self._fn_remove_from_owned_related_element,
+            no_conj_when_init=no_conj_when_init,
+            initial=list(owned_related_elements or []),
         )
         self._owning_related_elements: EConn[Element] = EConn(
             env=self.env, type_=Element,
             fn_add_conj=self._fn_add_to_owning_related_element,
             fn_remove_conj=self._fn_remove_from_owning_related_element,
+            no_conj_when_init=no_conj_when_init,
+            initial=[owning_related_element] if owning_related_element else [],
         )
 
     @property

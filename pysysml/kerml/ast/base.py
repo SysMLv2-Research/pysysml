@@ -118,7 +118,7 @@ class EConn(Generic[T]):
 
     def add(self, value: Union[T, str], no_conj: bool = False) -> 'EConn[T]':
         element_id = _to_element_id(value)
-        element = self.env[element_id]
+        element = self._to_ielement(element_id)
         if not isinstance(element, self._type):
             raise TypeError(f'Element type {self._type!r} expected, but {element!r} found.')
         else:
@@ -135,7 +135,7 @@ class EConn(Generic[T]):
 
     def remove(self, value: Union[T, str], no_conj: bool = False) -> 'EConn[T]':
         element_id = _to_element_id(value)
-        element = self.env[element_id]
+        element = self._to_ielement(element_id)
         if element_id in self._set:
             self._set.remove(element_id)
             if not no_conj and self._fn_remove_conj:
@@ -154,9 +154,9 @@ class EConn(Generic[T]):
 
     def set_to(self, element: Union[str, T], no_conj: bool = False):
         element_id = _to_element_id(element)
-        element = self.env[element_id]
+        element = self._to_ielement(element_id)
         for e in list(self._set):
-            if e != element.element_id:
+            if e != element_id:
                 self.remove(e, no_conj=no_conj)
         if element not in self:
             self.add(element, no_conj=no_conj)
