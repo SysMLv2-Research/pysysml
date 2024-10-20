@@ -196,3 +196,13 @@ class TestKerMLAstRootBaseRelationship:
         assert r2.owning_related_element is None
         assert r2.owned_related_elements == [e3]
         r2.check_constraints()
+
+        r2.owned_related_elements.clear()
+        assert e3.owning_relationship is None
+        assert e3.owned_relationships == []
+        e3.check_constraints()
+        assert r2.sources == [e1]
+        assert r2.targets == [e2, e3]
+        assert r2.related_elements == [e1, e2, e3]
+        assert r2.owning_related_element is None
+        assert r2.owned_related_elements == []
