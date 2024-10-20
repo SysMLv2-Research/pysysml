@@ -402,7 +402,7 @@ class Relationship(Element):
         The relatedElements of a Relationship consist of all of its source Elements followed by all of its target Elements.
         relatedElement = source->union(target)
         """
-        expected_related_elements = self.sources + self.targets
+        expected_related_elements = [*self.sources, *self.targets]
         if self.related_elements != expected_related_elements:
             raise ConstraintsError(
                 "The relatedElement property must be the union of source and target elements, in that order.")

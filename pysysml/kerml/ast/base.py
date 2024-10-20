@@ -86,7 +86,9 @@ _RemoveConjFuncTyping = Callable[[T], None]
 
 
 class EConn(Generic[T]):
-    def __init__(self, env: Env, type_: Type[T] = IElementID, initial: Optional[Iterable[Union[str, T]]] = None,
+    def __init__(self, env: Env, type_: Type[T] = IElementID,
+                 initial: Optional[Iterable[Union[str, T]]] = None,
+                 no_conj_when_init: bool = False,
                  fn_add_conj: Optional[_AddConjFuncTyping] = None,
                  fn_remove_conj: Optional[_RemoveConjFuncTyping] = None):
         self._env_ref = weakref.ref(env)
@@ -96,7 +98,7 @@ class EConn(Generic[T]):
         self._fn_remove_conj = fn_remove_conj
 
         for element in (initial or []):
-            self.add(element)
+            self.add(element, no_conj=no_conj_when_init)
 
     @property
     def env(self) -> Env:
@@ -159,6 +161,14 @@ class EConn(Generic[T]):
         if element not in self:
             self.add(element, no_conj=no_conj)
         return self
+
+    def is_subset(self, superset: Iterable[Union[str, T]]) -> bool:
+        superset = {_to_element_id(e) for e in superset}
+        return self._set.issubset(superset)
+
+    def is_superset(self, subset: Iterable[Union[str, T]]) -> bool:
+        subset = {_to_element_id(e) for e in subset}
+        return self._set.issuperset(subset)
 
     def __bool__(self) -> bool:
         return bool(self._set)
